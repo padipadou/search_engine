@@ -2,28 +2,28 @@
 
 import os
 import time
-from collections import Counter
+import collections
 
 def word_count_dict(filename):
     """
     Returns a word/count DICT for this filename.
     """
 
-    word_count_update = {}
+    word_count = {}
     input_file = open(filename, 'r')
 
     for line in input_file:
         words = line.split()
         for word in words:
             word = word.lower()
-            if not word in word_count_update:
-                word_count_update[word] = 1
+            if not word in word_count:
+                word_count[word] = 1
             else:
-                word_count_update[word] = word_count_update[word] + 1
+                word_count[word] = word_count[word] + 1
 
     input_file.close()
 
-    return word_count_update
+    return word_count
 
 def main():
     dir = 'data/lemonde-utf8'
@@ -34,12 +34,12 @@ def main():
         word_count_update = word_count_dict('{}/{}'.format(dir, filename))
 
         #merge
-        first = Counter(word_count)
-        second = Counter(word_count_update)
+        first = collections.Counter(word_count)
+        second = collections.Counter(word_count_update)
         word_count = dict(first + second)
 
     word_count_list = sorted(word_count.items(), key=lambda t: t[1])
-    print(word_count_list[-1::-21])
+    print('{}'.format(word_count_list[-1::-21]).decode('string_escape'))
 
 if __name__ == '__main__':
     time0 = time.time()
