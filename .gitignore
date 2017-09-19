@@ -18,7 +18,6 @@
 .idea/**/sqlDataSources.xml
 .idea/**/dynamic.xml
 .idea/**/uiDesigner.xml
-.idea/**/vcs.xml
 
 # Gradle:
 .idea/**/gradle.xml
@@ -69,4 +68,4 @@ fabric.properties
 .idea/misc.xml
 .idea/modules.xml
 .idea/search_engine.iml
-.idea
+.idea/vcs.xml
