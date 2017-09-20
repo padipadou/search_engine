@@ -3,6 +3,8 @@
 import os
 import time
 import collections
+import kea.kea as kea
+from tqdm import tqdm
 
 def word_count_dict(filename):
     """
@@ -13,7 +15,11 @@ def word_count_dict(filename):
     input_file = open(filename, 'r')
 
     for line in input_file:
-        words = line.split()
+        #words = line.split()
+
+        keatokenizer = kea.tokenizer()
+        words = keatokenizer.tokenize(line)
+
         for word in words:
             word = word.lower()
             if not word in word_count:
@@ -30,7 +36,7 @@ def main():
     os.chdir('..')
     word_count = {}
 
-    for filename in os.listdir(dir):
+    for filename in tqdm(os.listdir(dir)):
         word_count_update = word_count_dict('{}/{}'.format(dir, filename))
 
         #merge
@@ -39,7 +45,7 @@ def main():
         word_count = dict(first + second)
 
     word_count_list = sorted(word_count.items(), key=lambda t: t[1])
-    print('{}'.format(word_count_list[-1::-21]).decode('string_escape'))
+    print('{}'.format(word_count_list[-1::-21]))
 
 if __name__ == '__main__':
     time0 = time.time()
@@ -47,4 +53,4 @@ if __name__ == '__main__':
     main()
     duration = time.time() - time0
 
-    print "Temps d'execution = {} seconde(s)\n".format(duration)
+    print("Temps d'execution = {} seconde(s)\n".format(duration))
