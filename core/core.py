@@ -38,7 +38,22 @@ def word_count_dict(filename):
 
     return word_count
 
-def one_document_index_creation(filename):
+
+def transform_page_names_into_numbers(dir):
+    """
+    Creates a dictionnary (dico) where the keys are the document names (strings) and the values are numbers
+    """
+    dico = {}
+
+    i=1
+    for filename in tqdm(os.listdir(dir)):
+        dico['{}/{}'.format(dir, filename)]=i
+        i=i+1
+
+    return dico
+
+
+def one_document_index_creation(filename,dico):
     """
     Creates and return an index for this filename.
     """
@@ -60,13 +75,14 @@ def one_document_index_creation(filename):
             word = word.lower()
             if word not in stopwords:
                 if not word in index:
-                    index[word] = [filename]
+                    index[word] = [dico[filename]]
 
     input_file.close()
 
     return index
 
-def index_creation(dir):
+
+def index_creation(dir,dico):
     """
     Creates and return the index for all the files in the directory.
     """
@@ -74,7 +90,7 @@ def index_creation(dir):
     index_update = {}
 
     for filename in tqdm(os.listdir(dir)):
-        index_temp = one_document_index_creation('{}/{}'.format(dir, filename))
+        index_temp = one_document_index_creation('{}/{}'.format(dir, filename),dico)
 
         for word in index_temp.keys():
             if word in index_update:
@@ -102,12 +118,19 @@ def main():
     word_count_list = sorted(word_count.items(), key=lambda t: t[1])
     print('{}'.format(word_count_list[-1::-21]))
 
+    dico=transform_page_names_into_numbers(dir);
 
     #index
-    index=index_creation(dir)
+    index=index_creation(dir,dico)
+
+    print("Display of the index:")
 
     for key,value in index.items():
         print("{}->{}".format(key,value))
+
+    print("\nDisplay of dico:")
+    dico_list = sorted(dico.items(), key=lambda t: t[1])
+    print('{}'.format(dico_list))
 
 
 if __name__ == '__main__':
