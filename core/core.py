@@ -13,6 +13,11 @@ def word_count_dict(filename):
 
     word_count = {}
     input_file = open(filename, 'r')
+    stopwords_file = open('data/stopwords-fr.txt', 'r')
+    stopwords = []
+    for stopword in stopwords_file:
+        stopwords.append(stopword.split()[0])
+    stopwords = set(stopwords)
 
     for line in input_file:
         #words = line.split()
@@ -22,10 +27,11 @@ def word_count_dict(filename):
 
         for word in words:
             word = word.lower()
-            if not word in word_count:
-                word_count[word] = 1
-            else:
-                word_count[word] = word_count[word] + 1
+            if word not in stopwords:
+                if not word in word_count:
+                    word_count[word] = 1
+                else:
+                    word_count[word] = word_count[word] + 1
 
     input_file.close()
 
