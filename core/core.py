@@ -76,6 +76,8 @@ def one_document_index_creation(filename,dico):
             if word not in stopwords:
                 if not word in index:
                     index[word] = [dico[filename]]
+                else:
+                    index[word] = index[word]+[dico[filename]]
 
     input_file.close()
 
@@ -97,7 +99,14 @@ def index_creation(dir,dico):
                 index_update[word] = index_update[word] + index_temp[word]
             else:
                 index_update[word] = index_temp[word]
-    return index_update
+
+    index = {}
+
+    for key, value in index_update.items():
+        list_of_tuples = [(x, value.count(x)) for x in set(value)]
+        index[key] = list_of_tuples
+
+    return index
 
 
 def main():
