@@ -7,6 +7,9 @@ import kea.kea as kea
 from tqdm import tqdm
 
 def collect_datadoc_dict():
+    """
+    Returns a dict containing file num as key, file content as value.
+    """
     dir = 'data/lemonde-utf8'
     os.chdir('..')
 
