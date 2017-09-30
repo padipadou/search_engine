@@ -25,7 +25,7 @@ def collect_datadoc_dict():
 
 def index_creation(datadoc):
     """
-    Creates and return the positional index for all the files in the datadoc.
+    Creates and returns the positional index for all the files in the datadoc.
     """
     keatokenizer = kea.tokenizer()
 
@@ -48,7 +48,7 @@ def index_creation(datadoc):
                     i=i+1
                     word = word.lower()
                     if word in index.keys() and page in index[word]:
-                        index[word][page]=[i]+index[word][page]
+                        index[word][page]+=[i]
                     elif word in index.keys():
                         index[word] = {**index[word],**{page : [i]}}
                     else:
