@@ -14,5 +14,17 @@ def load_data_dict():
 
     return data_dict
 
+def load_stopwords_set():
+    # stopwords set
+    stopwords = []
+    path = '../data/stopwords-fr.txt'
+
+    with open(path, 'r') as stopwords_file:
+        for stopword in stopwords_file:
+            stopwords.append(stopword.split()[0])
+
+    return set(stopwords)
+
+
 if __name__ == '__main__':
     pass

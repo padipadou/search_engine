@@ -1,7 +1,7 @@
 import libs.kea as kea
 import tqdm as tq
 
-def create_index_dict(datadict):
+def create_index_dict(datadict, stopwords):
     """
     Creates and returns the positional index for all the files in datadict.
     Creates and returns a dict containing a word as key, wordnum as value for all the words in datadict.
@@ -9,13 +9,6 @@ def create_index_dict(datadict):
     """
     # tokenizer, from Kea
     tokenizer = kea.tokenizer()
-
-    # stopwords set
-    stopwords_file = open('../data/stopwords-fr.txt', 'r')
-    stopwords = []
-    for stopword in stopwords_file:
-        stopwords.append(stopword.split()[0])
-    stopwords = set(stopwords)
 
     word_num_dict = {}
     num_word_dict = {}
