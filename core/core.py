@@ -24,7 +24,8 @@ def load_data_dict():
 def create_index_dict(datadict):
     """
     Creates and returns the positional index for all the files in datadict.
-    Creates and returns a dict containing word num as key, word as value for all the words in datadict.
+    Creates and returns a dict containing a word as key, wordnum as value for all the words in datadict.
+    Creates and returns a dict containing a wordnum as key, word as value for all the words in datadict.
     """
     # tokenizer, from Kea
     tokenizer = kea.tokenizer()
@@ -36,8 +37,10 @@ def create_index_dict(datadict):
         stopwords.append(stopword.split()[0])
     stopwords = set(stopwords)
 
+    word_num_dict = {}
+    num_word_dict = {}
     index_dict = {}
-    #word_num_dict = {}
+    word_count = 0
 
     for page_number in tq.tqdm(datadict.keys()):
         word_position = 0
@@ -52,32 +55,39 @@ def create_index_dict(datadict):
                 if word not in stopwords:
                     word_position += 1
 
-                    # word already in the index, word already in the page
-                    if word in index_dict.keys() and page_number in index_dict[word]:
-                        index_dict[word][page_number] += [word_position]
-
-                    # word already in the index, word NOT YET in the page
-                    elif word in index_dict.keys():
-                        index_dict[word] = {**index_dict[word], **{page_number: [word_position]}}
+                    word_num = word_num_dict.get(word)
 
                     # word NOT YET in the index, word NOT YET in the page
-                    elif word not in index_dict.keys():
-                        index_dict[word] = {page_number: [word_position]}
+                    if not word_num :
+                        word_num_dict[word] = word_count
+                        num_word_dict[word_count] = word
+                        index_dict[word_count] = {page_number: [word_position]}
 
+                        word_count += 1
+
+                    # word ALREADY in the index, word NOT YET in the page
+                    elif word_num and page_number not in index_dict[word_num]:
+                        index_dict[word_num] = {**index_dict[word_num], **{page_number: [word_position]}}
+
+                    # word ALREADY in the index, word ALREADY in the page
+                    elif word_num and page_number in index_dict[word_num]:
+                        index_dict[word_num][page_number] += [word_position]
+
+                    # ERROR
                     else:
                         raise Exception('Issue with word: "{}" \n\tin the page {} \n\tat the position {}'.format(word, page_number, word_position))
 
-    return index_dict
+    return index_dict, word_num_dict, num_word_dict
 
 
 def main():
     print("Loading data...")
-    datadict = load_data_dict()
+    data_dict = load_data_dict()
 
     print("Creating index...")
-    index = create_index_dict(datadict)
+    index_dict, word_num_dict, num_word_dict = create_index_dict(data_dict)
 
-    print(index)
+    print(index_dict)
 
 
 if __name__ == '__main__':
