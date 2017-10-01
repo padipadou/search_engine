@@ -7,64 +7,65 @@ import libs.kea as kea
 from tqdm import tqdm
 
 
-def collect_datadoc_dict():
+def load_data_dict():
     """
     Returns a dict containing file num as key, file content as value.
     """
-    dir = 'data/lemonde-utf8'
-    os.chdir('..')
+    dir = '../data/lemonde-utf8'
 
-    dict = {}
+    data_dict = {}
     for i,filename in enumerate(os.listdir(dir)):
         path = '{}/{}'.format(dir, filename)
         with open(path, 'r') as infile:
-            dict[i] = infile.read()
+            data_dict[i] = infile.read()
 
-    return dict
+    return data_dict
 
 
-def index_creation(datadoc):
+def create_index_dict(datadict):
     """
     Creates and returns the positional index for all the files in the datadoc.
     """
-    keatokenizer = kea.tokenizer()
+    # tokenizer, from Kea
+    tokenizer = kea.tokenizer()
 
-    stopwords_file = open('data/stopwords-fr.txt', 'r')
+    # stopwords set
+    stopwords_file = open('../data/stopwords-fr.txt', 'r')
     stopwords = []
     for stopword in stopwords_file:
         stopwords.append(stopword.split()[0])
     stopwords = set(stopwords)
 
-    index = {}
+    index_dict = {}
 
-    for page in datadoc.keys():
+    for page_number in datadict.keys():
 
         i = 0
-        for line in datadoc[page].split('\n'):
-            words = keatokenizer.tokenize(line)
+        for line in datadict[page_number].split('\n'):
+            words = tokenizer.tokenize(line)
 
             for word in words:
                 if word not in stopwords:
-                    i=i+1
+                    i += 1
                     word = word.lower()
-                    if word in index.keys() and page in index[word]:
-                        index[word][page]+=[i]
-                    elif word in index.keys():
-                        index[word] = {**index[word],**{page : [i]}}
-                    else:
-                        index[word]={page : [i]}
+                    if word in index_dict.keys() and page_number in index_dict[word]:
+                        index_dict[word][page_number] += [i]
 
-    return index
+                    elif word in index_dict.keys():
+                        index_dict[word] = {**index_dict[word],**{page_number : [i]}}
+
+                    else:
+                        index_dict[word] = {page_number : [i]}
+
+    return index_dict
 
 
 def main():
+    print("Loading data...")
+    datadict = load_data_dict()
 
-    datadict = collect_datadoc_dict()
-
-    print(datadict[1])
-
-    #index
-    index=index_creation(datadict)
+    print("Creating index...")
+    index = create_index_dict(datadict)
 
     print(index)
 
