@@ -4,7 +4,7 @@ import time
 
 def main():
     print("Loading data...")
-    data_dict = ld.load_data_dict()
+    data_dict, name_num_dict, num_name_dict = ld.load_data_dict()
     stopwords = ld.load_stopwords_set()
 
     print("Creating index...")
