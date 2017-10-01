@@ -2,14 +2,13 @@
 
 import os
 import time
-import collections
 import libs.kea as kea
-from tqdm import tqdm
+import tqdm as tq
 
 
 def load_data_dict():
     """
-    Returns a dict containing file num as key, file content as value.
+    Creates and returns a dict containing file num as key, file content as value.
     """
     dir = '../data/lemonde-utf8'
 
@@ -24,7 +23,8 @@ def load_data_dict():
 
 def create_index_dict(datadict):
     """
-    Creates and returns the positional index for all the files in the datadoc.
+    Creates and returns the positional index for all the files in datadict.
+    Creates and returns a dict containing word num as key, word as value for all the words in datadict.
     """
     # tokenizer, from Kea
     tokenizer = kea.tokenizer()
@@ -37,25 +37,35 @@ def create_index_dict(datadict):
     stopwords = set(stopwords)
 
     index_dict = {}
+    #word_num_dict = {}
 
-    for page_number in datadict.keys():
+    for page_number in tq.tqdm(datadict.keys()):
+        word_position = 0
+        content_page = datadict[page_number].lower().split('\n')
 
-        i = 0
-        for line in datadict[page_number].split('\n'):
-            words = tokenizer.tokenize(line)
+        for line in content_page:
+            # faster to do it line by line than page by page
+            words_line = tokenizer.tokenize(line)
 
-            for word in words:
+            for word in words_line:
+
                 if word not in stopwords:
-                    i += 1
-                    word = word.lower()
-                    if word in index_dict.keys() and page_number in index_dict[word]:
-                        index_dict[word][page_number] += [i]
+                    word_position += 1
 
+                    # word already in the index, word already in the page
+                    if word in index_dict.keys() and page_number in index_dict[word]:
+                        index_dict[word][page_number] += [word_position]
+
+                    # word already in the index, word NOT YET in the page
                     elif word in index_dict.keys():
-                        index_dict[word] = {**index_dict[word],**{page_number : [i]}}
+                        index_dict[word] = {**index_dict[word], **{page_number: [word_position]}}
+
+                    # word NOT YET in the index, word NOT YET in the page
+                    elif word not in index_dict.keys():
+                        index_dict[word] = {page_number: [word_position]}
 
                     else:
-                        index_dict[word] = {page_number : [i]}
+                        raise Exception('Issue with word: "{}" \n\tin the page {} \n\tat the position {}'.format(word, page_number, word_position))
 
     return index_dict
 
