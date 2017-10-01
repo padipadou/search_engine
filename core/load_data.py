@@ -15,7 +15,9 @@ def load_data_dict():
     return data_dict
 
 def load_stopwords_set():
-    # stopwords set
+    """
+    Creates and returns a set containing stopwords which are in the file.
+    """
     stopwords = []
     path = '../data/stopwords-fr.txt'
 
