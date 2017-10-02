@@ -32,10 +32,10 @@
 :Usage:
     A typical usage of this module is sample:
     
-        >>> import libs
-        >>> sentence = "Le Kea est le seul perroquet alpin au monde."
-        >>> keatokenizer = libs.tokenizer()
-        >>> tokens = keatokenizer.tokenize(sentence)
+        import kea
+        sentence = "Le Kea est le seul perroquet alpin au monde."
+        keatokenizer = kea.tokenizer()
+        tokens = keatokenizer.tokenize(sentence)
         ['Le', 'Kea', 'est', 'le', 'seul', 'perroquet', 'alpin', 'au', 'monde', 
         '.']
 """

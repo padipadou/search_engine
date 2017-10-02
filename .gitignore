@@ -70,5 +70,5 @@ fabric.properties
 .idea/search_engine.iml
 .idea/vcs.xml
 .idea/inspectionProfiles
-core/__pycache__/
+core_functions/__pycache__/
 libs/__pycache__/

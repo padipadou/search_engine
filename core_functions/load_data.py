@@ -6,7 +6,7 @@ def load_data_dict():
     Creates and returns a dict containing filename as key, filenum as value.
     Creates and returns a dict containing filenum as key, filename as value.
     """
-    dir = '../data/lemonde-utf8'
+    dir = 'data/lemonde-utf8'
 
     data_dict = {}
     name_num_dict = {}
@@ -26,7 +26,7 @@ def load_stopwords_set():
     Creates and returns a set containing stopwords which are in the file.
     """
     stopwords = []
-    path = '../data/stopwords-fr.txt'
+    path = 'data/stopwords-fr.txt'
 
     with open(path, 'r') as stopwords_file:
         for stopword in stopwords_file:

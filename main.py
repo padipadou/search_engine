@@ -1,5 +1,5 @@
-import index_data as id
-import load_data as ld
+import core_functions.index_data as id
+import core_functions.load_data as ld
 import time
 
 def main():
