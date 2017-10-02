@@ -34,6 +34,5 @@ def load_stopwords_set():
 
     return set(stopwords)
 
-
 if __name__ == '__main__':
     pass

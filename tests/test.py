@@ -1,5 +1,5 @@
 import unittest
-import core.index_data as id
+import core_functions.index_data as id
 import load_data_test as ld
 
 class test_search_engine(unittest.TestCase):
@@ -15,8 +15,7 @@ class test_search_engine(unittest.TestCase):
         stopwords = ld.load_stopwords_set()
         index_dict, word_num_dict, num_word_dict = \
         test = id.create_index_dict(data_dict, stopwords)
-        expected = {0: {0: [1]}, 1: {0: [2,12]}, 2: {0: [3]}, 3: {0: [4]}, 4: {0: [5,6,10]},
-                    5: {0: [7,11]}, 6: {0: [8]}, 7: {0: [9]}}
+        expected = {0: {0: [1]}, 1: {0: [2, 7]}, 2: {0: [3]}, 3: {0: [4]}, 4: {0: [5]}, 5: {0: [6]}, 6: {0: [8]}}
         self.assertEqual(index_dict, expected, msg='Test failed')
 
 if __name__ == '__main__':

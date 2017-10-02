@@ -1,4 +1,4 @@
-import core.index_data as id
+import core_functions.index_data as id
 import load_data_test as ld
 import time
 
