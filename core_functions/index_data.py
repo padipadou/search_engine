@@ -9,8 +9,9 @@ def create_index_dict(datadict, stopwords):
     Creates and returns a dict containing a wordnum as key, word as value for all the words in datadict.
     """
     # tokenizer, from Kea
-    # stemmer, from PyStemmer
     tokenizer = kea.tokenizer()
+
+    # stemmer, from PyStemmer
     stemmer = pystemmer.Stemmer('french')
 
     word_num_dict = {}
