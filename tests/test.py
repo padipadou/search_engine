@@ -1,6 +1,6 @@
 import unittest
 import core_functions.index_data as id
-import load_data_test as ld
+import tests.load_data_test as ld
 
 class test_search_engine(unittest.TestCase):
 
