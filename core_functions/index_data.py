@@ -1,4 +1,5 @@
 import libs.kea as kea
+import Stemmer
 import tqdm as tq
 
 def create_index_dict(datadict, stopwords):
@@ -8,7 +9,9 @@ def create_index_dict(datadict, stopwords):
     Creates and returns a dict containing a wordnum as key, word as value for all the words in datadict.
     """
     # tokenizer, from Kea
+    # stemmer, from PyStemmer
     tokenizer = kea.tokenizer()
+    stemmer = Stemmer.Stemmer('french')
 
     word_num_dict = {}
     num_word_dict = {}
@@ -27,6 +30,7 @@ def create_index_dict(datadict, stopwords):
 
                 if word not in stopwords:
                     word_position += 1
+                    word = stemmer.stemWord(word)
 
                     word_num = word_num_dict.get(word)
 
