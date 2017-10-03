@@ -1,5 +1,5 @@
 import libs.kea as kea
-import Stemmer
+import Stemmer as pystemmer
 import tqdm as tq
 
 def create_index_dict(datadict, stopwords):
@@ -11,7 +11,7 @@ def create_index_dict(datadict, stopwords):
     # tokenizer, from Kea
     # stemmer, from PyStemmer
     tokenizer = kea.tokenizer()
-    stemmer = Stemmer.Stemmer('french')
+    stemmer = pystemmer.Stemmer('french')
 
     word_num_dict = {}
     num_word_dict = {}
@@ -30,29 +30,29 @@ def create_index_dict(datadict, stopwords):
 
                 if word not in stopwords:
                     word_position += 1
-                    word = stemmer.stemWord(word)
+                    wordstem = stemmer.stemWord(word)
 
-                    word_num = word_num_dict.get(word)
+                    word_num = word_num_dict.get(wordstem,-1)
 
                     # word NOT YET in the index, word NOT YET in the page
-                    if not word_num :
-                        word_num_dict[word] = word_count
-                        num_word_dict[word_count] = word
+                    if word_num < 0:
+                        word_num_dict[wordstem] = word_count
+                        num_word_dict[word_count] = wordstem
                         index_dict[word_count] = {page_number: [word_position]}
 
                         word_count += 1
 
                     # word ALREADY in the index, word NOT YET in the page
-                    elif word_num and page_number not in index_dict[word_num]:
+                    elif word_num >= 0 and page_number not in index_dict[word_num]:
                         index_dict[word_num] = {**index_dict[word_num], **{page_number: [word_position]}}
 
                     # word ALREADY in the index, word ALREADY in the page
-                    elif word_num and page_number in index_dict[word_num]:
+                    elif word_num >= 0 and page_number in index_dict[word_num]:
                         index_dict[word_num][page_number] += [word_position]
 
                     # ERROR
                     else:
-                        raise Exception('Issue with word: "{}" \n\tin the page {} \n\tat the position {}'.format(word, page_number, word_position))
+                        raise Exception('Issue with word: "{}" \n\tin the page {} \n\tat the position {}'.format(wordstem, page_number, word_position))
 
     return index_dict, word_num_dict, num_word_dict
 
