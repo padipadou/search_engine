@@ -1,5 +1,6 @@
 import core_functions.index_data as id
 import core_functions.load_data as ld
+import core_functions.similar_docs as sd
 import time
 
 def main():
@@ -11,7 +12,13 @@ def main():
     index_dict, word_num_dict, num_word_dict = \
         id.create_index_dict(data_dict, stopwords)
 
-    print(index_dict)
+    # print(index_dict)
+
+    print("Calculing tf * idf...")
+    tf_idf_dict = \
+        sd.calculate_tf_idf_dict(index_dict)
+
+    print(tf_idf_dict)
 
 if __name__ == '__main__':
     time0 = time.time()

@@ -1,5 +1,6 @@
 import os
 
+
 def load_data_dict():
     """
     Creates and returns a dict containing file num as key, file content as value.
@@ -21,6 +22,7 @@ def load_data_dict():
 
     return data_dict, name_num_dict, num_name_dict
 
+
 def get_docnum_from_name(name, name_num_dict):
     """
     Returns a num linked to a name (docname).
@@ -32,6 +34,7 @@ def get_docnum_from_name(name, name_num_dict):
     # ERROR
     else:
         raise Exception("'{}' is not a document !")
+
 
 def load_stopwords_set():
     """
