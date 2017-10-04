@@ -25,15 +25,13 @@ def get_docnum_from_name(name, name_num_dict):
     """
     Returns a num linked to a name (docname).
     """
-    num = name_num_dict.get(name,-1)
+    docnum = name_num_dict.get(name,-1)
 
-    if num >= 0:
-        return num
+    if docnum >= 0:
+        return docnum
     # ERROR
     else:
         raise Exception("'{}' is not a document !")
-
-    return name_num_dict.get(name)
 
 def load_stopwords_set():
     """
