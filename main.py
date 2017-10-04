@@ -14,17 +14,26 @@ def main():
 
     # print(index_dict)
 
-    print("Calculing tf * idf...")
+    print("Calculating tf * idf...")
     tf_idf_dict = \
         sd.calculate_tf_idf_dict(index_dict)
 
-    print(tf_idf_dict)
+    # print(tf_idf_dict)
+
+    print("Calculating similarity between documents...")
+    docname1 = ""
+    docname2 = ""
+    cosine_similarity = \
+        sd.calculate_docs_similarity(docname1, docname2, name_num_dict, tf_idf_dict)
+
+    print(cosine_similarity)
 
 if __name__ == '__main__':
-    time0 = time.time()
+
+    t_start = time.time()
 
     main()
 
-    duration = time.time() - time0
+    t_end = time.time()
 
-    print("Temps d'execution = {} seconde(s)\n".format(duration))
+    print("Temps d'execution = {} seconde(s)\n".format(t_end - t_start))
