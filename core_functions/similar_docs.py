@@ -1,5 +1,5 @@
 import core_functions.load_data as ld
-from math import sqrt
+from math import sqrt, log10
 
 def calculate_tf_idf_dict(index_dict):
     """
@@ -10,7 +10,8 @@ def calculate_tf_idf_dict(index_dict):
 
     for wordnum in index_dict.keys():
         word_dict = index_dict.get(wordnum)
-        idf = 1/len(word_dict)
+        # idf = 1/len(word_dict)
+        idf = log10(107/len(word_dict)) # variant from Mr Tannier's TP
         tf_idf_word_dict = {}
 
         for document in word_dict.keys():
