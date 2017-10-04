@@ -21,6 +21,20 @@ def load_data_dict():
 
     return data_dict, name_num_dict, num_name_dict
 
+def get_docnum_from_name(name, name_num_dict):
+    """
+    Returns a num linked to a name (docname).
+    """
+    num = name_num_dict.get(name,-1)
+
+    if num >= 0:
+        return num
+    # ERROR
+    else:
+        raise Exception("'{}' is not a document !")
+
+    return name_num_dict.get(name)
+
 def load_stopwords_set():
     """
     Creates and returns a set containing stopwords which are in the file.
