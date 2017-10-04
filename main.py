@@ -21,8 +21,8 @@ def main():
     # print(tf_idf_dict)
 
     print("Calculating similarity between documents...")
-    docname1 = ""
-    docname2 = ""
+    docname1 = "texte.95-1.txt"
+    docname2 = "texte.95-1.txt"
     cosine_similarity = \
         sd.calculate_docs_similarity(docname1, docname2, name_num_dict, tf_idf_dict)
 
