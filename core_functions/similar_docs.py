@@ -24,6 +24,8 @@ def tf_function(positions_list, infos_doc):
         return 1 + log10(len(positions_list))
     elif Const.TF_WEIGHT == 'double_normal_05':
         return 0.5 + 0.5 * (len(positions_list)/term_freq_max)
+    else:
+        raise Exception('Issue with TF calculation: {}'.format(Const.TF_WEIGHT))
 
 
 def idf_function(word_dict, infos_doc_dict):
@@ -42,14 +44,17 @@ def idf_function(word_dict, infos_doc_dict):
         return 1
     elif Const.IDF_WEIGHT == 'idf':
         return log10(N_total_docs/n_docs_term)
-    elif Const.TF_WEIGHT == 'idf_smooth':
+    elif Const.IDF_WEIGHT == 'idf_smooth':
         return log10(1 + N_total_docs/n_docs_term)
-    elif Const.TF_WEIGHT == 'idf_max':
+    elif Const.IDF_WEIGHT == 'idf_max':
         return log10(Ndocs_for_a_word_max/(1 + n_docs_term))
-    elif Const.TF_WEIGHT == 'idf_probalistic':
+    elif Const.IDF_WEIGHT == 'idf_probalistic':
         return log10((N_total_docs - n_docs_term)/n_docs_term)
-    elif Const.TF_WEIGHT == 'idf_probalistic_05':
+    elif Const.IDF_WEIGHT == 'idf_probalistic_05':
         return log10((N_total_docs - n_docs_term + 0.5)/(n_docs_term + 0.5))
+    else:
+        raise Exception('Issue with IDF calculation: {}'.format(Const.IDF_WEIGHT))
+
 
 def calculate_tf_idf_dict(index_dict, infos_doc_dict):
     """
