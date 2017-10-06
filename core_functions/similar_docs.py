@@ -48,7 +48,8 @@ def idf_function(word_dict, infos_doc_dict):
         return log10(Ndocs_for_a_word_max/(1 + n_docs_term))
     elif Const.TF_WEIGHT == 'idf_probalistic':
         return log10((N_total_docs - n_docs_term)/n_docs_term)
-
+    elif Const.TF_WEIGHT == 'idf_probalistic_05':
+        return log10((N_total_docs - n_docs_term + 0.5)/(n_docs_term + 0.5))
 
 def calculate_tf_idf_dict(index_dict, infos_doc_dict):
     """
