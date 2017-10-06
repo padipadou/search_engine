@@ -9,14 +9,14 @@ def main():
     stopwords = ld.load_stopwords_set()
 
     print("Creating index...")
-    index_dict, word_num_dict, num_word_dict = \
+    index_dict, word_num_dict, num_word_dict, infos_doc_dict = \
         id.create_index_dict(data_dict, stopwords)
 
     # print(index_dict)
 
     print("Calculating tf * idf...")
     tf_idf_dict = \
-        sd.calculate_tf_idf_dict(index_dict)
+        sd.calculate_tf_idf_dict(index_dict, infos_doc_dict)
 
     # print(tf_idf_dict)
 
