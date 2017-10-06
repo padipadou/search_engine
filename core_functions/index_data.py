@@ -63,11 +63,13 @@ def create_index_dict(datadict, stopwords):
                     else:
                         raise Exception('Issue with word: "{}" \n\tin the page {} \n\tat the position {}'.format(wordstem, page_number, word_position))
 
+        infos_doc_dict[page_number] = []
+
         # total nb of words
-        infos_doc_dict[page_number][0] = word_position
+        infos_doc_dict[page_number].append(word_position)
 
         # term frequency max
-        infos_doc_dict[page_number][1] = term_frequency_max
+        infos_doc_dict[page_number].append(term_frequency_max)
 
     return index_dict, word_num_dict, num_word_dict, infos_doc_dict
 
