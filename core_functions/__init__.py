@@ -8,4 +8,4 @@ class Const:
 
     # Variants for Inverse Document Frequency Weight
     # unary, idf, idf_smooth, idf_max, idf_probalistic
-    IDF_WEIGHT = ''
+    IDF_WEIGHT = 'idf'
