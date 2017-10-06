@@ -36,6 +36,7 @@ def idf_function(word_dict, infos_doc_dict):
 
     N_total_docs = len(infos_doc_dict)
     n_docs_term = len(word_dict)
+    Ndocs_for_a_word_max = Const.NDOCS_FOR_A_WORD_MAX
 
     if Const.IDF_WEIGHT == 'unary':
         return 1
@@ -44,7 +45,7 @@ def idf_function(word_dict, infos_doc_dict):
     elif Const.TF_WEIGHT == 'idf_smooth':
         return log10(1 + N_total_docs/n_docs_term)
     elif Const.TF_WEIGHT == 'idf_max':
-        return 0
+        return log10(Ndocs_for_a_word_max/(1 + n_docs_term))
     elif Const.TF_WEIGHT == 'idf_probalistic':
         return log10((N_total_docs - n_docs_term)/n_docs_term)
 

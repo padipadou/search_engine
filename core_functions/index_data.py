@@ -1,6 +1,7 @@
 import libs.kea as kea
 import Stemmer as pystemmer
 import tqdm as tq
+from core_functions import Const
 
 def create_index_dict(datadict, stopwords):
     """
@@ -70,6 +71,14 @@ def create_index_dict(datadict, stopwords):
 
         # term frequency max
         infos_doc_dict[page_number].append(term_frequency_max)
+
+    Ndocs_for_a_word_max = 0
+    for word_occ_dict in index_dict.values():
+        Ndocs_for_a_word = len(word_occ_dict)
+        if Ndocs_for_a_word > Ndocs_for_a_word_max:
+            Ndocs_for_a_word_max = Ndocs_for_a_word
+
+    Const.NDOCS_FOR_A_WORD_MAX = Ndocs_for_a_word_max
 
     return index_dict, word_num_dict, num_word_dict, infos_doc_dict
 
