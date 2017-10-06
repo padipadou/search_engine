@@ -13,7 +13,7 @@ class test_search_engine(unittest.TestCase):
         data_dict, name_num_dict, num_name_dict = ld.load_data_dict()
         stopwords = ld.load_stopwords_set()
         index_dict, word_num_dict, num_word_dict = id.create_index_dict(data_dict, stopwords)
-        expected = 14
+        expected = 22
         self.assertEqual(word_num_dict["vernaculair"], expected, msg='Test failed')
 
     def test_num_word_dict(self):
@@ -25,7 +25,7 @@ class test_search_engine(unittest.TestCase):
         data_dict, name_num_dict, num_name_dict = ld.load_data_dict()
         stopwords = ld.load_stopwords_set()
         index_dict, word_num_dict, num_word_dict = id.create_index_dict(data_dict, stopwords)
-        expected = 'term'
+        expected = 'thierry'
         self.assertEqual(num_word_dict[1], expected, msg='Test failed')
 
 if __name__ == '__main__':
