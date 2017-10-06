@@ -1,7 +1,10 @@
-import core_functions.index_data as id
-import core_functions.load_data as ld
-import core_functions.similar_docs as sd
 import time
+
+import core_functions.load_data as ld
+import core_functions.index_data as id
+import core_functions.tf_idf as ti
+import core_functions.similar_docs as sd
+
 
 def main():
     print("Loading data...")
@@ -16,7 +19,7 @@ def main():
 
     print("Calculating tf * idf...")
     tf_idf_dict = \
-        sd.calculate_tf_idf_dict(index_dict, infos_doc_dict)
+        ti.calculate_tf_idf_dict(index_dict, infos_doc_dict)
 
     # print(tf_idf_dict)
 
