@@ -11,7 +11,6 @@ def create_List_Vectors_dict(tf_idf_dict):
     numberList = []
 
     for docnum in range(107): #107 has to be changed
-        a=sd.create_doc_vector_dict(docnum, tf_idf_dict)
         vectorsList.append([sd.create_doc_vector_dict(docnum, tf_idf_dict)])
         numberList.append([docnum])
 
