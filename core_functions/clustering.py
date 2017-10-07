@@ -24,13 +24,13 @@ def merge_Nearest_Elements(vectorsList,numberList):
     Updates vectorsList and numberList by melting the nearest elements
     """
     similarityMax=0
-    currentSimilarity=0
     id1=0
     id2=0
 
 
     for List_i in vectorsList:
         for List_j in vectorsList:
+            currentSimilarity = 0
             if List_i==List_j:
                 continue
             else:
