@@ -33,17 +33,17 @@ def main():
 
     print(cosine_similarity)
 
-    L,numL= cl.create_List_Vectors_dict(tf_idf_dict)
+    listVectors,numberList= cl.create_List_Vectors_dict(tf_idf_dict)
 
-    numL=cl.HCA_loop(L, numL,5)
+    numberList=cl.HCA_loop(listVectors, numberList,5)
     print("groups:")
-    print(numL)
-    print("clusters number : "+ str(len(numL)))
+    print(numberList)
+    print("clusters number : "+ str(len(numberList)))
 
 
     print("Clusters sizes:")
-    for i in range(len(numL)):
-        print(str(i)+": " + str(len(numL[i])))
+    for i in range(len(numberList)):
+        print(str(i)+": " + str(len(numberList[i])))
 
     #print(sd.calculate_docs_similarity("texte.95-10.txt", "texte.95-11.txt", name_num_dict, tf_idf_dict))
 
