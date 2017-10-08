@@ -12,3 +12,7 @@ class Const:
 
     NDOCS_FOR_A_WORD_MAX = None
 
+    DIST_MEASURE_GROUPS = 'avg_linkage'
+
+    CORPUS_SIZE = None
+
