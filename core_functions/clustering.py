@@ -108,21 +108,21 @@ def merge_closest_elements(docnums_vectors_dict):
     return docnums_vectors_dict
 
 
-def HCA_loop(docnums_vectors_dict, nb_clusters):
+def hca_loop(tf_idf_dict, nb_clusters):
     """
     Returns a list composed of nbClusters lists of documents by using the hierarchical cluster analysis
     """
+
+    docnums_vectors_dict = init_docnums_vectors_dict(tf_idf_dict)
 
     if nb_clusters >= len(docnums_vectors_dict):
         raise Exception('"nb_clusters" must be inferior than the total number of files.')
 
     else:
-        # L_def=[]
-
         while len(docnums_vectors_dict) > nb_clusters:
             docnums_vectors_dict = merge_closest_elements(docnums_vectors_dict)
 
-        return docnums_vectors_dict.keys()
+        return docnums_vectors_dict
 
 if __name__ == '__main__':
     pass
