@@ -23,27 +23,32 @@ def main():
     tf_idf_dict = \
         ti.calculate_tf_idf_dict(index_dict, infos_doc_dict)
 
-    print(tf_idf_dict)
+    # print(tf_idf_dict)
 
-    print("Calculating similarity between documents...")
-    docname1 = "texte.95-1.txt"
-    docname2 = "texte.95-60.txt"
-    cosine_similarity = \
-        sd.calculate_docs_similarity(docname1, docname2, name_num_dict, tf_idf_dict)
+    # print("Calculating similarity between documents...")
+    # docname1 = "texte.95-1.txt"
+    # docname2 = "texte.95-60.txt"
+    # cosine_similarity = \
+    #     sd.calculate_docs_similarity(docname1, docname2, name_num_dict, tf_idf_dict)
 
-    print(cosine_similarity)
+    # print(cosine_similarity)
 
-    listVectors,numberList= cl.create_List_Vectors_dict(tf_idf_dict)
+    # listVectors, numberList = cl.create_List_Vectors_dict(tf_idf_dict)
 
-    numberList=cl.HCA_loop(listVectors, numberList,5)
+    docnums_vectors_dict = cl.init_docnums_vectors_dict(tf_idf_dict)
+
+    # print(docnums_vectors_dict)
+
+    numberList = cl.HCA_loop(docnums_vectors_dict, nb_clusters = 5)
+
     print("groups:")
     print(numberList)
     print("clusters number : "+ str(len(numberList)))
 
 
     print("Clusters sizes:")
-    for i in range(len(numberList)):
-        print(str(i)+": " + str(len(numberList[i])))
+    #for i in range(len(numberList)):
+        #print(str(i)+": " + str(len(numberList[i])))
 
     #print(sd.calculate_docs_similarity("texte.95-10.txt", "texte.95-11.txt", name_num_dict, tf_idf_dict))
 
