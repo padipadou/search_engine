@@ -3,6 +3,7 @@ import Stemmer as pystemmer
 import tqdm as tq
 from core_functions import Const
 
+
 def create_index_dict(datadict, stopwords):
     """
     Creates and returns the positional index for all the files in datadict.
@@ -81,6 +82,7 @@ def create_index_dict(datadict, stopwords):
     Const.NDOCS_FOR_A_WORD_MAX = Ndocs_for_a_word_max
 
     return index_dict, word_num_dict, num_word_dict, infos_doc_dict
+
 
 if __name__ == '__main__':
     pass

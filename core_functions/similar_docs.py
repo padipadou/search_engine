@@ -74,6 +74,5 @@ def calculate_docs_similarity(docname1, docname2, name_num_dict, tf_idf_dict):
     return docs_similarity
 
 
-
 if __name__ == '__main__':
     pass
