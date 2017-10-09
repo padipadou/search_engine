@@ -11,8 +11,8 @@ import core_functions.bm25 as bm25
 
 def main():
     print("Loading data...")
-    # data_dict, name_num_dict, num_name_dict = ld.load_data_dict()
-    data_dict, name_num_dict, num_name_dict = ld.load_data_dict(directory = 'tests/text_to_test/cluster_test')
+    data_dict, name_num_dict, num_name_dict = ld.load_data_dict()
+    # data_dict, name_num_dict, num_name_dict = ld.load_data_dict(directory = 'tests/text_to_test/cluster_test')
     stopwords = ld.load_stopwords_set()
 
     print("Creating index...")

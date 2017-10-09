@@ -3,6 +3,13 @@ import Stemmer as pystemmer
 
 
 def bm25_function(query, stopwords):
+    """
+    More info https://en.wikipedia.org/wiki/Okapi_BM25
+    :param query:
+    :param stopwords:
+    :return:
+    """
+
     # tokenizer, from Kea
     tokenizer = kea.tokenizer()
 
@@ -17,7 +24,9 @@ def bm25_function(query, stopwords):
             wordstem = stemmer.stemWord(word)
             query_list.append(wordstem)
 
-    #calcul de bm25 pour chaque document
+    # compute bm25 for each documents
+    for keyword in query_list:
+       bm25 += bm25 # à finir
 
     return 1
 
