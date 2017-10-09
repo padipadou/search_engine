@@ -1,19 +1,18 @@
 import os
 
 
-def load_data_dict():
+def load_data_dict(directory = 'data/lemonde-utf8'):
     """
     Creates and returns a dict containing file num as key, file content as value.
     Creates and returns a dict containing filename as key, filenum as value.
     Creates and returns a dict containing filenum as key, filename as value.
     """
-    dir = 'data/lemonde-utf8'
 
     data_dict = {}
     name_num_dict = {}
     num_name_dict = {}
-    for i,filename in enumerate(os.listdir(dir)):
-        path = '{}/{}'.format(dir, filename)
+    for i,filename in enumerate(os.listdir(directory)):
+        path = '{}/{}'.format(directory, filename)
         name_num_dict[filename] = i
         num_name_dict[i] = filename
 
