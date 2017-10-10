@@ -26,7 +26,8 @@ def bm25_function(query, stopwords):
 
     # compute bm25 for each documents
     for keyword in query_list:
-       bm25 += bm25 # à finir
+        # bm25 += bm25 # à finir
+        pass
 
     return 1
 
