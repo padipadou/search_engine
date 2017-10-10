@@ -6,6 +6,7 @@ import core_functions.tf_idf as ti
 import core_functions.similar_docs as sd
 import core_functions.clustering as cl
 import core_functions.bm25 as bm25
+import psutil
 
 
 
@@ -50,7 +51,7 @@ def main():
 
     #user_query = inpput("whats is your query ?")
     query_test = "que mangent les hiboux ?"
-    bm25.bm25_function(query_test, stopwords)
+    #bm25.bm25_function(query_test, stopwords)
 
 
 if __name__ == '__main__':
@@ -62,3 +63,5 @@ if __name__ == '__main__':
     t_end = time.time()
 
     print("Temps d'execution = {} seconde(s)\n".format(t_end - t_start))
+
+    print(psutil.virtual_memory())
