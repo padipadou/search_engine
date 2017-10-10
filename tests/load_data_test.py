@@ -65,7 +65,7 @@ if __name__ == '__main__':
 
     data_dict, name_num_dict, num_name_dict = ldtest.load_hiboudata_dict()
     stopwords = ldtest.load_stopwords_set()
-    index_dict, word_num_dict, num_word_dict = id.create_index_dict(data_dict, stopwords)
+    index_dict, word_num_dict, num_word_dict, info_doc_dict = id.create_index_dict(data_dict, stopwords)
 
     print(index_dict)
     print(num_word_dict)
