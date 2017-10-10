@@ -6,6 +6,9 @@ import core_functions.tf_idf as ti
 import core_functions.similar_docs as sd
 import core_functions.clustering as cl
 import core_functions.bm25 as bm25
+from core_functions import Const
+import matplotlib.pyplot as plt
+
 
 
 
@@ -36,22 +39,43 @@ def main():
     # print(cosine_similarity)
 
     # print("Clustering...")
-    # docnums_vectors_dict = cl.hca_loop(tf_idf_dict, nb_clusters = 2)
+    docnums_vectors_dict = cl.hca_loop(tf_idf_dict, nb_clusters = 20)
+    docnums_vectors_dict_all = cl.hca_loop(tf_idf_dict, nb_clusters=1)
     # print(docnums_vectors_dict)
-    # avg_vectors_dict = cl.avg_vectors_dict(docnums_vectors_dict)
+    avg_vectors_dict = cl.avg_vectors_dict(docnums_vectors_dict)
+    avg_vectors_dict_all = cl.avg_vectors_dict(docnums_vectors_dict_all)
+
+
+    for valeur in avg_vectors_dict_all.values():
+        centreOfGravityDict=valeur
+
+    all_vectors_dict=cl.init_docnums_vectors_dict(tf_idf_dict)
+
+    Itot=cl.compute_Total_Inertia(centreOfGravityDict, all_vectors_dict)
+    Iinter=cl.compute_Interclass_Inertia(centreOfGravityDict,avg_vectors_dict)
+    Iintra=cl.compute_Intraclass_Inertia(avg_vectors_dict,all_vectors_dict)
+    print("Itot="+str(Itot))
+    print("Iinter="+str(Iinter))
+    print("Iintra="+str(Iintra))
+
+    print("addition Iinter+Iintra=" +(str(Iinter+Iintra)))
+
     #
-    # print("\tclusters sizes:")
-    # for docnums_key, vector_value in avg_vectors_dict.items():
-    #     print("\t", len(docnums_key), '\t document(s):\t', list(docnums_key))
-    #     for i in list(docnums_key):
-    #         print(num_name_dict[i])
-    #     for wordnum_key, tf_idf_avg_value in vector_value.items():
-    #         print(wordnum_key, "\t", num_word_dict[wordnum_key]," : ", tf_idf_avg_value)
+    print("\tclusters sizes:")
+    for docnums_key, vector_value in avg_vectors_dict.items():
+        print("\t", len(docnums_key), '\t document(s):\t', list(docnums_key))
+        #for i in list(docnums_key):
+            #print(num_name_dict[i])
+        #for wordnum_key, tf_idf_avg_value in vector_value.items():
+            #print(wordnum_key, "\t", num_word_dict[wordnum_key]," : ", tf_idf_avg_value)
+
+
+    #plt.plot(X,Y,'o')
 
     #user_query = inpput("whats is your query ?")
-    query_test = "que mangent les hiboux ?"
-    bm25.bm25_function(query_test, stopwords)
-
+    #query_test = "que mangent les hiboux ?"
+    #bm25.bm25_function(query_test, stopwords)
+    #print(num_name_dict[9])
 
 if __name__ == '__main__':
 

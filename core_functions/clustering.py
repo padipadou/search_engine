@@ -15,6 +15,7 @@ def init_docnums_vectors_dict(tf_idf_dict):
 
         docnums_vectors_lists_dict[docnums_set] = doc_vectors_list
 
+
     return docnums_vectors_lists_dict
 
 
@@ -105,12 +106,13 @@ def hca_loop(tf_idf_dict, nb_clusters):
 
     docnums_vectors_dict = init_docnums_vectors_dict(tf_idf_dict)
 
-    if nb_clusters >= len(docnums_vectors_dict):
+    if nb_clusters > len(docnums_vectors_dict):
         raise Exception('"nb_clusters" must be inferior than the total number of files.')
 
     else:
         while len(docnums_vectors_dict) > nb_clusters:
             docnums_vectors_dict = merge_closest_elements(docnums_vectors_dict)
+
 
         return docnums_vectors_dict
 
@@ -153,6 +155,42 @@ def avg_vectors_dict(docnums_vectors_dict):
         docnums_vectors_avg_dict[docnums_key] = avg_vector
 
     return docnums_vectors_avg_dict
+
+
+#Inertia
+
+def compute_Total_Inertia(centreOfGravityDict,all_vectors_dict):
+    sum=0
+    n=Const.CORPUS_SIZE
+    for i in range(n):
+        sum+=(1 - sd.calculate_cosine(centreOfGravityDict, all_vectors_dict[frozenset({i})][0]))**2
+    return (1/n)*sum
+
+
+def compute_Interclass_Inertia(centreOfGravityDict,avg_vectors_dict): #soucis dans avg_vectors_dict : une liste se ballade dans les clefs d'où try except
+    sum=0
+    n = Const.CORPUS_SIZE
+
+    for key,value in avg_vectors_dict.items():
+        try:
+            sum+=len(key)*(1 - sd.calculate_cosine(centreOfGravityDict, value))**2
+        except:
+            sum += len(key) * (1 - sd.calculate_cosine(centreOfGravityDict, value[0])) ** 2
+    return (1/n)*sum
+
+
+def compute_Intraclass_Inertia(avg_vectors_dict,all_vectors_dict):
+    sum=0
+    n = Const.CORPUS_SIZE
+    for key,value in avg_vectors_dict.items():
+        gk=value
+        for i in key:
+            try:
+                sum += (1 - sd.calculate_cosine(gk, all_vectors_dict[frozenset({i})][0])) ** 2
+            except:
+                sum += (1 -sd.calculate_cosine(gk[0], all_vectors_dict[frozenset({i})][0])) ** 2
+
+    return (1/n)*sum
 
 
 if __name__ == '__main__':
