@@ -15,13 +15,13 @@ def init_docnums_vectors_dict(tf_idf_dict):
 
         docnums_vectors_lists_dict[docnums_set] = doc_vectors_list
 
-
     return docnums_vectors_lists_dict
 
 
 def average_linkage(dv_list_i, dv_list_j):
     """
     average linkage with cosine between two vectors
+    WARNING: it is a similarity not a distance
     :param dv_list_i:
     :param dv_list_j:
     :return:
@@ -46,7 +46,7 @@ def merge_closest_elements(docnums_vectors_dict):
     already_seen_keys = set()
     keys_to_see_global = docnums_vectors_dict.keys()
 
-    # Looking for the 2 closest doc_vectors
+    # -- Looking for the 2 closest doc_vectors --
     for dv_key_i in keys_to_see_global:
         already_seen_keys.add(dv_key_i)
         keys_to_see = set(keys_to_see_global).difference(already_seen_keys)
@@ -55,19 +55,22 @@ def merge_closest_elements(docnums_vectors_dict):
             dv_list_i = docnums_vectors_dict[dv_key_i]
             dv_list_j = docnums_vectors_dict[dv_key_j]
 
+            # Comparison between 2 ONE-vector's classes
             if len(dv_list_i) == 1 and len(dv_list_j) == 1:
                 vect_i = dv_list_i[0]
                 vect_j = dv_list_j[0]
 
                 current_similarity = sd.calculate_cosine(vect_i, vect_j)
 
-            #If we compare 2 groups of texts - Average linkage -----------we can use another method
+            # Comparison between 2 groups of SEVERAL vectors
+            # (at least one group with several vectors)
             else:
                 if Const.DIST_MEASURE_GROUPS == 'avg_linkage':
                     current_similarity = average_linkage(dv_list_i, dv_list_j)
                 else:
-                    raise "Error with measure."
+                    raise Exception("Error with measure.")
 
+            # Is it the closest relation ?
             if current_similarity > similarity_max:
                 similarity_max = current_similarity
 
@@ -76,7 +79,7 @@ def merge_closest_elements(docnums_vectors_dict):
                 docnums_sim_max_i = dv_key_i
                 docnums_sim_max_j = dv_key_j
 
-    # Merging part
+    # -- Merging part --
     try: #NEED TO BE CHANGED
         docnums_sim_max = frozenset(list(docnums_sim_max_i) + list(docnums_sim_max_j))
     except:
@@ -87,9 +90,9 @@ def merge_closest_elements(docnums_vectors_dict):
                 docnums_sim_max = frozenset(list(docnums_sim_max_i) + [docnums_sim_max_j])
             except:
                 docnums_sim_max = frozenset([docnums_sim_max_i] + [docnums_sim_max_j])
-
     vectors_sim_max = vectors_sim_max_i + vectors_sim_max_j
 
+    # New class with previous classes merged
     docnums_vectors_dict[docnums_sim_max] = vectors_sim_max
 
     del docnums_vectors_dict[docnums_sim_max_i]
@@ -117,80 +120,85 @@ def hca_loop(tf_idf_dict, nb_clusters):
         return docnums_vectors_dict
 
 
-def average_vector(vectors_dict_list):
-    """
-    return a vector dict which the average of the vectorlist.
-    :param vectors_list:
-    :return:
-    """
-    nb_vectors = len(vectors_dict_list)
-    avg_dict = {}
-
-    for vector in vectors_dict_list:
-        for wordnum_key, tf_idf_value in vector.items():
-            if wordnum_key not in avg_dict.keys():
-                avg_dict[wordnum_key] = tf_idf_value
-            else:
-                avg_dict[wordnum_key] += tf_idf_value
-
-    for wordnum_key in avg_dict.keys():
-        avg_dict[wordnum_key] *= 1 / nb_vectors
-
-    return avg_dict
-
-
-def avg_vectors_dict(docnums_vectors_dict):
-    """
-    Returns a dict with average vector dict for each group of vectors previously made by clustering
-    :param docnums_vectors_dict:
-    :return:
-    """
-    docnums_vectors_avg_dict = {}
-    for docnums_key, vectors_value in docnums_vectors_dict.items():
-        if len(docnums_key) > 1:
-            avg_vector = average_vector(vectors_value)
-        else:
-            avg_vector = vectors_value
-
-        docnums_vectors_avg_dict[docnums_key] = avg_vector
-
-    return docnums_vectors_avg_dict
-
-
-#Inertia
-
-def compute_Total_Inertia(centreOfGravityDict,all_vectors_dict):
-    sum=0
-    n=Const.CORPUS_SIZE
-    for i in range(n):
-        sum+=(1 - sd.calculate_cosine(centreOfGravityDict, all_vectors_dict[frozenset({i})][0]))**2
-    return (1/n)*sum
+# def average_vector(vectors_dict_list):
+#     """
+#     return a VECTOR dict with the average of the vectorlist values as values, and the exact same keys.
+#     :param vectors_list:
+#     :return:
+#     """
+#     nb_vectors = len(vectors_dict_list)
+#     avg_dict = {}
+#
+#     for vector in vectors_dict_list:
+#         for wordnum_key, tf_idf_value in vector.items():
+#             if wordnum_key not in avg_dict.keys():
+#                 avg_dict[wordnum_key] = tf_idf_value
+#             else:
+#                 avg_dict[wordnum_key] += tf_idf_value
+#
+#     for wordnum_key in avg_dict.keys():
+#         avg_dict[wordnum_key] *= 1 / nb_vectors
+#
+#     return avg_dict
+#
+#
+# def avg_vectors_dict(docnums_vectors_dict):
+#     """
+#     Returns a DICT with average vector dict for each group of vectors previously made by clustering
+#     :param docnums_vectors_dict:
+#     :return:
+#     """
+#     docnums_vectors_avg_dict = {}
+#     for docnums_key, vectors_value in docnums_vectors_dict.items():
+#         if len(docnums_key) > 1:
+#             avg_vector = average_vector(vectors_value)
+#         else:
+#             avg_vector = vectors_value
+#
+#         docnums_vectors_avg_dict[docnums_key] = avg_vector
+#
+#     return docnums_vectors_avg_dict
 
 
-def compute_Interclass_Inertia(centreOfGravityDict,avg_vectors_dict): #soucis dans avg_vectors_dict : une liste se ballade dans les clefs d'où try except
-    sum=0
-    n = Const.CORPUS_SIZE
-
-    for key,value in avg_vectors_dict.items():
-        try:
-            sum+=len(key)*(1 - sd.calculate_cosine(centreOfGravityDict, value))**2
-        except:
-            sum += len(key) * (1 - sd.calculate_cosine(centreOfGravityDict, value[0])) ** 2
-    return (1/n)*sum
-
-
-def compute_Intraclass_Inertia(avg_vectors_dict,all_vectors_dict):
-    sum=0
-    n = Const.CORPUS_SIZE
-    for key,value in avg_vectors_dict.items():
-        gk=value
-        for i in key:
-            try:
-                sum += (1 - sd.calculate_cosine(gk, all_vectors_dict[frozenset({i})][0])) ** 2
-            except:
-                sum += (1 -sd.calculate_cosine(gk[0], all_vectors_dict[frozenset({i})][0])) ** 2
-
-    return (1/n)*sum
+# # -- Inertia --
+#
+# def compute_Total_Inertia(centreOfGravityDict, all_vectors_dict):
+#     sum = 0
+#     n = Const.CORPUS_SIZE
+#
+#     for i in range(n):
+#         dist = 1 - sd.calculate_cosine(centreOfGravityDict, all_vectors_dict[frozenset({i})][0])
+#         sum += dist**2
+#
+#     return (1/n) * sum
+#
+#
+# def compute_Interclass_Inertia(centreOfGravityDict, avg_vectors_dict):
+#     sum = 0
+#     n = Const.CORPUS_SIZE
+#
+#     for key,value in avg_vectors_dict.items():
+#         try: #NEED TO BE REVIEWED
+#             dist = 1 - sd.calculate_cosine(centreOfGravityDict, value)
+#         except:
+#             dist = 1 - sd.calculate_cosine(centreOfGravityDict, value[0])
+#         sum += len(key) * dist**2
+#
+#     return (1/n) * sum
+#
+#
+# def compute_Intraclass_Inertia(avg_vectors_dict,all_vectors_dict):
+#     sum=0
+#     n = Const.CORPUS_SIZE
+#     for key,value in avg_vectors_dict.items():
+#         gk=value
+#         for i in key:
+#             try:
+#                 sum += (1 - sd.calculate_cosine(gk, all_vectors_dict[frozenset({i})][0])) ** 2
+#             except:
+#                 sum += (1 -sd.calculate_cosine(gk[0], all_vectors_dict[frozenset({i})][0])) ** 2
+#
+#     return (1/n)*sum
 
 
 if __name__ == '__main__':

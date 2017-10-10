@@ -16,3 +16,6 @@ class Const:
 
     CORPUS_SIZE = None
 
+    # other possibility : 'tests/text_to_test/cluster_test', 'data/lemonde-utf8'
+    DIRECTORY_NAME = 'data/lemonde-utf8'
+

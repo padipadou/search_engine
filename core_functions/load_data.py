@@ -1,7 +1,7 @@
 import os
 
 
-def load_data_dict(directory = 'data/lemonde-utf8'):
+def load_data_dict(directory):
     """
     Creates and returns a dict containing file num as key, file content as value.
     Creates and returns a dict containing filename as key, filenum as value.
