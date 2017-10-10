@@ -51,13 +51,13 @@ def main():
     all_vectors_dict = cl_cl.init_docnums_vectors_dict(tf_idf_dict)
 
     Itot = cl_in.compute_Total_Inertia(centreOfGravityDict, all_vectors_dict)
-    Iinter = cl_in.compute_Interclass_Inertia(centreOfGravityDict,avg_vectors_dict)
-    Iintra = cl_in.compute_Intraclass_Inertia(avg_vectors_dict,all_vectors_dict)
-    print("Itot=" + str(Itot))
-    print("Iinter=" + str(Iinter))
-    print("Iintra=" + str(Iintra))
+    Iinter = cl_in.compute_Interclass_Inertia(centreOfGravityDict, avg_vectors_dict)
+    Iintra = cl_in.compute_Intraclass_Inertia(avg_vectors_dict, all_vectors_dict)
+    print("Itot = ", Itot)
+    print("Iinter = ", Iinter)
+    print("Iintra = ", Iintra)
 
-    print("addition Iinter+Iintra=" +(str(Iinter+Iintra)))
+    print("addition Iinter + Iintra = ", Iinter + Iintra)
 
     print("\tclusters sizes:")
     for docnums_key, vector_value in avg_vectors_dict.items():
