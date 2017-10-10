@@ -1,4 +1,6 @@
 import core_functions.similar_docs as sd
+import core_functions.clustering.inertia as cl_in
+import core_functions.clustering.manip_vector as cl_mv
 from core_functions import Const
 
 
@@ -14,6 +16,22 @@ def init_docnums_vectors_dict(tf_idf_dict):
         doc_vectors_list = [sd.create_doc_vector_dict(docnum, tf_idf_dict)]
 
         docnums_vectors_lists_dict[docnums_set] = doc_vectors_list
+
+    return docnums_vectors_lists_dict
+
+
+def init_docnums_vectors_dict_one_group(tf_idf_dict):
+    """
+    Creates and returns a dict with ONE set of ALL docnum as keys, and tf_idf_dict vector linked to these docs as value.
+    WARNING: it requires to be run after the calculation of tf*idf measures
+    ONLY ONE GROUP
+    """
+    docnums_vectors_lists_dict = {}
+
+    docnums_set = frozenset([docnum for docnum in range(Const.CORPUS_SIZE)])
+    doc_vectors_list = [sd.create_doc_vector_dict(docnum, tf_idf_dict) for docnum in range(Const.CORPUS_SIZE)]
+
+    docnums_vectors_lists_dict[docnums_set] = doc_vectors_list
 
     return docnums_vectors_lists_dict
 
@@ -113,92 +131,30 @@ def hca_loop(tf_idf_dict, nb_clusters):
         raise Exception('"nb_clusters" must be inferior than the total number of files.')
 
     else:
+        ward_criteria_list = []
+
+        # Creation of gravity_center_dict
+        docnums_vectors_dict_1g = init_docnums_vectors_dict_one_group(tf_idf_dict)
+        avg_vectors_dict = cl_mv.avg_vectors_dict(docnums_vectors_dict_1g)
+        for value in avg_vectors_dict.values():
+            gravity_center_dict = value
+
+        # First Ward criteria
+        Itot = cl_in.compute_Total_Inertia(gravity_center_dict, docnums_vectors_dict)
+        Iinter = cl_in.compute_Interclass_Inertia(gravity_center_dict, avg_vectors_dict)
+        ward_criteria = Iinter / Itot
+        ward_criteria_list.append(ward_criteria)
+
         while len(docnums_vectors_dict) > nb_clusters:
             docnums_vectors_dict = merge_closest_elements(docnums_vectors_dict)
 
+            # Calculation avg on groups to get distance between groups with Iinter
+            avg_vectors_dict = cl_mv.avg_vectors_dict(docnums_vectors_dict)
+            Iinter = cl_in.compute_Interclass_Inertia(gravity_center_dict, avg_vectors_dict)
+            ward_criteria = Iinter / Itot
+            ward_criteria_list.append(ward_criteria)
 
-        return docnums_vectors_dict
-
-
-# def average_vector(vectors_dict_list):
-#     """
-#     return a VECTOR dict with the average of the vectorlist values as values, and the exact same keys.
-#     :param vectors_list:
-#     :return:
-#     """
-#     nb_vectors = len(vectors_dict_list)
-#     avg_dict = {}
-#
-#     for vector in vectors_dict_list:
-#         for wordnum_key, tf_idf_value in vector.items():
-#             if wordnum_key not in avg_dict.keys():
-#                 avg_dict[wordnum_key] = tf_idf_value
-#             else:
-#                 avg_dict[wordnum_key] += tf_idf_value
-#
-#     for wordnum_key in avg_dict.keys():
-#         avg_dict[wordnum_key] *= 1 / nb_vectors
-#
-#     return avg_dict
-#
-#
-# def avg_vectors_dict(docnums_vectors_dict):
-#     """
-#     Returns a DICT with average vector dict for each group of vectors previously made by clustering
-#     :param docnums_vectors_dict:
-#     :return:
-#     """
-#     docnums_vectors_avg_dict = {}
-#     for docnums_key, vectors_value in docnums_vectors_dict.items():
-#         if len(docnums_key) > 1:
-#             avg_vector = average_vector(vectors_value)
-#         else:
-#             avg_vector = vectors_value
-#
-#         docnums_vectors_avg_dict[docnums_key] = avg_vector
-#
-#     return docnums_vectors_avg_dict
-
-
-# # -- Inertia --
-#
-# def compute_Total_Inertia(centreOfGravityDict, all_vectors_dict):
-#     sum = 0
-#     n = Const.CORPUS_SIZE
-#
-#     for i in range(n):
-#         dist = 1 - sd.calculate_cosine(centreOfGravityDict, all_vectors_dict[frozenset({i})][0])
-#         sum += dist**2
-#
-#     return (1/n) * sum
-#
-#
-# def compute_Interclass_Inertia(centreOfGravityDict, avg_vectors_dict):
-#     sum = 0
-#     n = Const.CORPUS_SIZE
-#
-#     for key,value in avg_vectors_dict.items():
-#         try: #NEED TO BE REVIEWED
-#             dist = 1 - sd.calculate_cosine(centreOfGravityDict, value)
-#         except:
-#             dist = 1 - sd.calculate_cosine(centreOfGravityDict, value[0])
-#         sum += len(key) * dist**2
-#
-#     return (1/n) * sum
-#
-#
-# def compute_Intraclass_Inertia(avg_vectors_dict,all_vectors_dict):
-#     sum=0
-#     n = Const.CORPUS_SIZE
-#     for key,value in avg_vectors_dict.items():
-#         gk=value
-#         for i in key:
-#             try:
-#                 sum += (1 - sd.calculate_cosine(gk, all_vectors_dict[frozenset({i})][0])) ** 2
-#             except:
-#                 sum += (1 -sd.calculate_cosine(gk[0], all_vectors_dict[frozenset({i})][0])) ** 2
-#
-#     return (1/n)*sum
+        return docnums_vectors_dict, ward_criteria_list
 
 
 if __name__ == '__main__':

@@ -6,8 +6,6 @@ import core_functions.index_data as id
 import core_functions.tf_idf as ti
 import core_functions.similar_docs as sd
 import core_functions.clustering.cluster_data as cl_cl
-import core_functions.clustering.inertia as cl_in
-import core_functions.clustering.manip_vector as cl_mv
 import core_functions.bm25 as bm25
 from core_functions import Const
 
@@ -39,36 +37,24 @@ def main():
 
     # *------------------------------------------*
     print("Clustering...")
-    docnums_vectors_dict = cl_cl.hca_loop(tf_idf_dict, nb_clusters = 20)
-    docnums_vectors_dict_all = cl_cl.hca_loop(tf_idf_dict, nb_clusters=1)
-    # print(docnums_vectors_dict)
-    avg_vectors_dict = cl_mv.avg_vectors_dict(docnums_vectors_dict)
-    avg_vectors_dict_all = cl_mv.avg_vectors_dict(docnums_vectors_dict_all)
-
-    for valeur in avg_vectors_dict_all.values():
-        centreOfGravityDict = valeur
-
-    all_vectors_dict = cl_cl.init_docnums_vectors_dict(tf_idf_dict)
-
-    Itot = cl_in.compute_Total_Inertia(centreOfGravityDict, all_vectors_dict)
-    Iinter = cl_in.compute_Interclass_Inertia(centreOfGravityDict, avg_vectors_dict)
-    Iintra = cl_in.compute_Intraclass_Inertia(avg_vectors_dict, all_vectors_dict)
-    print("Itot = ", Itot)
-    print("Iinter = ", Iinter)
-    print("Iintra = ", Iintra)
-
-    print("addition Iinter + Iintra = ", Iinter + Iintra)
+    nb_clusters = 31
+    docnums_vectors_dict, ward_criteria_list = \
+        cl_cl.hca_loop(tf_idf_dict, nb_clusters = nb_clusters)
 
     print("\tclusters sizes:")
-    for docnums_key, vector_value in avg_vectors_dict.items():
+    for docnums_key, vector_value in docnums_vectors_dict.items():
         print("\t", len(docnums_key), '\t document(s):\t', list(docnums_key))
-        # for i in list(docnums_key):
-        #     print(num_name_dict[i])
+        for i in list(docnums_key):
+            print(num_name_dict[i])
         # for wordnum_key, tf_idf_avg_value in vector_value.items():
         #     print(wordnum_key, "\t", num_word_dict[wordnum_key]," : ", tf_idf_avg_value)
 
+    # X = [x for x in range(Const.CORPUS_SIZE, nb_clusters, -1)]
+    X = [x for x in range(nb_clusters, Const.CORPUS_SIZE)]
+    Y = ward_criteria_list[1:]
 
-    # plt.plot(X,Y,'o')
+    plt.plot(X,Y,'o')
+    plt.show()
 
     # user_query = inpput("whats is your query ?")
     # query_test = "que mangent les hiboux ?"
