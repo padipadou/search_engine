@@ -1,5 +1,6 @@
 import time
 import matplotlib.pyplot as plt
+import psutil as pst
 
 import core_functions.load_data as ld
 import core_functions.index_data as id
@@ -70,3 +71,5 @@ if __name__ == '__main__':
     t_end = time.time()
 
     print("Temps d'execution = {} seconde(s)\n".format(t_end - t_start))
+
+    print(pst.virtual_memory())
