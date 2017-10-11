@@ -1,6 +1,6 @@
 import time
 import memory_profiler
-import resource
+#import resource
 import matplotlib.pyplot as plt
 import core_functions.load_data as ld
 import core_functions.index_data as id
@@ -72,4 +72,4 @@ if __name__ == '__main__':
 
     print("Temps d'execution = {} seconde(s)\n".format(t_end - t_start))
 
-    print('Memory usage: %s (kb)' % resource.getrusage(resource.RUSAGE_SELF).ru_maxrss)
+    #print('Memory usage: %s (kb)' % resource.getrusage(resource.RUSAGE_SELF).ru_maxrss)
