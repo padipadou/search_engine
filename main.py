@@ -1,7 +1,7 @@
 import time
+import memory_profiler
+import resource
 import matplotlib.pyplot as plt
-import psutil as pst
-
 import core_functions.load_data as ld
 import core_functions.index_data as id
 import core_functions.tf_idf as ti
@@ -72,4 +72,4 @@ if __name__ == '__main__':
 
     print("Temps d'execution = {} seconde(s)\n".format(t_end - t_start))
 
-    print(pst.virtual_memory())
+    print('Memory usage: %s (kb)' % resource.getrusage(resource.RUSAGE_SELF).ru_maxrss)
