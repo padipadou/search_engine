@@ -101,6 +101,7 @@ def merge_closest_elements(docnums_vectors_dict):
     try: #NEED TO BE CHANGED
         docnums_sim_max = frozenset(list(docnums_sim_max_i) + list(docnums_sim_max_j))
     except:
+        print("exception merging part")
         try:
             docnums_sim_max = frozenset([docnums_sim_max_i] + list(docnums_sim_max_j))
         except:
@@ -136,7 +137,7 @@ def hca_loop(tf_idf_dict, nb_clusters):
         # Creation of gravity_center_dict
         docnums_vectors_dict_1g = init_docnums_vectors_dict_one_group(tf_idf_dict)
         avg_vectors_dict = cl_mv.avg_vectors_dict(docnums_vectors_dict_1g)
-        for value in avg_vectors_dict.values():
+        for value in avg_vectors_dict.values(): #to be changed
             gravity_center_dict = value
 
         # First Ward criteria
