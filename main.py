@@ -10,7 +10,7 @@ import core_functions.bm25 as bm25
 from core_functions import Const
 
 
-@profile
+#@profile
 def main():
     # *------------------------------------------*
     print("Loading data...")
@@ -25,7 +25,7 @@ def main():
 
     # *------------------------------------------*
     print("Calculating tf * idf...")
-    tf_idf_dict = \
+    tf_idf_dict, tf_dict = \
         ti.calculate_tf_idf_dict(index_dict, infos_doc_dict)
 
     # *------------------------------------------*

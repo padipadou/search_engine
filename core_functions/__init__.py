@@ -19,3 +19,6 @@ class Const:
     # other possibility : 'tests/text_to_test/cluster_test', 'data/lemonde-utf8'
     DIRECTORY_NAME = 'data/lemonde-utf8'
 
+    # true or false
+    BM_25 = True
+

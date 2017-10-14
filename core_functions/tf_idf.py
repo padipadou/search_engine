@@ -60,6 +60,7 @@ def calculate_tf_idf_dict(index_dict, infos_doc_dict):
     For each dict, you have docnums as keys and tf*idf as values.
     """
     tf_idf_dict = {}
+    tf_dict = {}
     Const.CORPUS_SIZE = len(infos_doc_dict)
 
     for wordnum in index_dict.keys():
@@ -67,6 +68,7 @@ def calculate_tf_idf_dict(index_dict, infos_doc_dict):
 
         idf = idf_function(word_dict)
         tf_idf_word_dict = {}
+        tf_word_dict = {}
 
         for document in word_dict.keys():
             positions_list = word_dict.get(document)
@@ -74,8 +76,14 @@ def calculate_tf_idf_dict(index_dict, infos_doc_dict):
 
             tf_idf_word_dict[document] = tf * idf
 
+            if Const.BM_25 == True:
+                tf_word_dict[document] = tf
+
         tf_idf_dict[wordnum] = tf_idf_word_dict
-    return tf_idf_dict
+        if Const.BM_25 == True:
+            tf_dict[wordnum] = tf_word_dict
+
+    return tf_idf_dict, tf_dict
 
 
 if __name__ == '__main__':
