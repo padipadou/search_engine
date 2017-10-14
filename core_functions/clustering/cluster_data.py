@@ -1,3 +1,4 @@
+import tqdm as tq
 import core_functions.similar_docs as sd
 import core_functions.clustering.inertia as cl_in
 import core_functions.clustering.manip_vector as cl_mv
@@ -146,7 +147,8 @@ def hca_loop(tf_idf_dict, nb_clusters):
         ward_criteria = Iinter / Itot
         ward_criteria_list.append(ward_criteria)
 
-        while len(docnums_vectors_dict) > nb_clusters:
+        nb_iterations = len(docnums_vectors_dict) - nb_clusters
+        for i in tq.tqdm(range(nb_iterations)):
             docnums_vectors_dict = merge_closest_elements(docnums_vectors_dict)
 
             # Calculation avg on groups to get distance between groups with Iinter
