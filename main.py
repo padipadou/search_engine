@@ -7,11 +7,12 @@ import core_functions.tf_idf as ti
 import core_functions.similar_docs as sd
 import core_functions.clustering.cluster_data as cl_cl
 import core_functions.bm25 as bm25
+import core_functions.pickle_usage as pck
 from core_functions import Const
 
 
 #@profile
-def main():
+def index_creation_part():
     # *------------------------------------------*
     print("Loading data...")
     data_dict, name_num_dict, num_name_dict = \
@@ -29,33 +30,49 @@ def main():
         ti.calculate_tf_idf_dict(index_dict, infos_doc_dict)
 
     # *------------------------------------------*
-    # print("Calculating similarity between documents...")
-    # docname1 = "texte.95-1.txt"
-    # docname2 = "texte.95-60.txt"
-    # cosine_similarity = \
-    #     sd.calculate_docs_similarity(docname1, docname2, name_num_dict, tf_idf_dict)
-
-    # *------------------------------------------*
     print("Clustering...")
     nb_clusters = 31
     docnums_vectors_dict, ward_criteria_list = \
-        cl_cl.hca_loop(tf_idf_dict, nb_clusters = nb_clusters)
+        cl_cl.hca_loop(tf_idf_dict, nb_clusters=nb_clusters)
 
-    print("\tclusters sizes:")
-    for docnums_key, vector_value in docnums_vectors_dict.items():
-        print("\t", len(docnums_key), '\t document(s):\t', list(docnums_key))
-        for i in list(docnums_key):
-            print(num_name_dict[i])
+    # print("\tclusters sizes:")
+    # for docnums_key, vector_value in docnums_vectors_dict.items():
+    #     print("\t", len(docnums_key), '\t document(s):\t', list(docnums_key))
+        # for i in list(docnums_key):
+        #     print(num_name_dict[i])
         # for wordnum_key, tf_idf_avg_value in vector_value.items():
         #     print(wordnum_key, "\t", num_word_dict[wordnum_key]," : ", tf_idf_avg_value)
 
-    # X = [x for x in range(Const.CORPUS_SIZE, nb_clusters, -1)]
-    X = [x for x in range(nb_clusters, Const.CORPUS_SIZE)]
-    Y = ward_criteria_list[1:]
+    # X = [x for x in range(nb_clusters, Const.CORPUS_SIZE)]
+    # Y = ward_criteria_list[1:]
+    #
+    # plt.plot(X, Y, 'o')
+    # plt.show()
 
-    plt.plot(X,Y,'o')
-    plt.show()
+    del data_dict
+    del name_num_dict
+    del word_num_dict
+    del tf_idf_dict
+    del ward_criteria_list
 
+    pck.pickle_store("num_name_dict", num_name_dict, "")
+    pck.pickle_store("index_dict", index_dict, "")
+    pck.pickle_store("num_word_dict", num_word_dict, "")
+    pck.pickle_store("docnums_vectors_dict", docnums_vectors_dict, "")
+    pck.pickle_store("infos_doc_dict", infos_doc_dict, "")
+    pck.pickle_store("tf_dict", tf_dict, "")
+
+    del num_name_dict
+    del index_dict
+    del num_word_dict
+    del docnums_vectors_dict
+    del infos_doc_dict
+    del tf_dict
+
+
+def main():
+    index_creation_part()
+    pass
     # user_query = inpput("whats is your query ?")
     # query_test = "que mangent les hiboux ?"
     # bm25.bm25_function(query_test, stopwords)
