@@ -4,4 +4,4 @@ init:
 test:
 
 clean:
-    rm -rf data/*.pickle
+	rm data/*.pickle
