@@ -5,7 +5,7 @@ import core_functions.clustering.manip_vector as cl_mv
 from core_functions import Const
 
 
-def init_docnums_vectors_dict(tf_idf_dict):
+def init_docnums_vectors_dict(tf_idf_dict, way="frozenset"):
     """
     Creates and returns a dict with set of ONE docnum as keys, and tf_idf_dict vector linked ONLY to this doc as value.
     WARNING: it requires to be run after the calculation of tf*idf measures
@@ -13,10 +13,16 @@ def init_docnums_vectors_dict(tf_idf_dict):
     docnums_vectors_lists_dict = {}
 
     for docnum in range(Const.CORPUS_SIZE):
-        docnums_set = frozenset([docnum])
+        if way == "frozenset":
+            docnums_key = frozenset([docnum])
+        elif way == "normal":
+            docnums_key = docnum
+        else:
+            raise Exception("Incorrect way to create index.")
+
         doc_vectors_list = [sd.create_doc_vector_dict(docnum, tf_idf_dict)]
 
-        docnums_vectors_lists_dict[docnums_set] = doc_vectors_list
+        docnums_vectors_lists_dict[docnums_key] = doc_vectors_list
 
     return docnums_vectors_lists_dict
 
