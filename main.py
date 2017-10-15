@@ -57,35 +57,12 @@ def index_creation_part():
 
 
 def after_index_creation_part():
-    try:
-        num_name_dict = pck.pickle_load("num_name_dict", "")
-    except:
-        raise Exception("No file found for num_name_dict, please use the index_creation function!")
-
-    try:
-        index_dict = pck.pickle_load("index_dict", "")
-    except:
-        raise Exception("No file found for index_dict, please use the index_creation function!")
-
-    try:
-        num_word_dict = pck.pickle_load("num_word_dict", "")
-    except:
-        raise Exception("No file found for num_word_dict, please use the index_creation function!")
-
-    try:
-        docnums_vectors_dict = pck.pickle_load("docnums_vectors_dict", "")
-    except:
-        raise Exception("No file found for docnums_vectors_dict, please use the index_creation function!")
-
-    try:
-        infos_doc_dict = pck.pickle_load("infos_doc_dict", "")
-    except:
-        raise Exception("No file found for infos_doc_dict, please use the index_creation function!")
-
-    try:
-        tf_dict = pck.pickle_load("tf_dict", "")
-    except:
-        raise Exception("No file found for tf_dict, please use the index_creation function!")
+    num_name_dict = pck.pickle_load("num_name_dict", "")
+    index_dict = pck.pickle_load("index_dict", "")
+    num_word_dict = pck.pickle_load("num_word_dict", "")
+    docnums_vectors_dict = pck.pickle_load("docnums_vectors_dict", "")
+    infos_doc_dict = pck.pickle_load("infos_doc_dict", "")
+    tf_dict = pck.pickle_load("tf_dict", "")
 
     print("\tclusters sizes:")
     for docnums_key, vector_value in docnums_vectors_dict.items():
