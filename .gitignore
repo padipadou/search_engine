@@ -72,3 +72,5 @@ fabric.properties
 .idea/inspectionProfiles
 core_functions/__pycache__/
 libs/__pycache__/
+
+data/*.pickle
