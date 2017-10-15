@@ -35,20 +35,6 @@ def index_creation_part():
     docnums_vectors_dict, ward_criteria_list = \
         cl_cl.hca_loop(tf_idf_dict, nb_clusters=nb_clusters)
 
-    # print("\tclusters sizes:")
-    # for docnums_key, vector_value in docnums_vectors_dict.items():
-    #     print("\t", len(docnums_key), '\t document(s):\t', list(docnums_key))
-        # for i in list(docnums_key):
-        #     print(num_name_dict[i])
-        # for wordnum_key, tf_idf_avg_value in vector_value.items():
-        #     print(wordnum_key, "\t", num_word_dict[wordnum_key]," : ", tf_idf_avg_value)
-
-    # X = [x for x in range(nb_clusters, Const.CORPUS_SIZE)]
-    # Y = ward_criteria_list[1:]
-    #
-    # plt.plot(X, Y, 'o')
-    # plt.show()
-
     del data_dict
     del name_num_dict
     del word_num_dict
@@ -70,13 +56,56 @@ def index_creation_part():
     del tf_dict
 
 
-def main():
-    index_creation_part()
-    pass
+def after_index_creation_part():
+    try:
+        num_name_dict = pck.pickle_load("num_name_dict", "")
+    except:
+        raise Exception("No file found for num_name_dict, please use the index_creation function!")
+
+    try:
+        index_dict = pck.pickle_load("index_dict", "")
+    except:
+        raise Exception("No file found for index_dict, please use the index_creation function!")
+
+    try:
+        num_word_dict = pck.pickle_load("num_word_dict", "")
+    except:
+        raise Exception("No file found for num_word_dict, please use the index_creation function!")
+
+    try:
+        docnums_vectors_dict = pck.pickle_load("docnums_vectors_dict", "")
+    except:
+        raise Exception("No file found for docnums_vectors_dict, please use the index_creation function!")
+
+    try:
+        infos_doc_dict = pck.pickle_load("infos_doc_dict", "")
+    except:
+        raise Exception("No file found for infos_doc_dict, please use the index_creation function!")
+
+    try:
+        tf_dict = pck.pickle_load("tf_dict", "")
+    except:
+        raise Exception("No file found for tf_dict, please use the index_creation function!")
+
+    print("\tclusters sizes:")
+    for docnums_key, vector_value in docnums_vectors_dict.items():
+        print("\t", len(docnums_key), '\t document(s):\t', list(docnums_key))
+        # for i in list(docnums_key):
+        #     print(num_name_dict[i])
+        # for wordnum_key, tf_idf_avg_value in vector_value.items():
+        #     print(wordnum_key, "\t", num_word_dict[wordnum_key]," : ", tf_idf_avg_value)
+
     # user_query = inpput("whats is your query ?")
     # query_test = "que mangent les hiboux ?"
     # bm25.bm25_function(query_test, stopwords)
     # print(num_name_dict[9])
+
+
+def main():
+    # index_creation_part()
+
+    after_index_creation_part()
+
 
 if __name__ == '__main__':
 
