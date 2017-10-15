@@ -35,12 +35,11 @@ def get_docnum_from_name(name, name_num_dict):
         raise Exception("'{}' is not a document !")
 
 
-def load_stopwords_set():
+def load_stopwords_set(path='data/stopwords-fr.txt'):
     """
     Creates and returns a set containing stopwords which are in the file.
     """
     stopwords = []
-    path = 'data/stopwords-fr.txt'
 
     with open(path, 'r') as stopwords_file:
         for stopword in stopwords_file:
