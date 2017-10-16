@@ -34,7 +34,6 @@ def bm25_function(query, stopwords, word_num_dict, tf_idf_dict, tf_dict, infos_d
                 wordstem = stemmer.stemWord(word).lower()
             else:
                 wordstem = word.lower()
-            print(wordstem)
 
             keyword_num = word_num_dict.get(wordstem, -1)
             if keyword_num >= 0:
@@ -43,18 +42,15 @@ def bm25_function(query, stopwords, word_num_dict, tf_idf_dict, tf_dict, infos_d
     docnum_score_sum_dict = {}
     for keyword_num in keyword_num_list:
         keyword_docnums_tf_idf_dict = tf_idf_dict[keyword_num]
-        tf = tf_dict[keyword_num]
 
         for docnum_key in keyword_docnums_tf_idf_dict.keys():
             tf_idf = keyword_docnums_tf_idf_dict[docnum_key]
             nb_words = infos_doc_dict[docnum_key][0]
             docnum_score_sum = docnum_score_sum_dict.get(docnum_key, 0)
+            tf = tf_dict[keyword_num][docnum_key]
 
             score = tf_idf * (k1 + 1) \
                     / (tf + k1 * (1 - b + b * (nb_words / nb_words_avg)))
-
-            if docnum_score_sum > 0:
-                del docnum_score_sum[docnum_key]
 
             docnum_score_sum_dict[docnum_key] = docnum_score_sum + score
 

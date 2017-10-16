@@ -77,17 +77,11 @@ def after_index_creation_part():
         #     print(wordnum_key, "\t", num_word_dict[wordnum_key]," : ", tf_idf_avg_value)
 
     # user_query = inpput("whats is your query ?")
-    query_test = "palestine israel"
+    query_test = "israël jérusalem"
     stopwords = ld.load_stopwords_set()
-    # bm25.bm25_function(query_test, stopwords)
-    # print(num_name_dict[9])
-
-    #print('test')
 
     docnum_score_sum_dict = \
         bm25.bm25_function(query_test, stopwords, word_num_dict, tf_idf_dict, tf_dict, infos_doc_dict)
-
-    # print(docnum_score_sum_dict)
 
     for key, value in sorted(docnum_score_sum_dict.items(), key=lambda x: x[1], reverse=True)[:10]:
         print("{}: \t{}".format(num_name_dict[key], value))
