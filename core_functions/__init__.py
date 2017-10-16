@@ -22,3 +22,5 @@ class Const:
     # true or false
     BM_25 = True
 
+    STEMMER = False
+

@@ -37,8 +37,6 @@ def index_creation_part():
 
     del data_dict
     del name_num_dict
-    del word_num_dict
-    del tf_idf_dict
     del ward_criteria_list
 
     pck.pickle_store("num_name_dict", num_name_dict, "")
@@ -47,7 +45,11 @@ def index_creation_part():
     pck.pickle_store("docnums_vectors_dict", docnums_vectors_dict, "")
     pck.pickle_store("infos_doc_dict", infos_doc_dict, "")
     pck.pickle_store("tf_dict", tf_dict, "")
+    pck.pickle_store("word_num_dict", word_num_dict, "")
+    pck.pickle_store("tf_idf_dict", tf_idf_dict, "")
 
+    del word_num_dict
+    del tf_idf_dict
     del num_name_dict
     del index_dict
     del num_word_dict
@@ -60,22 +62,35 @@ def after_index_creation_part():
     num_name_dict = pck.pickle_load("num_name_dict", "")
     index_dict = pck.pickle_load("index_dict", "")
     num_word_dict = pck.pickle_load("num_word_dict", "")
+    word_num_dict = pck.pickle_load("word_num_dict", "")
+    tf_idf_dict = pck.pickle_load("tf_idf_dict", "")
     docnums_vectors_dict = pck.pickle_load("docnums_vectors_dict", "")
     infos_doc_dict = pck.pickle_load("infos_doc_dict", "")
     tf_dict = pck.pickle_load("tf_dict", "")
 
-    print("\tclusters sizes:")
-    for docnums_key, vector_value in docnums_vectors_dict.items():
-        print("\t", len(docnums_key), '\t document(s):\t', list(docnums_key))
+    # print("\tclusters sizes:")
+    # for docnums_key, vector_value in docnums_vectors_dict.items():
+    #     print("\t", len(docnums_key), '\t document(s):\t', list(docnums_key))
         # for i in list(docnums_key):
         #     print(num_name_dict[i])
         # for wordnum_key, tf_idf_avg_value in vector_value.items():
         #     print(wordnum_key, "\t", num_word_dict[wordnum_key]," : ", tf_idf_avg_value)
 
     # user_query = inpput("whats is your query ?")
-    # query_test = "que mangent les hiboux ?"
+    query_test = "palestine israel"
+    stopwords = ld.load_stopwords_set()
     # bm25.bm25_function(query_test, stopwords)
     # print(num_name_dict[9])
+
+    #print('test')
+
+    docnum_score_sum_dict = \
+        bm25.bm25_function(query_test, stopwords, word_num_dict, tf_idf_dict, tf_dict, infos_doc_dict)
+
+    # print(docnum_score_sum_dict)
+
+    for key, value in sorted(docnum_score_sum_dict.items(), key=lambda x: x[1], reverse=True)[:10]:
+        print("{}: \t{}".format(num_name_dict[key], value))
 
 
 def main():

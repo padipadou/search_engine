@@ -36,7 +36,10 @@ def create_index_dict(datadict, stopwords):
 
                 if word not in stopwords:
                     word_position += 1
-                    wordstem = stemmer.stemWord(word)
+                    if Const.STEMMER == True:
+                        wordstem = stemmer.stemWord(word)
+                    else:
+                        wordstem = word
 
                     word_num = word_num_dict.get(wordstem,-1)
 
