@@ -16,8 +16,8 @@ class Const:
 
     CORPUS_SIZE = None
 
-    # other possibility : 'tests/text_to_test/cluster_test', 'data/lemonde-utf8'
-    DIRECTORY_NAME = 'data/lemonde-utf8'
+    # other possibility : 'tests/text_to_test/cluster_test', 'data/lemonde-utf8', 'data/text_10000'
+    DIRECTORY_NAME = 'data/text_10000'
 
     # true or false
     BM_25 = True

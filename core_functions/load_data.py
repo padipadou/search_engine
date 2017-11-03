@@ -1,7 +1,7 @@
 import os
 
 
-def load_data_dict(directory):
+def load_data_dict(directory, number_files=None):
     """
     Creates and returns a dict containing file num as key, file content as value.
     Creates and returns a dict containing filename as key, filenum as value.
@@ -11,13 +11,37 @@ def load_data_dict(directory):
     data_dict = {}
     name_num_dict = {}
     num_name_dict = {}
-    for i,filename in enumerate(os.listdir(directory)):
-        path = '{}/{}'.format(directory, filename)
-        name_num_dict[filename] = i
-        num_name_dict[i] = filename
 
-        with open(path, 'r') as infile:
-            data_dict[i] = infile.read()
+    if number_files is None:
+        # dir_ = 'data/lemonde-utf8'
+        for i, filename in enumerate(os.listdir(directory)):
+            path = '{}/{}'.format(directory, filename)
+            name_num_dict[filename] = i
+            num_name_dict[i] = filename
+
+            with open(path, 'r') as infile:
+                data_dict[i] = infile.read()
+    else:
+        i_global = 0
+        # dir_ = 'data/text_10000'
+        current_path_0 = directory
+        for year_dir in os.listdir(current_path_0):
+            current_path_1 = current_path_0 + '/' + year_dir
+            for month_dir in os.listdir(current_path_1):
+                current_path_2 = current_path_1 + '/' + month_dir
+                for day_dir in os.listdir(current_path_2):
+                    current_path_3 = current_path_2 + '/' + month_dir
+                    for filename in os.listdir(current_path_3):
+                        if i_global < number_files:
+                            current_path_4 = current_path_3 + '/' + filename
+                            name_num_dict[filename] = i_global
+                            num_name_dict[i_global] = filename
+
+                            with open(current_path_4, 'r') as infile:
+                                data_dict[i_global] = infile.read()
+                            i_global += 1
+                        else:
+                            return data_dict, name_num_dict, num_name_dict
 
     return data_dict, name_num_dict, num_name_dict
 

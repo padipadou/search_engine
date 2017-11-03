@@ -88,10 +88,13 @@ def after_index_creation_part():
 
 
 def main():
-    # index_creation_part()
+    #index_creation_part()
 
-    after_index_creation_part()
+    #after_index_creation_part()
 
+    print("Loading data...")
+    data_dict, name_num_dict, num_name_dict = \
+        ld.load_data_dict(Const.DIRECTORY_NAME, 10000)
 
 if __name__ == '__main__':
 
