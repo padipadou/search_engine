@@ -10,14 +10,14 @@ class Const:
     # unary, idf, idf_smooth, idf_max, idf_probalistic, idf_probalistic_05
     IDF_WEIGHT = 'idf'
 
-    NDOCS_FOR_A_WORD_MAX = None
+    NDOCS_FOR_A_WORD_MAX = 0
 
     DIST_MEASURE_GROUPS = 'avg_linkage'
 
     CORPUS_SIZE = None
 
     # other possibility : 'tests/text_to_test/cluster_test', 'data/lemonde_utf8', 'data/text_10000'
-    DIRECTORY_NAME = 'data/lemonde_utf8'
+    DIRECTORY_NAME = 'data/text_10000'
 
     # true or false
     BM_25 = True
@@ -25,6 +25,6 @@ class Const:
     # true or false
     STEMMER = True
 
-    # true or false, false allows less memory usage
+    # true or false -> false allows less memory usage (instead of a position list, only one int)
     POSITIONS_LIST = False
 
