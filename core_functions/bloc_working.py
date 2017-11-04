@@ -34,7 +34,7 @@ def bloc_indexing(bloc_num, size_bloc=10000):
     del word_num_dict
 
 
-def bloc_merging(bloc_num1, bloc_num2, blocsize):
+def bloc_merging(bloc_num1, bloc_num2, blocsize): # NOT FINISHED
     """
     In order to make a clear distinction:
     -> each variable linked to bloc_num1 are suffixed by '_1'
@@ -83,7 +83,7 @@ def bloc_merging(bloc_num1, bloc_num2, blocsize):
             word_num_dict[norm_word] = i_newword
             num_word_dict[i_newword] = norm_word
             i_newword += 1
-            # index_dict ...
+            # index_dict ... NOT FINISHED
             # word_num_dict OK
             # num_word_dict OK
 
@@ -97,7 +97,7 @@ def bloc_merging(bloc_num1, bloc_num2, blocsize):
             # num_word_dict OK
 
 
-
+    # NOT FINISHED
 
 
 
