@@ -1,4 +1,3 @@
-import core_functions.handle_data as ld
 from math import sqrt
 
 
