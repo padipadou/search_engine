@@ -1,7 +1,8 @@
 import tqdm as tq
-import core_functions.similar_docs as sd
+
 import core_functions.clustering.inertia as cl_in
 import core_functions.clustering.manip_vector as cl_mv
+import core_functions.clustering.similar_docs as sd
 from core_functions import Const
 
 

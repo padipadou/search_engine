@@ -1,4 +1,4 @@
-import core_functions.load_data as ld
+import core_functions.handle_data as ld
 from math import sqrt
 
 
@@ -63,8 +63,12 @@ def calculate_docs_similarity(docname1, docname2, name_num_dict, tf_idf_dict):
     """
     Full function to get similarity between two docs.
     """
-    docnum1 = ld.get_docnum_from_name(docname1, name_num_dict)
-    docnum2 = ld.get_docnum_from_name(docname2, name_num_dict)
+
+    docnum1 = name_num_dict.get(docname1, -1)
+    docnum2 = name_num_dict.get(docname2, -1)
+
+    assert (docnum1 >= 0), "'{}' is not a document !".format(docname1)
+    assert (docnum2 >= 0), "'{}' is not a document !".format(docname2)
 
     words_doc1_dict = create_doc_vector_dict(docnum1, tf_idf_dict)
     words_doc2_dict = create_doc_vector_dict(docnum2, tf_idf_dict)

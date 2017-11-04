@@ -1,4 +1,4 @@
-import core_functions.similar_docs as sd
+import core_functions.clustering.similar_docs as sd
 from core_functions import Const
 
 
