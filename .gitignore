@@ -73,6 +73,5 @@ fabric.properties
 core_functions/__pycache__/
 libs/__pycache__/
 
-data/*.pickle
 /data/text_10000/
-/data/pickle_files/
+/data/pickle_files/*

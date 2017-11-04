@@ -112,7 +112,6 @@ def main():
             bw.bloc_merging(blocnum, neighboor_blocnum, bloc_size)
 
 
-
 if __name__ == '__main__':
 
     t_start = time.time()
