@@ -1,5 +1,4 @@
 import pickle
-import time
 
 
 def pickle_store(object_name, value, prefix_path="../"):
