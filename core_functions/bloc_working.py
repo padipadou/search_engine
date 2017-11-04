@@ -12,7 +12,7 @@ def bloc_indexing(bloc_num, size_bloc=10000):
     :param size_bloc: number of documents per bloc
     :return: nothing
     """
-    print("Loading data...")
+    # print("Loading data...")
     data_dict, name_num_dict, num_name_dict = \
         hd.load_data_dict(Const.DIRECTORY_NAME, size_bloc, bloc_num * size_bloc)
 
@@ -26,7 +26,7 @@ def bloc_indexing(bloc_num, size_bloc=10000):
     stopwords = hd.load_stopwords_set()
 
     # *------------------------------------------*
-    print("Creating index...")
+    # print("Creating index...")
     index_dict, word_num_dict, num_word_dict, infos_doc_dict = \
         idxd.create_index_dict(data_dict, stopwords)
 
@@ -68,8 +68,8 @@ def bloc_merging(bloc_num1, bloc_num2, blocsize):
 
     del num_name_dict_2
 
-    os.remove("data/num_name_dict_b" + str(bloc_num1) + ".pickle")
-    os.remove("data/num_name_dict_b" + str(bloc_num2) + ".pickle")
+    os.remove("data/pickle_files/num_name_dict_b" + str(bloc_num1) + ".pickle")
+    os.remove("data/pickle_files/num_name_dict_b" + str(bloc_num2) + ".pickle")
     pck.pickle_store("num_name_dict_b" + str(bloc_num1), num_name_dict, "")
     del num_name_dict
 
@@ -107,18 +107,18 @@ def bloc_merging(bloc_num1, bloc_num2, blocsize):
     del index_dict_2
     del num_word_dict_2
 
-    os.remove("data/index_dict_b" + str(bloc_num1) + ".pickle")
-    os.remove("data/index_dict_b" + str(bloc_num2) + ".pickle")
+    os.remove("data/pickle_files/index_dict_b" + str(bloc_num1) + ".pickle")
+    os.remove("data/pickle_files/index_dict_b" + str(bloc_num2) + ".pickle")
     pck.pickle_store("index_dict_b" + str(bloc_num1), index_dict, "")
     del index_dict
 
-    os.remove("data/word_num_dict_b" + str(bloc_num1) + ".pickle")
-    os.remove("data/word_num_dict_b" + str(bloc_num2) + ".pickle")
+    os.remove("data/pickle_files/word_num_dict_b" + str(bloc_num1) + ".pickle")
+    os.remove("data/pickle_files/word_num_dict_b" + str(bloc_num2) + ".pickle")
     pck.pickle_store("word_num_dict_b" + str(bloc_num1), word_num_dict, "")
     del word_num_dict
 
-    os.remove("data/num_word_dict_b" + str(bloc_num1) + ".pickle")
-    os.remove("data/num_word_dict_b" + str(bloc_num2) + ".pickle")
+    os.remove("data/pickle_files/num_word_dict_b" + str(bloc_num1) + ".pickle")
+    os.remove("data/pickle_files/num_word_dict_b" + str(bloc_num2) + ".pickle")
     pck.pickle_store("num_word_dict_b" + str(bloc_num1), num_word_dict, "")
     del num_word_dict
 
@@ -132,8 +132,8 @@ def bloc_merging(bloc_num1, bloc_num2, blocsize):
 
     del infos_doc_dict_2
 
-    os.remove("data/infos_doc_dict_b" + str(bloc_num1) + ".pickle")
-    os.remove("data/infos_doc_dict_b" + str(bloc_num2) + ".pickle")
+    os.remove("data/pickle_files/infos_doc_dict_b" + str(bloc_num1) + ".pickle")
+    os.remove("data/pickle_files/infos_doc_dict_b" + str(bloc_num2) + ".pickle")
     pck.pickle_store("infos_doc_dict_b" + str(bloc_num1), infos_doc_dict, "")
     del infos_doc_dict
 

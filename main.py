@@ -1,5 +1,6 @@
 import os
 import time
+from tqdm import tqdm
 
 from memory_profiler import profile
 
@@ -92,9 +93,25 @@ def after_index_creation_part():
 # @profile
 def main():
     # index_creation_part()
-
     # after_index_creation_part()
-    pass
+
+    # NEED MULTIPROCESSING
+    bloc_size = 100
+    total_nb_blocs = 4  # 2 power something
+    for blocnum in range(0, total_nb_blocs, 1):
+        print(blocnum+1, "/", total_nb_blocs, "...")
+        bw.bloc_indexing(blocnum, bloc_size)
+
+    print("Merging...")
+
+    gap = 1
+    while gap < total_nb_blocs:
+        gap *= 2
+        for blocnum in range(0, total_nb_blocs, gap):
+            neighboor_blocnum = int(blocnum + gap/2)
+            bw.bloc_merging(blocnum, neighboor_blocnum, bloc_size)
+
+
 
 if __name__ == '__main__':
 
@@ -104,5 +121,5 @@ if __name__ == '__main__':
 
     t_end = time.time()
 
-    print("Temps d'execution = {} seconde(s)\n".format(t_end - t_start))
+    print("Running time = {} second(s)\n".format(t_end - t_start))
 
