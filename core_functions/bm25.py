@@ -6,10 +6,15 @@ from core_functions import Const
 def bm25_function(query, stopwords, word_num_dict, tf_idf_dict, tf_dict, infos_doc_dict):
     """
     More info https://en.wikipedia.org/wiki/Okapi_BM25
-    :param query:
-    :param stopwords:
-    :return:
+    :param query: normal sentence in natural language
+    :param stopwords: set of stopwords
+    :param word_num_dict: dict with normalized word as key, wordnum as value
+    :param tf_idf_dict: dict with wordnum as key, dict as value (dict with docnum as key, tf*idf as value per doc)
+    :param tf_dict: dict with wordnum as key, tf as value
+    :param infos_doc_dict: dict with docnum  as key, list as value (per doc; list[0]: total nb of words, list[1]: term frequency max)
+    :return: dict with docnum as key, score of bm25 as value
     """
+
     k1 = 1.5
     b = 0.75
     nb_words_avg = 0
@@ -21,7 +26,8 @@ def bm25_function(query, stopwords, word_num_dict, tf_idf_dict, tf_dict, infos_d
     tokenizer = kea.tokenizer()
 
     # stemmer, from PyStemmer
-    stemmer = pystemmer.Stemmer('french')
+    if Const.STEMMER is True:
+        stemmer = pystemmer.Stemmer('french')
 
     #query_list = []
     words_query = tokenizer.tokenize(query)
@@ -30,7 +36,7 @@ def bm25_function(query, stopwords, word_num_dict, tf_idf_dict, tf_dict, infos_d
 
     for word in words_query:
         if word not in stopwords:
-            if Const.STEMMER == True:
+            if Const.STEMMER is True:
                 wordstem = stemmer.stemWord(word).lower()
             else:
                 wordstem = word.lower()
@@ -49,9 +55,11 @@ def bm25_function(query, stopwords, word_num_dict, tf_idf_dict, tf_dict, infos_d
             docnum_score_sum = docnum_score_sum_dict.get(docnum_key, 0)
             tf = tf_dict[keyword_num][docnum_key]
 
+            # Bm25 score
             score = tf_idf * (k1 + 1) \
                     / (tf + k1 * (1 - b + b * (nb_words / nb_words_avg)))
 
+            # Sum
             docnum_score_sum_dict[docnum_key] = docnum_score_sum + score
 
     return docnum_score_sum_dict
