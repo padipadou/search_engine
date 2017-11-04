@@ -6,16 +6,21 @@ from core_functions import Const
 
 def create_index_dict(datadict, stopwords):
     """
-    Creates and returns the positional index for all the files in datadict.
-    Creates and returns a dict containing a word as key, wordnum as value for all the words in datadict.
-    Creates and returns a dict containing a wordnum as key, word as value for all the words in datadict.
-    Creates and returns a dict containing a docnum as key, number of interesting words as value for all the files in datadict.
+    :param datadict: dict with docnum as key, content of doc as value
+    :param stopwords: set of stopwords
+    :return:
+    index_dict: dict with wordnum as key, dict as value (dict with docnum as key, list of positions per doc as value)
+    word_num_dict: dict with normalized word as key, wordnum as value
+    num_word_dict: dict with wordnum  as key, normalized word as value
+    infos_doc_dict: dict with docnum  as key, list as value (per doc; list[0]: total nb of words, list[1]: term frequency max)
     """
+
     # tokenizer, from Kea
     tokenizer = kea.tokenizer()
 
     # stemmer, from PyStemmer
-    stemmer = pystemmer.Stemmer('french')
+    if Const.STEMMER is True:
+        stemmer = pystemmer.Stemmer('french')
 
     word_num_dict = {}
     num_word_dict = {}
@@ -26,7 +31,7 @@ def create_index_dict(datadict, stopwords):
     for page_number in tq.tqdm(datadict.keys()):
         word_position = 0
         term_frequency_max = 0
-        content_page = datadict[page_number].lower().split('\n')
+        content_page = datadict[page_number].split('\n')
 
         for line in content_page:
             # faster to do it line by line than page by page
@@ -37,7 +42,7 @@ def create_index_dict(datadict, stopwords):
                 if word not in stopwords:
                     word_position += 1
                     if Const.STEMMER == True:
-                        wordstem = stemmer.stemWord(word)
+                        wordstem = stemmer.stemWord(word).lower()
                     else:
                         wordstem = word
 
@@ -68,20 +73,19 @@ def create_index_dict(datadict, stopwords):
                     else:
                         raise Exception('Issue with word: "{}" \n\tin the page {} \n\tat the position {}'.format(wordstem, page_number, word_position))
 
+        # to get some infos about corpus
         infos_doc_dict[page_number] = []
-
         # total nb of words
         infos_doc_dict[page_number].append(word_position)
-
         # term frequency max
         infos_doc_dict[page_number].append(term_frequency_max)
 
+    # to get some infos about corpus
     Ndocs_for_a_word_max = 0
     for word_occ_dict in index_dict.values():
         Ndocs_for_a_word = len(word_occ_dict)
         if Ndocs_for_a_word > Ndocs_for_a_word_max:
             Ndocs_for_a_word_max = Ndocs_for_a_word
-
     Const.NDOCS_FOR_A_WORD_MAX = Ndocs_for_a_word_max
 
     return index_dict, word_num_dict, num_word_dict, infos_doc_dict
