@@ -74,4 +74,4 @@ core_functions/__pycache__/
 libs/__pycache__/
 
 /data/text_10000/
-/data/pickle_files/*
+#/data/pickle_files/*
