@@ -9,7 +9,7 @@ def create_index_dict(datadict, stopwords):
     :param datadict: dict with docnum as key, content of doc as value
     :param stopwords: set of stopwords
     :return:
-    index_dict: dict with wordnum as key, dict as value (dict with docnum as key, list of positions per doc as value)
+    index_dict: dict with wordnum as key, dict as value (dict with docnum as key, list of positions OR a count per doc as value)
     word_num_dict: dict with normalized word as key, wordnum as value
     num_word_dict: dict with wordnum  as key, normalized word as value
     infos_doc_dict: dict with docnum  as key, list as value (per doc; list[0]: total nb of words, list[1]: term frequency max)
@@ -46,7 +46,7 @@ def create_index_dict(datadict, stopwords):
                     else:
                         wordstem = word
 
-                    word_num = word_num_dict.get(wordstem,-1)
+                    word_num = word_num_dict.get(wordstem, -1)
 
                     # word NOT YET in the index, word NOT YET in the page
                     if word_num < 0:
