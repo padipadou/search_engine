@@ -52,7 +52,10 @@ def create_index_dict(datadict, stopwords):
                     if word_num < 0:
                         word_num_dict[wordstem] = word_count
                         num_word_dict[word_count] = wordstem
-                        index_dict[word_count] = {page_number: [word_position]}
+                        if Const.POSITIONS_LIST is True:
+                            index_dict[word_count] = {page_number: [word_position]}
+                        else:
+                            index_dict[word_count] = {page_number: 1}
 
                         if term_frequency_max < 1: term_frequency_max = 1
 
@@ -60,14 +63,22 @@ def create_index_dict(datadict, stopwords):
 
                     # word ALREADY in the index, word NOT YET in the page
                     elif word_num >= 0 and page_number not in index_dict[word_num]:
-                        index_dict[word_num] = {**index_dict[word_num], **{page_number: [word_position]}}
+                        if Const.POSITIONS_LIST is True:
+                            index_dict[word_num] = {**index_dict[word_num], **{page_number: [word_position]}}
+                        else:
+                            index_dict[word_num] = {**index_dict[word_num], **{page_number: 1}}
 
                     # word ALREADY in the index, word ALREADY in the page
                     elif word_num >= 0 and page_number in index_dict[word_num]:
-                        index_dict[word_num][page_number] += [word_position]
+                        if Const.POSITIONS_LIST is True:
+                            index_dict[word_num][page_number] += [word_position]
+                            if term_frequency_max < len(index_dict[word_num][page_number]):
+                                term_frequency_max = len(index_dict[word_num][page_number])
+                        else:
+                            index_dict[word_num][page_number] += 1
+                            if term_frequency_max < index_dict[word_num][page_number]:
+                                term_frequency_max = index_dict[word_num][page_number]
 
-                        if term_frequency_max < len(index_dict[word_num][page_number]):
-                            term_frequency_max = len(index_dict[word_num][page_number])
 
                     # ERROR
                     else:

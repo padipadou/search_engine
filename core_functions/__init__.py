@@ -16,12 +16,15 @@ class Const:
 
     CORPUS_SIZE = None
 
-    # other possibility : 'tests/text_to_test/cluster_test', 'data/lemonde-utf8', 'data/text_10000'
-    DIRECTORY_NAME = 'data/text_10000'
+    # other possibility : 'tests/text_to_test/cluster_test', 'data/lemonde_utf8', 'data/text_10000'
+    DIRECTORY_NAME = 'data/lemonde_utf8'
 
     # true or false
     BM_25 = True
 
     # true or false
     STEMMER = True
+
+    # true or false, false allows less memory usage
+    POSITIONS_LIST = False
 

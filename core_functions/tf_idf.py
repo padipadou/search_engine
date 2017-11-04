@@ -2,7 +2,7 @@ from core_functions import Const
 from math import log10
 
 
-def tf_function(positions_list, infos_doc):
+def tf_function(positions_or_count, infos_doc):
     """
     More infos https://en.wikipedia.org/wiki/Tf%E2%80%93idf#Term_frequency_2
     :param positions_list:
@@ -13,16 +13,21 @@ def tf_function(positions_list, infos_doc):
     nb_total_words = infos_doc[0]
     term_freq_max = infos_doc[1]
 
+    if Const.POSITIONS_LIST is True:
+        count = len(positions_or_count)
+    else:
+        count = positions_or_count
+
     if Const.TF_WEIGHT == 'binary':
         return 1
     elif Const.TF_WEIGHT == 'raw_count':
-        return len(positions_list)
+        return count
     elif Const.TF_WEIGHT == 'term_frequency':
-        return len(positions_list) / nb_total_words
+        return count / nb_total_words
     elif Const.TF_WEIGHT == 'log_frequency':
-        return 1 + log10(len(positions_list))
+        return 1 + log10(count)
     elif Const.TF_WEIGHT == 'double_normal_05':
-        return 0.5 + 0.5 * (len(positions_list)/term_freq_max)
+        return 0.5 + 0.5 * (count/term_freq_max)
     else:
         raise Exception('Issue with TF calculation: {}'.format(Const.TF_WEIGHT))
 
@@ -71,8 +76,8 @@ def calculate_tf_idf_dict(index_dict, infos_doc_dict):
         tf_word_dict = {}
 
         for document in word_dict.keys():
-            positions_list = word_dict.get(document)
-            tf = tf_function(positions_list, infos_doc_dict[document])
+            positions_or_count = word_dict.get(document)
+            tf = tf_function(positions_or_count, infos_doc_dict[document])
 
             tf_idf_word_dict[document] = tf * idf
 
