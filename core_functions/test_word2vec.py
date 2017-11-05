@@ -1,5 +1,5 @@
 from gensim.models import Word2Vec
-import core_functions.load_data as ld
+import core_functions.handle_data as ld
 import os
 
 # from nltk.corpus import brown, movie_reviews, treebank
@@ -14,7 +14,7 @@ import os
 
 from nltk.corpus.reader.plaintext import PlaintextCorpusReader
 
-corpusdir = 'data/lemonde-utf8/' # Directory of corpus.
+corpusdir = 'data/lemonde_utf8/' # Directory of corpus.
 # corpusdir = '/home/david/PycharmProjects/search_engine/data/lemonde-utf8/' # Directory of corpus.
 
 
