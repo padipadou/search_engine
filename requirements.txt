@@ -1,6 +1,5 @@
 tqdm
 PyStemmer
-psutil
 memory_profiler
 matplotlib
 gensim
