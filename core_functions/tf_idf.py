@@ -5,9 +5,9 @@ from math import log10
 def tf_function(positions_or_count, infos_doc):
     """
     More infos https://en.wikipedia.org/wiki/Tf%E2%80%93idf#Term_frequency_2
-    :param positions_list:
-    :param infos_doc:
-    :return:
+    :param positions_or_count: list of positions one word in the doc or directly the count of words for this word
+    :param infos_doc: list[0]: total nb of words, list[1]: term frequency max
+    :return: tf_value for this word regarding to differents way of calculation
     """
 
     nb_total_words = infos_doc[0]
@@ -35,8 +35,8 @@ def tf_function(positions_or_count, infos_doc):
 def idf_function(word_dict):
     """
     More infos https://en.wikipedia.org/wiki/Tf%E2%80%93idf#Inverse_document_frequency_2
-    :param word_dict:
-    :return:
+    :param word_dict: dict with docnum as key, list of positions OR a count per doc as value
+    :return: idf_value for this word regarding to differents way of calculation
     """
 
     N_total_docs = Const.CORPUS_SIZE

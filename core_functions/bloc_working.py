@@ -53,10 +53,10 @@ def bloc_merging(bloc_num1, bloc_num2, blocsize):
     -> each variable linked to bloc_num1 are suffixed by '_1'
     -> each variable linked to bloc_num2 are suffixed by '_2'
     -> each variable linked to the final bloc are NOT suffixed
-    :param bloc_num1:
-    :param bloc_num2:
-    :param blocsize:
-    :return:
+    :param bloc_num1: number to identify first bloc to merge among others
+    :param bloc_num2: number to identify second bloc to merge among others
+    :param blocsize: size of blocs (number of docs)
+    :return: nothing
     """
     # *------------------------------------------*
     # -- num_name_dict --

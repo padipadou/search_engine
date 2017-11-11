@@ -15,8 +15,10 @@ def bm25_function(query, stopwords, word_num_dict, tf_idf_dict, tf_dict, infos_d
     :return: dict with docnum as key, score of bm25 as value
     """
 
+    # bm25 parameters
     k1 = 1.5
     b = 0.75
+
     nb_words_avg = 0
     for value in infos_doc_dict.values():
         nb_words_avg += value[0]
@@ -29,7 +31,6 @@ def bm25_function(query, stopwords, word_num_dict, tf_idf_dict, tf_dict, infos_d
     if Const.STEMMER is True:
         stemmer = pystemmer.Stemmer('french')
 
-    #query_list = []
     words_query = tokenizer.tokenize(query)
 
     keyword_num_list = []

@@ -10,10 +10,13 @@ class Const:
     # unary, idf, idf_smooth, idf_max, idf_probalistic, idf_probalistic_05
     IDF_WEIGHT = 'idf'
 
+    # max number of docs for one word, unknown at the beginning
     NDOCS_FOR_A_WORD_MAX = 0
 
+    # way to calculate distances in clustering, only 'avg_linkage' for the moment
     DIST_MEASURE_GROUPS = 'avg_linkage'
 
+    # corpus size is unknown at the beginning
     CORPUS_SIZE = None
 
     # other possibility : 'tests/text_to_test/cluster_test', 'data/lemonde_utf8', 'data/text_10000'

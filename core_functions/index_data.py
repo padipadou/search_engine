@@ -91,7 +91,7 @@ def create_index_dict(datadict, stopwords):
         # term frequency max
         infos_doc_dict[page_number].append(term_frequency_max)
 
-    # BEWARE OF DIFFICULTY WITH BLOC INDEXING /!\/!\/!\
+    # BEWARE OF DIFFICULTY WITH BLOC INDEXING /!\/!\/!\ (need to be true for more than one bloc)
     # to get some infos about corpus
     Ndocs_for_a_word_max = Const.NDOCS_FOR_A_WORD_MAX
     for word_occ_dict in index_dict.values():

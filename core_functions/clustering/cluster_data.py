@@ -7,9 +7,15 @@ from core_functions import Const
 
 
 def init_docnums_vectors_dict(tf_idf_dict, way="frozenset-list"):
+    # """
+    # Creates and returns a dict with set of ONE docnum as keys, and tf_idf_dict vector linked ONLY to this doc as value.
+    # WARNING: it requires to be run after the calculation of tf*idf measures
+    # """
     """
-    Creates and returns a dict with set of ONE docnum as keys, and tf_idf_dict vector linked ONLY to this doc as value.
-    WARNING: it requires to be run after the calculation of tf*idf measures
+
+    :param tf_idf_dict:
+    :param way:
+    :return:
     """
     docnums_vectors_lists_dict = {}
 

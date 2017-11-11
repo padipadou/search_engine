@@ -5,7 +5,7 @@ def load_data_dict(directory, nb_files_needed=None, indice_start=0):
     """
     :param directory: root to read files
     :param nb_files_needed: number of files that you need
-    :param indice_start: first file that you need
+    :param indice_start: number of the first file that you need
     :return:
     data_dict: dict with docnum as key, content of doc as value
     name_num_dict: dict with doc name as key, docnum as value
@@ -77,10 +77,6 @@ def load_stopwords_set(path='data/stopwords-fr.txt'):
 
     return set(stopwords)
 
-
-def remove_old_files_for_bloc(bloc_num):
-    os.remove("data/*_b" + str(bloc_num) + ".pickle")
-    return ''
 
 if __name__ == '__main__':
     pass
