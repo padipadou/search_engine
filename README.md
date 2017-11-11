@@ -34,18 +34,10 @@ dict with docnum as key, list of positions OR a count per doc as value
 dict with wordnum as key, dict as value (dict with docnum as key, tf x idf as value per doc)
 
 ### *tf_dict*:
-**Empty** if bm25 is not used.
 dict with wordnum as key, tf as value
 
-### *AAA*:
+**Empty** if bm25 is not used.
 
-### *AAA*:
-
-### *AAA*:
-
-### *AAA*:
-
-### *AAA*:
 
 ## Other important variables:
 
