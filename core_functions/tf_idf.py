@@ -68,8 +68,8 @@ def calculate_tf_idf_dict(index_dict, infos_doc_dict):
     tf_dict = {}
     Const.CORPUS_SIZE = len(infos_doc_dict)
 
-    for wordnum in index_dict.keys():
-        word_dict = index_dict.get(wordnum)
+    # index_dict could be split into different dict if needed
+    for wordnum, word_dict in index_dict.items():
 
         idf = idf_function(word_dict)
         tf_idf_word_dict = {}

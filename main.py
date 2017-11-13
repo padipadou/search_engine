@@ -90,26 +90,68 @@ def after_index_creation_part():
         print("{}: \t{}".format(num_name_dict[key], value))
 
 
-# @profile
-def main():
-    # index_creation_part()
-    # after_index_creation_part()
 
+
+
+def main_bloc_creation(bloc_size=100, total_nb_blocs=4, total_nb_blocs_index=1):
+    # *------------------------------------------*
+    print("Creating indexes...")
     # NEED MULTIPROCESSING
-    bloc_size = 100
-    total_nb_blocs = 4  # 2 power something
     for blocnum in range(0, total_nb_blocs, 1):
-        print(blocnum+1, "/", total_nb_blocs, "...")
+        print(blocnum + 1, "/", total_nb_blocs, "...")
         bw.bloc_indexing(blocnum, bloc_size)
 
-    print("Merging...")
-
+    # *------------------------------------------*
+    print("Merging indexes...")
     gap = 1
     while gap < total_nb_blocs:
         gap *= 2
+        # NEED MULTIPROCESSING
         for blocnum in range(0, total_nb_blocs, gap):
-            neighboor_blocnum = int(blocnum + gap/2)
+            neighboor_blocnum = int(blocnum + gap / 2)
             bw.bloc_merging(blocnum, neighboor_blocnum, bloc_size)
+
+    # *------------------------------------------*
+    print("Splitting indexes...")
+    if total_nb_blocs_index > 1:
+        bw.split_indexes(total_nb_blocs_index)
+
+    # *------------------------------------------*
+    print("Calculating tf * idf...")
+    for blocnum in range(0, total_nb_blocs_index, 1):
+        bw.calculate_tf_idf(blocnum, total_nb_blocs_index)
+    gap = 1
+    while gap < total_nb_blocs_index:
+        gap *= 2
+        for blocnum in range(0, total_nb_blocs_index, gap):
+            neighboor_blocnum = int(blocnum + gap / 2)
+            #NOT FINISHED
+            bw.bloc_merging2(blocnum, neighboor_blocnum, bloc_size)
+
+
+
+def main_bloc_after_creation():
+    num_name_dict = pck.pickle_load("num_name_dict_b0", "")
+    word_num_dict = pck.pickle_load("word_num_dict_b0", "")
+    infos_doc_dict = pck.pickle_load("infos_doc_dict_b0", "")
+    tf_idf_dict = pck.pickle_load("tf_idf_dict_b0", "")
+    tf_dict = pck.pickle_load("tf_dict_b0", "")
+
+    query_test = "israël jérusalem"
+    stopwords = hd.load_stopwords_set()
+
+    docnum_score_sum_dict = \
+        bm25.bm25_function(query_test, stopwords, word_num_dict, tf_idf_dict, tf_dict, infos_doc_dict)
+
+    for key, value in sorted(docnum_score_sum_dict.items(), key=lambda x: x[1], reverse=True)[:10]:
+        print("{}: \t{}".format(num_name_dict[key], value))
+    pass
+
+
+# @profile
+def main():
+    main_bloc_creation(bloc_size=100, total_nb_blocs=4)
+    main_bloc_after_creation()
 
 
 if __name__ == '__main__':

@@ -3,7 +3,12 @@ import Stemmer as pystemmer
 from core_functions import Const
 
 
-def bm25_function(query, stopwords, word_num_dict, tf_idf_dict, tf_dict, infos_doc_dict):
+def bm25_function(query, stopwords,
+                  word_num_dict=None,
+                  tf_idf_dict=None,
+                  tf_dict=None,
+                  infos_doc_dict=None,
+                  byBloc=False):
     """
     More info https://en.wikipedia.org/wiki/Okapi_BM25
     :param query: normal sentence in natural language
@@ -14,6 +19,14 @@ def bm25_function(query, stopwords, word_num_dict, tf_idf_dict, tf_dict, infos_d
     :param infos_doc_dict: dict with docnum  as key, list as value (per doc; list[0]: total nb of words, list[1]: term frequency max)
     :return: dict with docnum as key, score of bm25 as value
     """
+
+    if (word_num_dict is None \
+        or tf_idf_dict is None \
+        or tf_dict is None \
+        or infos_doc_dict is None) \
+        and byBloc is not True:
+        print("Error with arguments in bm25 function.")
+
 
     # bm25 parameters
     k1 = 1.5
