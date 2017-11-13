@@ -6,24 +6,21 @@ import core_functions.clustering.similar_docs as sd
 from core_functions import Const
 
 
-def init_docnums_vectors_dict(tf_idf_dict, way="frozenset-list"):
-    # """
-    # Creates and returns a dict with set of ONE docnum as keys, and tf_idf_dict vector linked ONLY to this doc as value.
-    # WARNING: it requires to be run after the calculation of tf*idf measures
-    # """
+def init_docnums_vectors_dict(tf_idf_dict, key_type="frozenset-list"):
     """
-
-    :param tf_idf_dict:
-    :param way:
+    WARNING: it requires to be run after the calculation of tf*idf measures
+    :param tf_idf_dict: dict with wordnum as key, dict as value (dict with docnum as key, tf x idf as value per doc)
+    :param key_type: could be a frozenlist or one simple int
     :return:
+    docnums_vectors_lists_dict: dict with set of ONE docnum as keys, and tf_idf_dict vector linked ONLY to this doc as value
     """
     docnums_vectors_lists_dict = {}
 
     for docnum in range(Const.CORPUS_SIZE):
-        if way == "frozenset-list":
+        if key_type == "frozenset-list":
             docnums_key = frozenset([docnum])
             doc_vectors_value = [sd.create_doc_vector_dict(docnum, tf_idf_dict)]
-        elif way == "normal":
+        elif key_type == "normal":
             docnums_key = docnum
             doc_vectors_value = sd.create_doc_vector_dict(docnum, tf_idf_dict)
         else:
@@ -36,9 +33,11 @@ def init_docnums_vectors_dict(tf_idf_dict, way="frozenset-list"):
 
 def init_docnums_vectors_dict_one_group(tf_idf_dict):
     """
-    Creates and returns a dict with ONE set of ALL docnum as keys, and tf_idf_dict vector linked to these docs as value.
     WARNING: it requires to be run after the calculation of tf*idf measures
     ONLY ONE GROUP
+    :param tf_idf_dict: dict with wordnum as key, dict as value (dict with docnum as key, tf x idf as value per doc)
+    :return:
+    docnums_vectors_lists_dict: dict with ONE set of ALL docnum as keys, and tf_idf_dict vector linked to these docs as value
     """
     docnums_vectors_lists_dict = {}
 
@@ -52,11 +51,11 @@ def init_docnums_vectors_dict_one_group(tf_idf_dict):
 
 def average_linkage(dv_list_i, dv_list_j):
     """
-    average linkage with cosine between two vectors
     WARNING: it is a similarity not a distance
     :param dv_list_i:
     :param dv_list_j:
     :return:
+    similarity: average linkage with cosine between two vectors
     """
     similarity = 0
 
