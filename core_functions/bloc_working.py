@@ -46,7 +46,7 @@ def bloc_indexing(bloc_num, size_bloc=10000):
     del infos_doc_dict
 
 
-def bloc_merging(bloc_num1, bloc_num2, blocsize):
+def bloc_merging(bloc_num1, bloc_num2):
     """
     Merge 2 blocs which have been already created
     In order to make a clear distinction:
@@ -55,17 +55,16 @@ def bloc_merging(bloc_num1, bloc_num2, blocsize):
     -> each variable linked to the final bloc are NOT suffixed
     :param bloc_num1: number to identify first bloc to merge among others
     :param bloc_num2: number to identify second bloc to merge among others
-    :param blocsize: size of blocs (number of docs)
     :return: nothing
     """
     # *------------------------------------------*
     # -- num_name_dict --
     num_name_dict = pck.pickle_load("num_name_dict_b" + str(bloc_num1), "")
     num_name_dict_2 = pck.pickle_load("num_name_dict_b" + str(bloc_num2), "")
-    blocsize = len(num_name_dict) #NOT SURE
+    bloc_size = len(num_name_dict)
 
     for docnum_key_2, name_value_2  in num_name_dict_2.items():
-        num_name_dict[blocsize + docnum_key_2] = name_value_2
+        num_name_dict[bloc_size + docnum_key_2] = name_value_2
 
     del num_name_dict_2
 
@@ -80,7 +79,7 @@ def bloc_merging(bloc_num1, bloc_num2, blocsize):
     word_num_dict = pck.pickle_load("word_num_dict_b" + str(bloc_num1), "")
     num_word_dict = pck.pickle_load("num_word_dict_b" + str(bloc_num1), "")
 
-    i_newword = len(word_num_dict) + 0
+    i_newword = len(word_num_dict)
 
     index_dict_2 = pck.pickle_load("index_dict_b" + str(bloc_num2), "")
     num_word_dict_2 = pck.pickle_load("num_word_dict_b" + str(bloc_num2), "")
@@ -95,14 +94,14 @@ def bloc_merging(bloc_num1, bloc_num2, blocsize):
             index_dict[i_newword] = {}
 
             for docnum_key_2, pos_count_value_2 in dict_value_2.items():
-                docnum = blocsize + docnum_key_2
+                docnum = bloc_size + docnum_key_2
                 index_dict[i_newword] = {**index_dict[i_newword], **{docnum: pos_count_value_2}}
             i_newword += 1
 
         # word ALREADY in the index
         else:
             for docnum_key_2, pos_count_value_2 in dict_value_2.items():
-                docnum = blocsize + docnum_key_2
+                docnum = bloc_size + docnum_key_2
                 index_dict[word_num] = {**index_dict[word_num], **{docnum: pos_count_value_2}}
 
     del index_dict_2
@@ -127,9 +126,10 @@ def bloc_merging(bloc_num1, bloc_num2, blocsize):
     # -- infos_doc_dict --
     infos_doc_dict = pck.pickle_load("infos_doc_dict_b" + str(bloc_num1), "")
     infos_doc_dict_2 = pck.pickle_load("infos_doc_dict_b" + str(bloc_num2), "")
+    bloc_size = len(infos_doc_dict)
 
     for docnum_key_2, infos_value_2  in infos_doc_dict_2.items():
-        infos_doc_dict[blocsize + docnum_key_2] = infos_value_2
+        infos_doc_dict[bloc_size + docnum_key_2] = infos_value_2
 
     del infos_doc_dict_2
 
@@ -145,14 +145,16 @@ def bloc_merging(bloc_num1, bloc_num2, blocsize):
     # infos_doc_dict    OK
 
 
-def split_indexes(total_nb_blocs_index): #OK
-    index_dict = pck.pickle_load("index_dict_b1", "")
+def split_indexes(total_nb_blocs_index):
+    index_dict = pck.pickle_load("index_dict_b0", "")
+    remove("data/pickle_files/index_dict_b0.pickle")
     index_bloc_len = ceil(len(index_dict) / total_nb_blocs_index)
 
     current_index_bloc = 0
     index_dict_bloc = {}
     for wordnum in range(len(index_dict)):
-        if wordnum >= (current_index_bloc+1) * index_bloc_len:
+        # if the bloc is full, need to be stored
+        if wordnum == (current_index_bloc+1) * index_bloc_len:
             pck.pickle_store("index_dict_b" + str(current_index_bloc), index_dict_bloc, "")
             del index_dict_bloc
 
@@ -161,11 +163,12 @@ def split_indexes(total_nb_blocs_index): #OK
 
         index_dict_bloc[wordnum] = index_dict.get(wordnum)
 
+    # last bloc, need to be stored
     pck.pickle_store("index_dict_b" + str(current_index_bloc), index_dict_bloc, "")
     del index_dict_bloc
 
 
-def calculate_tf_idf(blocnum, total_nb_blocs_index): #OK
+def calculate_tf_idf(blocnum, total_nb_blocs_index):
     infos_doc_dict = pck.pickle_load("infos_doc_dict_b0", "")
 
     index_dict = pck.pickle_load("index_dict_b" + str(blocnum), "")
@@ -181,8 +184,41 @@ def calculate_tf_idf(blocnum, total_nb_blocs_index): #OK
     del tf_idf_dict
 
 
-def bloc_merging2(): #NOT FINISHED
-    pass
+def bloc_merging2(bloc_num1, bloc_num2):
+    # *------------------------------------------*
+    # -- tf_idf_dict --
+    tf_idf_dict = pck.pickle_load("tf_idf_dict_b" + str(bloc_num1), "")
+    tf_idf_dict_2 = pck.pickle_load("tf_idf_dict_b" + str(bloc_num2), "")
+    blocsize = len(tf_idf_dict)
+
+    for wordnum_key_2, dict_value_2 in tf_idf_dict_2.items():
+        # tf_idf_dict[blocsize + wordnum_key_2] = dict_value_2
+        tf_idf_dict[wordnum_key_2] = dict_value_2
+
+    del tf_idf_dict_2
+
+    remove("data/pickle_files/tf_idf_dict_b" + str(bloc_num1) + ".pickle")
+    remove("data/pickle_files/tf_idf_dict_b" + str(bloc_num2) + ".pickle")
+    pck.pickle_store("tf_idf_dict_b" + str(bloc_num1), tf_idf_dict, "")
+    del tf_idf_dict
+
+    # *------------------------------------------*
+    # -- tf_dict --
+    tf_dict = pck.pickle_load("tf_dict_b" + str(bloc_num1), "")
+    tf_dict_2 = pck.pickle_load("tf_dict_b" + str(bloc_num2), "")
+    blocsize = len(tf_dict)
+
+    for wordnum_key_2, dict_value_2 in tf_dict_2.items():
+        # tf_dict[blocsize + wordnum_key_2] = dict_value_2
+        tf_dict[wordnum_key_2] = dict_value_2
+
+    del tf_dict_2
+
+    remove("data/pickle_files/tf_dict_b" + str(bloc_num1) + ".pickle")
+    remove("data/pickle_files/tf_dict_b" + str(bloc_num2) + ".pickle")
+    pck.pickle_store("tf_dict_b" + str(bloc_num1), tf_dict, "")
+    del tf_dict
+
 
 if __name__ == '__main__':
     pass

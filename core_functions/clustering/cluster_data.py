@@ -173,5 +173,9 @@ def hca_loop(tf_idf_dict, nb_clusters):
 
 
 if __name__ == '__main__':
-    pass
+    print("Clustering...")
+    tf_idf_dict = {}
+    nb_clusters = 31
+    docnums_vectors_dict, ward_criteria_list = \
+        hca_loop(tf_idf_dict, nb_clusters=nb_clusters)
 

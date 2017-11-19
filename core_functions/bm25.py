@@ -60,6 +60,11 @@ def bm25_function(query, stopwords,
                 keyword_num_list.append(keyword_num)
 
     docnum_score_sum_dict = {}
+
+    if len(keyword_num_list) == 0:
+        print("No results in the corpus")
+        return docnum_score_sum_dict
+
     for keyword_num in keyword_num_list:
         keyword_docnums_tf_idf_dict = tf_idf_dict[keyword_num]
 
@@ -78,6 +83,12 @@ def bm25_function(query, stopwords,
 
     return docnum_score_sum_dict
 
+
+def test_dict(tf_idf_dict):
+    for i in range(len(tf_idf_dict)):
+        test_val = tf_idf_dict.get(i, -1)
+        if test_val == -1:
+            print(i)
 
 if __name__ == '__main__':
     pass

@@ -26,6 +26,7 @@ def load_data_dict(directory, nb_files_needed=None, indice_start=0):
 
             with open(path, 'r') as infile:
                 data_dict[i] = infile.read()
+
     # Larger mode: with number_files documents
     else:
         i_global = 0
@@ -33,12 +34,20 @@ def load_data_dict(directory, nb_files_needed=None, indice_start=0):
         # dir_ = 'data/text_10000'
         current_path_0 = directory
         for year_dir in os.listdir(current_path_0):
+            if year_dir == ".DS_Store":
+                pass
             current_path_1 = current_path_0 + '/' + year_dir
             for month_dir in os.listdir(current_path_1):
+                if month_dir == ".DS_Store":
+                    pass
                 current_path_2 = current_path_1 + '/' + month_dir
                 for day_dir in os.listdir(current_path_2):
+                    if day_dir == ".DS_Store":
+                        pass
                     current_path_3 = current_path_2 + '/' + day_dir
                     for filename in os.listdir(current_path_3):
+                        if filename == ".DS_Store":
+                            pass
                         file_count += 1
                         # No need to read this file
                         if file_count < indice_start:
