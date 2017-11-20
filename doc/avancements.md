@@ -39,7 +39,7 @@ Crawler possiblement réalisable (pas encore fait).
 Vous fournirez toutes les mesures objectives pertinentes de la performance de votre système. Devront figurer au minimum :
 
 * Le temps de calcul consacré à l’indexation (pour chaque index), et la durée de réponse moyenne à une requête.
-* Vous comparerez  ́egalement l’espace disque occup ́e par les diff ́erents index. Vous expliquerez les diff ́erences constat ́ees.
+* Vous comparerez  ́egalement l’espace disque occupé par les différents index. Vous expliquerez les différences constatées.
 * Enfin, vous estimerez la mémoire occupée lors de l’indexation et lors d’une requête.
  
 **Idée:** Courbe montrant l’évolution de la consommation mémoire pour l’indexation, par exemple avec l’aide de l’outil jconsole **(besoin d'un équivalent sur python)**.
