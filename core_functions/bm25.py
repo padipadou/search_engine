@@ -20,6 +20,7 @@ def bm25_function(query, stopwords,
     :param infos_doc_dict: dict with docnum  as key, list as value (per doc; list[0]: total nb of words, list[1]: term frequency max)
     :return: dict with docnum as key, score of bm25 as value
     """
+    docnum_score_sum_dict = {}
 
     if (word_num_dict is None \
         or tf_idf_dict is None \
@@ -27,37 +28,20 @@ def bm25_function(query, stopwords,
         or infos_doc_dict is None) \
         and byBloc is not True:
         print("Error with arguments in bm25 function.")
+        return docnum_score_sum_dict
 
 
     # bm25 parameters
     k1 = 1.5
     b = 0.75
-
-    nb_words_avg = 0
-    for value in infos_doc_dict.values():
-        nb_words_avg += value[0]
-    nb_words_avg /= len(infos_doc_dict)
+    nb_words_avg = get_nb_words_avg(infos_doc_dict)
 
     # tokenizer, from Kea
     tokenizer = kea.tokenizer()
 
-    # stemmer, from PyStemmer
-    if Const.STEMMER is True:
-        stemmer = pystemmer.Stemmer('french')
-    else:
-        stemmer = None
-
     words_query = tokenizer.tokenize(query)
 
-    keyword_num_list = []
-
-    for word in words_query:
-        norm_word = nrm.normalization(word, stopwords, stemmer)
-        keyword_num = word_num_dict.get(norm_word, -1)
-        if keyword_num >= 0:
-            keyword_num_list.append(keyword_num)
-
-    docnum_score_sum_dict = {}
+    keyword_num_list = get_keyword_num_list(words_query, word_num_dict, stopwords)
 
     if len(keyword_num_list) == 0:
         print("No results in the corpus")
@@ -87,6 +71,34 @@ def test_dict(tf_idf_dict):
         test_val = tf_idf_dict.get(i, -1)
         if test_val == -1:
             print(i)
+
+
+def get_nb_words_avg(infos_doc_dict):
+    nb_words_avg = 0
+    for value in infos_doc_dict.values():
+        nb_words_avg += value[0]
+    nb_words_avg /= len(infos_doc_dict)
+
+    return nb_words_avg
+
+
+def get_keyword_num_list(words_query, word_num_dict, stopwords):
+    keyword_num_list = []
+
+    # stemmer, from PyStemmer
+    if Const.STEMMER is True:
+        stemmer = pystemmer.Stemmer('french')
+    else:
+        stemmer = None
+
+    for word in words_query:
+        norm_word = nrm.normalization(word, stopwords, stemmer)
+        keyword_num = word_num_dict.get(norm_word, -1)
+        if keyword_num >= 0:
+            keyword_num_list.append(keyword_num)
+
+    return keyword_num_list
+
 
 if __name__ == '__main__':
     pass
