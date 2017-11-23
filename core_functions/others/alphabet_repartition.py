@@ -6,6 +6,12 @@ import tqdm as tq
 
 
 def creation_alpha_dict(depth):
+    if 0 < depth < 4:
+        pass
+    else:
+        print("Error with depth.")
+        return {}
+
     alphabet_list = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t",
                      "u", "v", "w", "x", "y", "z"]
     alpha_dict = {}
@@ -17,7 +23,7 @@ def creation_alpha_dict(depth):
             for second_letter in alphabet_list:
                 key_ = first_letter + second_letter
                 alpha_dict[key_] = 0
-        elif depth == 3:
+        elif depth == 3:  # NOT USED FOR THE MOMENT
             for second_letter in alphabet_list:
                 for third_letter in alphabet_list:
                     key_ = first_letter + second_letter + third_letter
@@ -28,13 +34,17 @@ def creation_alpha_dict(depth):
     return alpha_dict
 
 
-def repartition(size_bloc=100):
-    alpha_dict_1 = creation_alpha_dict(1)
-    alpha_dict_2 = creation_alpha_dict(2)
+def repartition(nb_docs_to_look_at=100, depth=2):
+    if 0 < depth < 3:
+        alpha_dict = creation_alpha_dict(depth)
+    else:
+        print("Error with depth.")
+        return {}
 
     data_dict, name_num_dict, num_name_dict = \
-        hd.load_data_dict("../../data/text_10000", size_bloc)
+        hd.load_data_dict("../../data/text_10000", nb_docs_to_look_at)
 
+    # useless data
     del name_num_dict
     del num_name_dict
 
@@ -48,33 +58,20 @@ def repartition(size_bloc=100):
         for line in content_page:
             words_line = tokenizer.tokenize(line)
             for word in words_line:
-                if word.lower() not in stopwords and len(word) > 2:
-                    norm_word = nrm.accents_removal(word)
-                    key_3 = norm_word[:3]
-                    key_2 = norm_word[:2]
-                    key_1 = norm_word[:1]
+                norm_word = nrm.normalization(word, stopwords)
+                if norm_word is not None:
+                    key_ = norm_word[:depth]
 
-                    if alpha_dict_2.get(key_2, -1) >= 0:
-                        alpha_dict_2[key_2] += 1
-                        alpha_dict_1[key_1] += 1
+                    if alpha_dict.get(key_, -1) >= 0:
+                        alpha_dict[key_] += 1
                     else:
-                        alpha_dict_2["0others"] += 1
-                        alpha_dict_1["0others"] += 1
+                        alpha_dict["0others"] += 1
 
-    return alpha_dict_1, alpha_dict_2
-
-
-def write_csv(alpha_dict, total_word_nb):
-    f = open('../../data/aphabet_repartition.csv', 'w')
-
-    for key, value in sorted(alpha_dict.items(), key=lambda x: x[0], reverse=False):
-        row = "{};{}\n".format(key, value/total_word_nb)
-        f.write(row)
-
-    f.close()
+    return alpha_dict
 
 
-def repartition_calc(alpha_dict, total_word_nb, groups_nb):
+def repartition_groups_calc(alpha_dict, groups_nb):
+    total_word_nb = get_total_word_nb(alpha_dict)
     val_nb_group = int(total_word_nb/groups_nb)
 
     val_nb = 0
@@ -96,19 +93,31 @@ def repartition_calc(alpha_dict, total_word_nb, groups_nb):
     return start_end_groups
 
 
-if __name__ == '__main__':
-    # alpha_dict_1, alpha_dict_2 = repartition()
-    # pck.pickle_store("alpha_dict_2", alpha_dict_2, "../../")
-
-    alpha_dict_2 = pck.pickle_load("alpha_dict_2", "../../")
+def get_total_word_nb(alpha_dict):
     total_word_nb = 0
-    for val_ in alpha_dict_2.values():
+    for val_ in alpha_dict.values():
         total_word_nb += val_
 
+    return total_word_nb
+
+
+def write_csv(alpha_dict, total_word_nb):
+    f = open('../../data/aphabet_repartition.csv', 'w')
+
+    for key, value in sorted(alpha_dict.items(), key=lambda x: x[0], reverse=False):
+        row = "{};{}\n".format(key, value/total_word_nb)
+        f.write(row)
+
+    f.close()
+
+
+if __name__ == '__main__':
+    # alpha_dict = repartition(depth=2)
+    # pck.pickle_store("alpha_dict", alpha_dict, "../../")
+
+    alpha_dict = pck.pickle_load("alpha_dict", "../../")
+
     groups_nb = 50
-    start_end_groups = repartition_calc(alpha_dict_2, total_word_nb, groups_nb)
+    start_end_groups = repartition_groups_calc(alpha_dict, groups_nb)
     for start_end_group in start_end_groups:
         print(start_end_group)
-
-
-    # write_csv(alpha_dict, total_word_nb)

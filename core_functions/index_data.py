@@ -39,49 +39,47 @@ def create_index_dict(datadict, stopwords):
             words_line = tokenizer.tokenize(line)
 
             for word in words_line:
-                wordstem = nrm.normalization(word, stopwords, stemmer)
 
-                # No need to keep this word (cf normalization function)
-                if wordstem is None:
-                    pass
+                norm_word = nrm.normalization(word, stopwords, stemmer)
+                if norm_word is not None:
 
-                word_position += 1
-                word_num = word_num_dict.get(wordstem, -1)
+                    word_position += 1
+                    word_num = word_num_dict.get(norm_word, -1)
 
-                # word NOT YET in the index, word NOT YET in the page
-                if word_num < 0:
-                    word_num_dict[wordstem] = word_count
-                    num_word_dict[word_count] = wordstem
-                    if Const.POSITIONS_LIST is True:
-                        index_dict[word_count] = {page_number: [word_position]}
+                    # word NOT YET in the index, word NOT YET in the page
+                    if word_num < 0:
+                        word_num_dict[norm_word] = word_count
+                        num_word_dict[word_count] = norm_word
+                        if Const.POSITIONS_LIST is True:
+                            index_dict[word_count] = {page_number: [word_position]}
+                        else:
+                            index_dict[word_count] = {page_number: 1}
+
+                        if term_frequency_max < 1: term_frequency_max = 1
+
+                        word_count += 1
+
+                    # word ALREADY in the index, word NOT YET in the page
+                    elif word_num >= 0 and page_number not in index_dict[word_num]:
+                        if Const.POSITIONS_LIST is True:
+                            index_dict[word_num] = {**index_dict[word_num], **{page_number: [word_position]}}
+                        else:
+                            index_dict[word_num] = {**index_dict[word_num], **{page_number: 1}}
+
+                    # word ALREADY in the index, word ALREADY in the page
+                    elif word_num >= 0 and page_number in index_dict[word_num]:
+                        if Const.POSITIONS_LIST is True:
+                            index_dict[word_num][page_number] += [word_position]
+                            if term_frequency_max < len(index_dict[word_num][page_number]):
+                                term_frequency_max = len(index_dict[word_num][page_number])
+                        else:
+                            index_dict[word_num][page_number] += 1
+                            if term_frequency_max < index_dict[word_num][page_number]:
+                                term_frequency_max = index_dict[word_num][page_number]
+
+                    # ERROR
                     else:
-                        index_dict[word_count] = {page_number: 1}
-
-                    if term_frequency_max < 1: term_frequency_max = 1
-
-                    word_count += 1
-
-                # word ALREADY in the index, word NOT YET in the page
-                elif word_num >= 0 and page_number not in index_dict[word_num]:
-                    if Const.POSITIONS_LIST is True:
-                        index_dict[word_num] = {**index_dict[word_num], **{page_number: [word_position]}}
-                    else:
-                        index_dict[word_num] = {**index_dict[word_num], **{page_number: 1}}
-
-                # word ALREADY in the index, word ALREADY in the page
-                elif word_num >= 0 and page_number in index_dict[word_num]:
-                    if Const.POSITIONS_LIST is True:
-                        index_dict[word_num][page_number] += [word_position]
-                        if term_frequency_max < len(index_dict[word_num][page_number]):
-                            term_frequency_max = len(index_dict[word_num][page_number])
-                    else:
-                        index_dict[word_num][page_number] += 1
-                        if term_frequency_max < index_dict[word_num][page_number]:
-                            term_frequency_max = index_dict[word_num][page_number]
-
-                # ERROR
-                else:
-                    raise Exception('Issue with word: "{}" \n\tin the page {} \n\tat the position {}'.format(wordstem, page_number, word_position))
+                        raise Exception('Issue with word: "{}" \n\tin the page {} \n\tat the position {}'.format(norm_word, page_number, word_position))
 
         # to get some infos about corpus
         infos_doc_dict[page_number] = []

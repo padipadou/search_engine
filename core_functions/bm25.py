@@ -93,9 +93,10 @@ def get_keyword_num_list(words_query, word_num_dict, stopwords):
 
     for word in words_query:
         norm_word = nrm.normalization(word, stopwords, stemmer)
-        keyword_num = word_num_dict.get(norm_word, -1)
-        if keyword_num >= 0:
-            keyword_num_list.append(keyword_num)
+        if norm_word is not None:
+            keyword_num = word_num_dict.get(norm_word, -1)
+            if keyword_num >= 0:
+                keyword_num_list.append(keyword_num)
 
     return keyword_num_list
 
