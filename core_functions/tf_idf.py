@@ -41,7 +41,7 @@ def idf_function(word_dict):
 
     N_total_docs = Const.CORPUS_SIZE
     n_docs_term = len(word_dict)
-    Ndocs_for_a_word_max = Const.NDOCS_FOR_A_WORD_MAX
+    Ndocs_for_a_word_max = Const.NB_DOCS_FOR_A_WORD_MAX
 
     if Const.IDF_WEIGHT == 'unary':
         return 1

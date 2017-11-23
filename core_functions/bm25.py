@@ -1,6 +1,7 @@
 import libs.kea as kea
 import Stemmer as pystemmer
 from core_functions import Const
+from core_functions import normalization as nrm
 
 
 def bm25_function(query, stopwords,
@@ -43,21 +44,18 @@ def bm25_function(query, stopwords,
     # stemmer, from PyStemmer
     if Const.STEMMER is True:
         stemmer = pystemmer.Stemmer('french')
+    else:
+        stemmer = None
 
     words_query = tokenizer.tokenize(query)
 
     keyword_num_list = []
 
     for word in words_query:
-        if word not in stopwords:
-            if Const.STEMMER is True:
-                wordstem = stemmer.stemWord(word).lower()
-            else:
-                wordstem = word.lower()
-
-            keyword_num = word_num_dict.get(wordstem, -1)
-            if keyword_num >= 0:
-                keyword_num_list.append(keyword_num)
+        norm_word = nrm.normalization(word, stopwords, stemmer)
+        keyword_num = word_num_dict.get(norm_word, -1)
+        if keyword_num >= 0:
+            keyword_num_list.append(keyword_num)
 
     docnum_score_sum_dict = {}
 

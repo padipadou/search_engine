@@ -11,7 +11,7 @@ class Const:
     IDF_WEIGHT = 'idf'
 
     # max number of docs for one word, unknown at the beginning
-    NDOCS_FOR_A_WORD_MAX = 0
+    NB_DOCS_FOR_A_WORD_MAX = 0
 
     # way to calculate distances in clustering, only 'avg_linkage' for the moment
     DIST_MEASURE_GROUPS = 'avg_linkage'

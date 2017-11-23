@@ -18,7 +18,7 @@ def accents_removal(word):
 def normalization(word, stopwords_set, stemmer=None):
     """
     - not in stopwords
-    - length > 2
+    - length >= min_length
     - stem (if needed)
     - lower letters
     - accents removal
@@ -27,7 +27,8 @@ def normalization(word, stopwords_set, stemmer=None):
     :param stemmer: if needed
     :return: clean word
     """
-    if word not in stopwords_set and len(word) > 2:
+    min_length = 3
+    if word not in stopwords_set and len(word) >= min_length:
         if Const.STEMMER is True and stemmer:
             word_stem = stemmer.stemWord(word)
         else:
@@ -37,6 +38,8 @@ def normalization(word, stopwords_set, stemmer=None):
         word_final = accents_removal(word_stem_low)
 
         return word_final
+
+    # No need to keep this word
     else:
         return None
 
