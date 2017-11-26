@@ -3,9 +3,10 @@ import Stemmer as pystemmer
 import tqdm as tq
 from core_functions import Const
 import core_functions.normalization as nrm
+import core_functions.handle_data as hd
 
 
-def create_index_dict(datadict, stopwords):
+def create_index_dict(datadict):
     """
     :param datadict: dict with docnum as key, content of doc as value
     :param stopwords: set of stopwords
@@ -15,6 +16,8 @@ def create_index_dict(datadict, stopwords):
     num_word_dict: dict with wordnum  as key, normalized word as value
     infos_doc_dict: dict with docnum  as key, list as value (per doc; list[0]: total nb of words, list[1]: term frequency max)
     """
+
+    stopwords = hd.load_stopwords_set()
 
     # tokenizer, from Kea
     tokenizer = kea.tokenizer()

@@ -4,46 +4,122 @@ import core_functions.pickle_usage as pck
 import core_functions.handle_data as hd
 import core_functions.index_data as idxd
 import core_functions.tf_idf as ti
+import core_functions.merging_dict as md
 from core_functions import Const
+import psutil
+import gc
+import os
+import time
 
 
-def bloc_indexing(bloc_num, size_bloc=10000):
+def memory_usage():
+    memory_usage = -1
+    pid = os.getpid()
+    infos = None
+    for p in psutil.process_iter(attrs=['pid']):
+        if p.info['pid'] == pid:
+            infos = p.memory_info()
+    if infos:
+        # in Mo
+        memory_usage = int(infos.rss / (1024 ** 3) * 1000)
+
+    if memory_usage < 0:
+        print("Error with memory calculation")
+        return -1
+    else:
+        return memory_usage
+
+
+def bloc_indexing(i_start_doc, bloc_num, nb_total_docs, connection=None):
     """
     Create and store num_name_dict, index_dict, word_num_dict, num_word_dict, infos_doc_dict for one bloc
-    :param bloc_num: number to identify each bloc among others
-    :param size_bloc: number of documents per bloc
-    :return: nothing
+    # :param bloc_num: number to identify each bloc among others
+    # :param size_bloc: number of documents per bloc
+    # :return: nothing
     """
-    data_dict, name_num_dict, num_name_dict = \
-        hd.load_data_dict(Const.DIRECTORY_NAME, size_bloc, bloc_num * size_bloc)
+    i_doc = i_start_doc
+    size_minibloc = 400
+    max_memory_usage = 50 #in Mo
 
-    # useful ?
-    del name_num_dict
+    num_name_dict = {}
+    infos_doc_dict = {}
+    index_dict = {}
+    word_num_dict = {}
+    num_word_dict = {}
 
-    # useful ?
-    pck.pickle_store("num_name_dict_b" + str(bloc_num), num_name_dict, "")
-    del num_name_dict
+    while i_doc < nb_total_docs and memory_usage() < max_memory_usage:
+        data_dict, num_name_dict_temp = \
+            hd.load_data_dict(Const.DIRECTORY_NAME, size_minibloc, i_doc)
 
-    stopwords = hd.load_stopwords_set()
+        print("Memory usage", memory_usage(), "Mo")
 
-    # *------------------------------------------*
-    index_dict, word_num_dict, num_word_dict, infos_doc_dict = \
-        idxd.create_index_dict(data_dict, stopwords)
+        i_doc += len(data_dict)
 
-    del data_dict
-    del stopwords
+        i_newdoc = len(num_name_dict)
+        i_newword = len(word_num_dict)
 
-    pck.pickle_store("index_dict_b" + str(bloc_num), index_dict, "")
-    del index_dict
+        # -- num_name_dict --
+        for key, value in num_name_dict_temp.items():
+            num_name_dict[i_newdoc + key] = value
+        del num_name_dict_temp
 
-    pck.pickle_store("word_num_dict_b" + str(bloc_num), word_num_dict, "")
-    del word_num_dict
+        # /!\ word_num_dict_temp useless
+        index_dict_temp, word_num_dict_temp, num_word_dict_temp, infos_doc_dict_temp = \
+            idxd.create_index_dict(data_dict)
+        del data_dict
 
-    pck.pickle_store("num_word_dict_b" + str(bloc_num), num_word_dict, "")
-    del num_word_dict
+        # -- infos_doc_dict --
+        for key, value in infos_doc_dict_temp.items():
+            infos_doc_dict[i_newdoc + key] = value
+        del infos_doc_dict_temp
 
-    pck.pickle_store("infos_doc_dict_b" + str(bloc_num), infos_doc_dict, "")
-    del infos_doc_dict
+        # -- index_dict, num_word_dict, word_num_dict --
+        for wordnum_key_temp, dict_value_temp in index_dict_temp.items():
+            norm_word = num_word_dict_temp[wordnum_key_temp]
+            word_num = word_num_dict.get(norm_word, -1)
+
+            # word NOT YET in the global index
+            if word_num < 0:
+                word_num_dict[norm_word] = i_newword
+                num_word_dict[i_newword] = norm_word
+                index_dict[i_newword] = {}
+
+                for docnum_key_temp, pos_count_value_temp in dict_value_temp.items():
+                    docnum = i_newdoc + docnum_key_temp
+                    index_dict[i_newword] = {**index_dict[i_newword], **{docnum: pos_count_value_temp}}
+                i_newword += 1
+
+            # word ALREADY in the global index
+            else:
+                for docnum_key_temp, pos_count_value_temp in dict_value_temp.items():
+                    docnum = i_newdoc + docnum_key_temp
+                    index_dict[word_num] = {**index_dict[word_num], **{docnum: pos_count_value_temp}}
+
+        del index_dict_temp
+        del num_word_dict_temp
+
+    # Storing dictionaries
+    if num_name_dict and infos_doc_dict and index_dict and word_num_dict and num_word_dict:
+        pck.pickle_store("num_name_dict_b" + str(bloc_num), num_name_dict, "")
+        del num_name_dict
+
+        pck.pickle_store("index_dict_b" + str(bloc_num), index_dict, "")
+        del index_dict
+
+        pck.pickle_store("word_num_dict_b" + str(bloc_num), word_num_dict, "")
+        del word_num_dict
+
+        pck.pickle_store("num_word_dict_b" + str(bloc_num), num_word_dict, "")
+        del num_word_dict
+
+        pck.pickle_store("infos_doc_dict_b" + str(bloc_num), infos_doc_dict, "")
+        del infos_doc_dict
+
+    if connection:
+        connection.send(i_doc)
+        connection.close()
+    else:
+        return i_doc
 
 
 def bloc_merging(bloc_num1, bloc_num2):
@@ -63,7 +139,7 @@ def bloc_merging(bloc_num1, bloc_num2):
     num_name_dict_2 = pck.pickle_load("num_name_dict_b" + str(bloc_num2), "")
     bloc_size = len(num_name_dict)
 
-    for docnum_key_2, name_value_2  in num_name_dict_2.items():
+    for docnum_key_2, name_value_2 in num_name_dict_2.items():
         num_name_dict[bloc_size + docnum_key_2] = name_value_2
 
     del num_name_dict_2
@@ -128,7 +204,7 @@ def bloc_merging(bloc_num1, bloc_num2):
     infos_doc_dict_2 = pck.pickle_load("infos_doc_dict_b" + str(bloc_num2), "")
     bloc_size = len(infos_doc_dict)
 
-    for docnum_key_2, infos_value_2  in infos_doc_dict_2.items():
+    for docnum_key_2, infos_value_2 in infos_doc_dict_2.items():
         infos_doc_dict[bloc_size + docnum_key_2] = infos_value_2
 
     del infos_doc_dict_2
@@ -154,7 +230,7 @@ def split_indexes(total_nb_blocs_index):
     index_dict_bloc = {}
     for wordnum in range(len(index_dict)):
         # if the bloc is full, need to be stored
-        if wordnum == (current_index_bloc+1) * index_bloc_len:
+        if wordnum == (current_index_bloc + 1) * index_bloc_len:
             pck.pickle_store("index_dict_b" + str(current_index_bloc), index_dict_bloc, "")
             del index_dict_bloc
 

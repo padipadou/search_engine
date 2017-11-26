@@ -1,6 +1,7 @@
 import os
 import time
 from tqdm import tqdm
+import gc
 
 from memory_profiler import profile
 
@@ -12,43 +13,53 @@ import core_functions.pickle_usage as pck
 import core_functions.tf_idf as ti
 from core_functions import Const
 import core_functions.bloc_working as bw
+from multiprocessing import Process, Pipe
 
 
-def main_bloc_creation(bloc_size=100, total_nb_blocs=4, total_nb_blocs_index=1):
+def main_bloc_creation(nb_total_docs):
     # *------------------------------------------*
     print("Creating indexes...")
-    # NEED MULTIPROCESSING
-    for blocnum in range(0, total_nb_blocs, 1):
-        print(blocnum + 1, "/", total_nb_blocs, "...")
-        bw.bloc_indexing(blocnum, bloc_size)
+    nb_docs = 0
+    bloc_num = 0
+    while nb_docs < nb_total_docs:
+        print(nb_docs, " / ", nb_total_docs, " done...")
 
-    # *------------------------------------------*
-    # CAN BE IMPROVED if we need to reduce memory usage
-    print("Merging indexes...")
-    gap = 1
-    while gap < total_nb_blocs:
-        gap *= 2
-        # NEED MULTIPROCESSING
-        for blocnum in range(0, total_nb_blocs, gap):
-            neighboor_blocnum = int(blocnum + gap / 2)
-            bw.bloc_merging(blocnum, neighboor_blocnum)
+        parent_conn, child_conn = Pipe()
+        p = Process(target=bw.bloc_indexing,
+                    args=(nb_docs, bloc_num, nb_total_docs, child_conn))
+        p.start()
+        nb_docs = parent_conn.recv()
+        p.join()
 
-    # *------------------------------------------*
-    print("Splitting indexes...")
-    if total_nb_blocs_index > 1:
-        bw.split_indexes(total_nb_blocs_index)
+        bloc_num += 1
 
-    # *------------------------------------------*
-    print("Calculating tf * idf...")
-    for blocnum in range(0, total_nb_blocs_index, 1):
-        bw.calculate_tf_idf(blocnum, total_nb_blocs_index)
-    # merging
-    gap = 1
-    while gap < total_nb_blocs_index:
-        gap *= 2
-        for blocnum in range(0, total_nb_blocs_index, gap):
-            neighboor_blocnum = int(blocnum + gap / 2)
-            bw.bloc_merging2(blocnum, neighboor_blocnum)
+    # # *------------------------------------------*
+    # # CAN BE IMPROVED if we need to reduce memory usage
+    # print("Merging indexes...")
+    # gap = 1
+    # while gap < total_nb_blocs:
+    #     gap *= 2
+    #     # NEED MULTIPROCESSING
+    #     for blocnum in range(0, total_nb_blocs, gap):
+    #         neighboor_blocnum = int(blocnum + gap / 2)
+    #         bw.bloc_merging(blocnum, neighboor_blocnum)
+    #
+    # # *------------------------------------------*
+    # print("Splitting indexes...")
+    # if total_nb_blocs_index > 1:
+    #     bw.split_indexes(total_nb_blocs_index)
+    #
+    # # *------------------------------------------*
+    # print("Calculating tf * idf...")
+    # for blocnum in range(0, total_nb_blocs_index, 1):
+    #     bw.calculate_tf_idf(blocnum, total_nb_blocs_index)
+    # # merging
+    # gap = 1
+    # while gap < total_nb_blocs_index:
+    #     gap *= 2
+    #     for blocnum in range(0, total_nb_blocs_index, gap):
+    #         neighboor_blocnum = int(blocnum + gap / 2)
+    #         bw.bloc_merging2(blocnum, neighboor_blocnum)
 
 
 def main_bloc_after_creation():
@@ -73,12 +84,11 @@ def main_bloc_after_creation():
 
 
 def main():
-    # main_bloc_creation(bloc_size=1000, total_nb_blocs=1, total_nb_blocs_index=1)
-    main_bloc_after_creation()
+    main_bloc_creation(1200)
+    # main_bloc_after_creation()
 
 
 if __name__ == '__main__':
-
     t_start = time.time()
 
     main()
@@ -86,4 +96,3 @@ if __name__ == '__main__':
     t_end = time.time()
 
     print("Running time = {} second(s)\n".format(t_end - t_start))
-
