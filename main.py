@@ -72,7 +72,6 @@ def main_bloc_after_creation():
         print("{}: \t{}".format(num_name_dict[key], value))
 
 
-# @profile
 def main():
     # main_bloc_creation(bloc_size=1000, total_nb_blocs=1, total_nb_blocs_index=1)
     main_bloc_after_creation()
