@@ -74,7 +74,7 @@ def main_bloc_after_creation():
 
 # @profile
 def main():
-    main_bloc_creation(bloc_size=1000, total_nb_blocs=4, total_nb_blocs_index=2)
+    # main_bloc_creation(bloc_size=1000, total_nb_blocs=1, total_nb_blocs_index=1)
     main_bloc_after_creation()
 
 

@@ -6,12 +6,6 @@ import tqdm as tq
 
 
 def creation_alpha_dict(depth):
-    if 0 < depth < 4:
-        pass
-    else:
-        print("Error with depth.")
-        return {}
-
     alphabet_list = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t",
                      "u", "v", "w", "x", "y", "z"]
     alpha_dict = {}
@@ -34,8 +28,8 @@ def creation_alpha_dict(depth):
     return alpha_dict
 
 
-def repartition(nb_docs_to_look_at=100, depth=2):
-    if 0 < depth < 3:
+def repartition_corpus(nb_docs_to_look_at=100, depth=2):
+    if 0 < depth < 4:
         alpha_dict = creation_alpha_dict(depth)
     else:
         print("Error with depth.")
@@ -102,7 +96,7 @@ def get_total_word_nb(alpha_dict):
 
 
 def write_csv(alpha_dict, total_word_nb):
-    f = open('../../data/aphabet_repartition.csv', 'w')
+    f = open('../../data/alphabet_repartition.csv', 'w')
 
     for key, value in sorted(alpha_dict.items(), key=lambda x: x[0], reverse=False):
         row = "{};{}\n".format(key, value/total_word_nb)
@@ -112,7 +106,7 @@ def write_csv(alpha_dict, total_word_nb):
 
 
 if __name__ == '__main__':
-    # alpha_dict = repartition(depth=2)
+    # alpha_dict = repartition_corpus(depth=3)
     # pck.pickle_store("alpha_dict", alpha_dict, "../../")
 
     alpha_dict = pck.pickle_load("alpha_dict", "../../")
