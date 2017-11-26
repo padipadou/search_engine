@@ -4,3 +4,4 @@ memory_profiler
 matplotlib
 gensim
 nltk
+psutil
