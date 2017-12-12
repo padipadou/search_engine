@@ -4,7 +4,6 @@ import core_functions.pickle_usage as pck
 import core_functions.handle_data as hd
 import core_functions.index_data as idxd
 import core_functions.tf_idf as ti
-import core_functions.merging_dict as md
 from core_functions import Const
 import psutil
 import gc
@@ -13,8 +12,12 @@ import time
 
 
 def memory_usage():
+    """
+    Return memory usage for the current process in Mo
+    :return: memory_usage:
+    """
     memory_usage = -1
-    pid = os.getpid()
+    pid = os.getpid() # this process pid
     infos = None
     for p in psutil.process_iter(attrs=['pid']):
         if p.info['pid'] == pid:
@@ -32,13 +35,17 @@ def memory_usage():
 
 def bloc_indexing(i_start_doc, bloc_num, nb_total_docs, connection=None):
     """
-    Create and store num_name_dict, index_dict, word_num_dict, num_word_dict, infos_doc_dict for one bloc
-    # :param bloc_num: number to identify each bloc among others
-    # :param size_bloc: number of documents per bloc
-    # :return: nothing
+    * Create a directory for each bloc with a precise memory size
+    * Create and store num_name_dict, index_dict, word_num_dict, num_word_dict, infos_doc_dict for one bloc
+    :param i_start_doc: first doc to look at in repertory
+    :param bloc_num: number to store each bloc amongst others
+    :param nb_total_docs: max number of wanted docs
+    :param connection: connection for the process (easiest way to handle memory)
+    :return: i_doc: number of docs which has been explorated in this part
     """
+
     i_doc = i_start_doc
-    size_minibloc = 400
+    minibatch_size = 400
     max_memory_usage = 50 #in Mo
 
     num_name_dict = {}
@@ -49,7 +56,7 @@ def bloc_indexing(i_start_doc, bloc_num, nb_total_docs, connection=None):
 
     while i_doc < nb_total_docs and memory_usage() < max_memory_usage:
         data_dict, num_name_dict_temp = \
-            hd.load_data_dict(Const.DIRECTORY_NAME, size_minibloc, i_doc)
+            hd.load_data_dict(Const.DIRECTORY_NAME, minibatch_size, i_doc)
 
         print("Memory usage", memory_usage(), "Mo")
 
@@ -99,29 +106,36 @@ def bloc_indexing(i_start_doc, bloc_num, nb_total_docs, connection=None):
         del num_word_dict_temp
 
     # Storing dictionaries
+    os.mkdir("data/pickle_files/b_{}".format(bloc_num))
     if num_name_dict and infos_doc_dict and index_dict and word_num_dict and num_word_dict:
-        pck.pickle_store("num_name_dict_b" + str(bloc_num), num_name_dict, "")
+        path_name = "b_{}/num_name_dict_b{}".format(bloc_num, bloc_num)
+        pck.pickle_store(path_name, num_name_dict, "")
         del num_name_dict
 
-        pck.pickle_store("index_dict_b" + str(bloc_num), index_dict, "")
+        path_name = "b_{}/index_dict_b{}".format(bloc_num, bloc_num)
+        pck.pickle_store(path_name, index_dict, "")
         del index_dict
 
-        pck.pickle_store("word_num_dict_b" + str(bloc_num), word_num_dict, "")
+        path_name = "b_{}/word_num_dict_b{}".format(bloc_num, bloc_num)
+        pck.pickle_store(path_name, word_num_dict, "")
         del word_num_dict
 
-        pck.pickle_store("num_word_dict_b" + str(bloc_num), num_word_dict, "")
+        path_name = "b_{}/num_word_dict_b{}".format(bloc_num, bloc_num)
+        pck.pickle_store(path_name, num_word_dict, "")
         del num_word_dict
 
-        pck.pickle_store("infos_doc_dict_b" + str(bloc_num), infos_doc_dict, "")
+        path_name = "b_{}/infos_doc_dict_b{}".format(bloc_num, bloc_num)
+        pck.pickle_store(path_name, infos_doc_dict, "")
         del infos_doc_dict
 
+    # Return nb_docs done
     if connection:
         connection.send(i_doc)
         connection.close()
     else:
         return i_doc
 
-
+#DEPRECATED
 def bloc_merging(bloc_num1, bloc_num2):
     """
     Merge 2 blocs which have been already created
@@ -220,28 +234,67 @@ def bloc_merging(bloc_num1, bloc_num2):
     # word_num_dict     OK
     # infos_doc_dict    OK
 
+def split_indexes(bloc_num, start_end_groups):
 
-def split_indexes(total_nb_blocs_index):
-    index_dict = pck.pickle_load("index_dict_b0", "")
-    remove("data/pickle_files/index_dict_b0.pickle")
-    index_bloc_len = ceil(len(index_dict) / total_nb_blocs_index)
+    depth = len(start_end_groups[0][0])
 
-    current_index_bloc = 0
-    index_dict_bloc = {}
-    for wordnum in range(len(index_dict)):
-        # if the bloc is full, need to be stored
-        if wordnum == (current_index_bloc + 1) * index_bloc_len:
-            pck.pickle_store("index_dict_b" + str(current_index_bloc), index_dict_bloc, "")
-            del index_dict_bloc
+    path_name = "b_{}/index_dict_b{}".format(bloc_num, bloc_num)
+    index_dict = pck.pickle_load(path_name, "")
+    path_name = "b_{}/word_num_dict_b{}".format(bloc_num, bloc_num)
+    word_num_dict = pck.pickle_load(path_name, "")
 
-            current_index_bloc += 1
-            index_dict_bloc = {}
+    for i_alpha_rep, start_end_group in enumerate(start_end_groups):
+        os.mkdir("data/pickle_files/b_{}/b_{}_{}".format(bloc_num, bloc_num, i_alpha_rep))
+        sub_index_dict = {}
+        sub_word_num_dict = {}
+        sub_num_word_dict = {}
 
-        index_dict_bloc[wordnum] = index_dict.get(wordnum)
+        if start_end_group[0] != "0others":
+            start_key = start_end_group[0]
+            end_key = start_end_group[1]
+        else:
+            break
 
-    # last bloc, need to be stored
-    pck.pickle_store("index_dict_b" + str(current_index_bloc), index_dict_bloc, "")
-    del index_dict_bloc
+        for key, value in sorted(word_num_dict.items(), key=lambda x: x[0], reverse=False):
+            first_letters = key[:depth-1]
+            if start_key <= first_letters <= end_key:
+                sub_word_num_dict[key] = value
+                sub_num_word_dict[value] = key
+                sub_index_dict[value] = index_dict[value]
+
+        path_name = "b_{}/b_{}_{}/word_num_dict_b{}_{}".format(bloc_num,
+                                                                bloc_num, i_alpha_rep,
+                                                                bloc_num, i_alpha_rep)
+        pck.pickle_store(path_name, sub_word_num_dict, "")
+        path_name = "b_{}/b_{}_{}/num_word_dict_b{}_{}".format(bloc_num,
+                                                                bloc_num, i_alpha_rep,
+                                                                bloc_num, i_alpha_rep)
+        pck.pickle_store(path_name, sub_num_word_dict, "")
+        path_name = "b_{}/b_{}_{}/index_dict_b{}_{}".format(bloc_num,
+                                                                bloc_num, i_alpha_rep,
+                                                                bloc_num, i_alpha_rep)
+        pck.pickle_store(path_name, sub_index_dict, "")
+
+    # index_dict = pck.pickle_load("index_dict_b0", "")
+    # remove("data/pickle_files/index_dict_b0.pickle")
+    # index_bloc_len = ceil(len(index_dict) / total_nb_blocs_index)
+    #
+    # current_index_bloc = 0
+    # index_dict_bloc = {}
+    # for wordnum in range(len(index_dict)):
+    #     # if the bloc is full, need to be stored
+    #     if wordnum == (current_index_bloc + 1) * index_bloc_len:
+    #         pck.pickle_store("index_dict_b" + str(current_index_bloc), index_dict_bloc, "")
+    #         del index_dict_bloc
+    #
+    #         current_index_bloc += 1
+    #         index_dict_bloc = {}
+    #
+    #     index_dict_bloc[wordnum] = index_dict.get(wordnum)
+    #
+    # # last bloc, need to be stored
+    # pck.pickle_store("index_dict_b" + str(current_index_bloc), index_dict_bloc, "")
+    # del index_dict_bloc
 
 
 def calculate_tf_idf(blocnum, total_nb_blocs_index):

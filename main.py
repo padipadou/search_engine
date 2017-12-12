@@ -19,16 +19,16 @@ from multiprocessing import Process, Pipe
 def main_bloc_creation(nb_total_docs):
     # *------------------------------------------*
     print("Creating indexes...")
-    nb_docs = 0
+    nb_docs_done = 0
     bloc_num = 0
-    while nb_docs < nb_total_docs:
-        print(nb_docs, " / ", nb_total_docs, " done...")
+    while nb_docs_done < nb_total_docs:
+        print("\n", nb_docs_done, "/", nb_total_docs, "done...")
 
         parent_conn, child_conn = Pipe()
         p = Process(target=bw.bloc_indexing,
-                    args=(nb_docs, bloc_num, nb_total_docs, child_conn))
+                    args=(nb_docs_done, bloc_num, nb_total_docs, child_conn))
         p.start()
-        nb_docs = parent_conn.recv()
+        nb_docs_done = parent_conn.recv()
         p.join()
 
         bloc_num += 1

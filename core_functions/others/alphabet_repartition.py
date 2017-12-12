@@ -6,6 +6,11 @@ import tqdm as tq
 
 
 def creation_alpha_dict(depth):
+    """
+    Returns a dict with the beginning of each word regarding the depth
+    :param depth: numbers of first letters to look at
+    :return: alpha_dict
+    """
     alphabet_list = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t",
                      "u", "v", "w", "x", "y", "z"]
     alpha_dict = {}
@@ -17,11 +22,14 @@ def creation_alpha_dict(depth):
             for second_letter in alphabet_list:
                 key_ = first_letter + second_letter
                 alpha_dict[key_] = 0
-        elif depth == 3:  # NOT USED FOR THE MOMENT
+        elif depth == 3:
             for second_letter in alphabet_list:
                 for third_letter in alphabet_list:
                     key_ = first_letter + second_letter + third_letter
                     alpha_dict[key_] = 0
+        else:
+            print("Too deep for now.")
+            return alpha_dict
 
     alpha_dict["0others"] = 0
 
@@ -29,17 +37,23 @@ def creation_alpha_dict(depth):
 
 
 def repartition_corpus(nb_docs_to_look_at=100, depth=2):
+    """
+    counter of words regarding first letters, using same normalization as real search engine
+    :param nb_docs_to_look_at: the more we put in it, the precise it will be
+    :param depth: the more we put in it, the precise it will be (number of first letters to check)
+    :return: alpha_dict with number of words for each beginning of word (key)
+    """
     if 0 < depth < 4:
         alpha_dict = creation_alpha_dict(depth)
     else:
         print("Error with depth.")
         return {}
 
-    data_dict, name_num_dict, num_name_dict = \
+    data_dict, num_name_dict = \
         hd.load_data_dict("../../data/text_10000", nb_docs_to_look_at)
 
     # useless data
-    del name_num_dict
+    # del name_num_dict
     del num_name_dict
 
     # tokenizer, from Kea
@@ -65,24 +79,39 @@ def repartition_corpus(nb_docs_to_look_at=100, depth=2):
 
 
 def repartition_groups_calc(alpha_dict, groups_nb):
+    """
+    try to estimate best distribution to create the number of group that you really need
+    :param alpha_dict: number of words for each beginning of word (key)
+    :param groups_nb: desired number of groups
+    :return: list with each beginning/end of group and size in percentage
+    """
     total_word_nb = get_total_word_nb(alpha_dict)
-    val_nb_group = int(total_word_nb/groups_nb)
+    val_nb_group = int(total_word_nb/(groups_nb-1))
+
+    # last group for other words
+    other_words_value = alpha_dict["0others"]
+    del alpha_dict["0others"]
 
     val_nb = 0
     start_end_groups = []
-    start_key = "00"
-    for key, value in sorted(alpha_dict.items(), key=lambda x: x[0], reverse=False)[1:]:
+    start_key = "000"
+
+#    for key, value in sorted(alpha_dict.items(), key=lambda x: x[0], reverse=False)[1:]:
+    for key, value in sorted(alpha_dict.items(), key=lambda x: x[0], reverse=False):
         val_nb += value
         if val_nb > val_nb_group:
-            start_end_groups.append([start_key, prev_key, val_nb, val_nb / total_word_nb])
+            start_end_groups.append([start_key, prev_key, prev_val, prev_val / total_word_nb])
             start_key = key
             val_nb = value
         prev_key = key
+        prev_val = val_nb
+
+    # last normal group
     if val_nb > 0:
         start_end_groups.append([start_key, prev_key, val_nb, val_nb/total_word_nb])
 
-    val_nb = alpha_dict["0others"]
-    start_end_groups.append(["0others", val_nb, val_nb/total_word_nb])
+    # last group for other words
+    start_end_groups.append(["0others", other_words_value, other_words_value/total_word_nb])
 
     return start_end_groups
 
@@ -95,23 +124,22 @@ def get_total_word_nb(alpha_dict):
     return total_word_nb
 
 
-def write_csv(alpha_dict, total_word_nb):
-    f = open('../../data/alphabet_repartition.csv', 'w')
-
-    for key, value in sorted(alpha_dict.items(), key=lambda x: x[0], reverse=False):
-        row = "{};{}\n".format(key, value/total_word_nb)
-        f.write(row)
-
-    f.close()
-
-
 if __name__ == '__main__':
-    # alpha_dict = repartition_corpus(depth=3)
+    # depth = 3
+    # alpha_dict = repartition_corpus(depth)
     # pck.pickle_store("alpha_dict", alpha_dict, "../../")
 
     alpha_dict = pck.pickle_load("alpha_dict", "../../")
 
-    groups_nb = 50
+    # groups_nb = 27
+    groups_nb = 3
     start_end_groups = repartition_groups_calc(alpha_dict, groups_nb)
+    repartition_max_percent = 0
     for start_end_group in start_end_groups:
         print(start_end_group)
+        if start_end_group[-1] > repartition_max_percent:
+            repartition_max_percent = start_end_group[-1]
+
+    pck.pickle_store("start_end_groups", start_end_groups, "../../")
+
+    print(repartition_max_percent, len(start_end_groups))
