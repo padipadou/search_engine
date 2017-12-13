@@ -2,8 +2,103 @@ import libs.kea as kea
 import Stemmer as pystemmer
 from core_functions import Const
 from core_functions import normalization as nrm
+import core_functions.pickle_usage as pck
+import core_functions.handle_data as hd
 
-def big_query_bm25()
+
+
+def get_sub_bloc_num_dict(words_query, start_end_groups):
+    sub_bloc_num_dict = {}
+    stopwords = hd.load_stopwords_set()
+    depth = 3
+
+    # stemmer, from PyStemmer
+    if Const.STEMMER is True:
+        stemmer = pystemmer.Stemmer('french')
+    else:
+        stemmer = None
+
+    for word in words_query:
+        norm_word = nrm.normalization(word, stopwords, stemmer)
+        if norm_word is not None:
+            for sub_bloc_num, start_end_group in enumerate(start_end_groups):
+                # we have some letters
+                if start_end_group[0] != "0others":
+                    start_key = start_end_group[0]
+                    end_key = start_end_group[1]
+                # other words
+                else:
+                    start_key = False
+                    end_key = False
+
+                if start_key and end_key:
+                    first_letters = norm_word[:depth]
+                    # word is here
+                    if start_key <= first_letters <= end_key:
+                        need_to_add = True
+                    # word is still not here
+                    else:
+                        need_to_add = False
+
+                # last category (others), in default
+                else:
+                    need_to_add = True
+
+                if need_to_add:
+                    if sub_bloc_num_dict.get(sub_bloc_num) is None:
+                        sub_bloc_num_dict[sub_bloc_num] = []
+                    sub_bloc_num_dict[sub_bloc_num].append(norm_word)
+                    break
+
+    return sub_bloc_num_dict
+
+def big_query_bm25(query, start_end_groups):
+
+    docnum_score_sum_dict = {}
+
+    # bm25 parameters
+    k1 = 1.5
+    b = 0.75
+
+    #COULD BE PUT INTO A PROCESS /!\
+    path_name = "b_{}/infos_doc_dict_b{}".format(0, 0)
+    infos_doc_dict = pck.pickle_load(path_name, "")
+    nb_words_avg = get_nb_words_avg(infos_doc_dict)
+    del infos_doc_dict
+
+    # tokenizer, from Kea
+    tokenizer = kea.tokenizer()
+
+    words_query = tokenizer.tokenize(query)
+
+    # keyword_num_list = get_keyword_num_list(words_query, word_num_dict, stopwords)
+    sub_bloc_num_dict = get_sub_bloc_num_dict(words_query, start_end_groups)
+
+    if len(sub_bloc_num_dict) == 0:
+        print("No results in the corpus")
+        return docnum_score_sum_dict
+
+    # *------------------------------------------*
+
+    for keyword_num in keyword_num_list:
+        keyword_docnums_tf_idf_dict = tf_idf_dict[keyword_num]
+
+        for docnum_key in keyword_docnums_tf_idf_dict.keys():
+            tf_idf = keyword_docnums_tf_idf_dict[docnum_key]
+            nb_words = infos_doc_dict[docnum_key][0]
+            docnum_score_sum = docnum_score_sum_dict.get(docnum_key, 0)
+            tf = tf_dict[keyword_num][docnum_key]
+
+            # Bm25 score
+            score = tf_idf * (k1 + 1) \
+                    / (tf + k1 * (1 - b + b * (nb_words / nb_words_avg)))
+
+            # Sum
+            docnum_score_sum_dict[docnum_key] = docnum_score_sum + score
+
+    return docnum_score_sum_dict
+
+
 def bm25_function(query, stopwords,
                   word_num_dict=None,
                   tf_idf_dict=None,
@@ -66,7 +161,7 @@ def bm25_function(query, stopwords,
     return docnum_score_sum_dict
 
 
-def test_dict(tf_idf_dict):
+def test_dict(tf_idf_dict): #useless
     for i in range(len(tf_idf_dict)):
         test_val = tf_idf_dict.get(i, -1)
         if test_val == -1:

@@ -73,21 +73,16 @@ def main_bloc_creation(nb_total_docs):
 
 
 def main_bloc_after_creation():
-    num_name_dict = pck.pickle_load("num_name_dict_b0", "")
-    word_num_dict = pck.pickle_load("word_num_dict_b0", "")
-    infos_doc_dict = pck.pickle_load("infos_doc_dict_b0", "")
-    tf_idf_dict = pck.pickle_load("tf_idf_dict_b0", "")
-    tf_dict = pck.pickle_load("tf_dict_b0", "")
+    start_end_groups = pck.pickle_load("start_end_groups", "")
 
     query_test = "israël jérusalem"
     # query_test = "président hollande"
-    stopwords = hd.load_stopwords_set()
 
-    bm25.test_dict(tf_idf_dict)
-
-    # CAN BE IMPROVED if we need to reduce memory usage
     docnum_score_sum_dict = \
-        bm25.bm25_function(query_test, stopwords, word_num_dict, tf_idf_dict, tf_dict, infos_doc_dict)
+        bm25.big_query_bm25(query_test, start_end_groups)
+
+    path_name = "b_{}/num_name_dict_b{}".format(0, 0)
+    num_name_dict = pck.pickle_load(path_name, "")
 
     for key, value in sorted(docnum_score_sum_dict.items(), key=lambda x: x[1], reverse=True)[:10]:
         print("{}: \t{}".format(num_name_dict[key], value))
