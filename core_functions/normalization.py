@@ -6,13 +6,17 @@ def accents_removal(word):
     """
     é->e
     è->e
+    ã->e
     :param word: dirty word
     :return: clean word
     """
     word1 = word.replace("é", "e")
     word2 = word1.replace("è", "e")
+    word3 = word2.replace("ã", "e")
 
-    return word2
+    final_word = word3
+
+    return final_word
 
 
 def normalization(word, stopwords_set, stemmer=None):
@@ -29,13 +33,14 @@ def normalization(word, stopwords_set, stemmer=None):
     """
     min_length = 3
     if word not in stopwords_set and len(word) >= min_length:
+        word_semiclean = accents_removal(word)
         if Const.STEMMER is True and stemmer:
-            word_stem = stemmer.stemWord(word)
+            word_stem = stemmer.stemWord(word_semiclean)
         else:
-            word_stem = word
+            word_stem = word_semiclean
 
         word_stem_low = word_stem.lower()
-        word_final = accents_removal(word_stem_low)
+        word_final = word_stem_low
 
         return word_final
 

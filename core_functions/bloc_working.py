@@ -9,6 +9,8 @@ import psutil
 import gc
 import os
 import time
+from multiprocessing import Process, Pipe
+
 
 
 def memory_usage():
@@ -136,7 +138,7 @@ def bloc_indexing(i_start_doc, bloc_num, nb_total_docs, connection=None):
         return i_doc
 
 
-def split_indexes(bloc_num, start_end_groups):
+def split_indexes(bloc_num, start_end_groups): #MAYBE NEED TO IMPROVED WITH PROCESSES
 
     depth = len(start_end_groups[0][0])
 
@@ -145,8 +147,8 @@ def split_indexes(bloc_num, start_end_groups):
     path_name = "b_{}/word_num_dict_b{}".format(bloc_num, bloc_num)
     word_num_dict = pck.pickle_load(path_name, "")
 
-    for i_alpha_rep, start_end_group in enumerate(start_end_groups):
-        os.mkdir("data/pickle_files/b_{}/b_{}_{}".format(bloc_num, bloc_num, i_alpha_rep))
+    for sub_bloc_num, start_end_group in enumerate(start_end_groups):
+        os.mkdir("data/pickle_files/b_{}/b_{}_{}".format(bloc_num, bloc_num, sub_bloc_num))
         sub_index_dict = {}
         sub_word_num_dict = {}
         sub_num_word_dict = {}
@@ -181,120 +183,202 @@ def split_indexes(bloc_num, start_end_groups):
         # print("Memory usage", memory_usage(), "Mo", start_key)
 
         path_name = "b_{}/b_{}_{}/word_num_dict_b{}_{}".format(bloc_num,
-                                                                bloc_num, i_alpha_rep,
-                                                                bloc_num, i_alpha_rep)
+                                                                bloc_num, sub_bloc_num,
+                                                                bloc_num, sub_bloc_num)
         pck.pickle_store(path_name, sub_word_num_dict, "")
         path_name = "b_{}/b_{}_{}/num_word_dict_b{}_{}".format(bloc_num,
-                                                                bloc_num, i_alpha_rep,
-                                                                bloc_num, i_alpha_rep)
+                                                                bloc_num, sub_bloc_num,
+                                                                bloc_num, sub_bloc_num)
         pck.pickle_store(path_name, sub_num_word_dict, "")
         path_name = "b_{}/b_{}_{}/index_dict_b{}_{}".format(bloc_num,
-                                                                bloc_num, i_alpha_rep,
-                                                                bloc_num, i_alpha_rep)
+                                                                bloc_num, sub_bloc_num,
+                                                                bloc_num, sub_bloc_num)
         pck.pickle_store(path_name, sub_index_dict, "")
 
 
-#DEPRECATED
-def bloc_merging(bloc_num1, bloc_num2):
-    """
-    Merge 2 blocs which have been already created
-    In order to make a clear distinction:
-    -> each variable linked to bloc_num1 are suffixed by '_1'
-    -> each variable linked to bloc_num2 are suffixed by '_2'
-    -> each variable linked to the final bloc are NOT suffixed
-    :param bloc_num1: number to identify first bloc to merge among others
-    :param bloc_num2: number to identify second bloc to merge among others
-    :return: nothing
-    """
-    # *------------------------------------------*
+def merge_num_name_dict(bloc_num):
     # -- num_name_dict --
-    num_name_dict = pck.pickle_load("num_name_dict_b" + str(bloc_num1), "")
-    num_name_dict_2 = pck.pickle_load("num_name_dict_b" + str(bloc_num2), "")
+    path_name = "b_{}/num_name_dict_b{}".format(0, 0)
+    num_name_dict = pck.pickle_load(path_name, "")
+    path_name_2 = "b_{}/num_name_dict_b{}".format(bloc_num, bloc_num)
+    num_name_dict_2 = pck.pickle_load(path_name_2, "")
     bloc_size = len(num_name_dict)
 
     for docnum_key_2, name_value_2 in num_name_dict_2.items():
         num_name_dict[bloc_size + docnum_key_2] = name_value_2
 
+    print("merge_num_name_dict() : Memory usage", memory_usage(), "Mo")
     del num_name_dict_2
 
-    remove("data/pickle_files/num_name_dict_b" + str(bloc_num1) + ".pickle")
-    remove("data/pickle_files/num_name_dict_b" + str(bloc_num2) + ".pickle")
-    pck.pickle_store("num_name_dict_b" + str(bloc_num1), num_name_dict, "")
+    remove("data/pickle_files/" + path_name + ".pickle")
+    remove("data/pickle_files/" + path_name_2 + ".pickle")
+    pck.pickle_store(path_name, num_name_dict, "")
     del num_name_dict
 
+
+def merge_infos_doc_dict(bloc_num, connection):
+    # -- infos_doc_dict --
+    path_name = "b_{}/infos_doc_dict_b{}".format(0, 0)
+    infos_doc_dict = pck.pickle_load(path_name, "")
+    path_name_2 = "b_{}/infos_doc_dict_b{}".format(bloc_num, bloc_num)
+    infos_doc_dict_2 = pck.pickle_load(path_name_2, "")
+    bloc_size = len(infos_doc_dict)
+
+    for docnum_key_2, infos_value_2 in infos_doc_dict_2.items():
+        infos_doc_dict[bloc_size + docnum_key_2] = infos_value_2
+
+    print("merge_infos_doc_dict() : Memory usage", memory_usage(), "Mo")
+    del infos_doc_dict_2
+
+    remove("data/pickle_files/" + path_name + ".pickle")
+    remove("data/pickle_files/" + path_name_2 + ".pickle")
+    pck.pickle_store(path_name, infos_doc_dict, "")
+    del infos_doc_dict
+
+    # Return nb_docs for b0
+    if connection:
+        connection.send(bloc_size)
+        connection.close()
+    else:
+        return ""
+
+
+def merge_index_wn_nw_dicts(bloc_num, sub_bloc_num, nb_docs_b0):
     # *------------------------------------------*
-    # -- index_dict, num_word_dict, word_num_dict --
-    index_dict = pck.pickle_load("index_dict_b" + str(bloc_num1), "")
-    word_num_dict = pck.pickle_load("word_num_dict_b" + str(bloc_num1), "")
-    num_word_dict = pck.pickle_load("num_word_dict_b" + str(bloc_num1), "")
+    # 0
+    path_name = "b_{}/b_{}_{}/word_num_dict_b{}_{}".format(0,
+                                                           0, sub_bloc_num,
+                                                           0, sub_bloc_num)
+    word_num_dict = pck.pickle_load(path_name, "")
+    path_name = "b_{}/b_{}_{}/num_word_dict_b{}_{}".format(0,
+                                                           0, sub_bloc_num,
+                                                           0, sub_bloc_num)
+    num_word_dict = pck.pickle_load(path_name, "")
+    path_name = "b_{}/b_{}_{}/index_dict_b{}_{}".format(0,
+                                                        0, sub_bloc_num,
+                                                        0, sub_bloc_num)
+    index_dict = pck.pickle_load(path_name, "")
 
-    i_newword = len(word_num_dict)
+    # *------------------------------------------*
+    # bloc_num
+    path_name = "b_{}/b_{}_{}/num_word_dict_b{}_{}".format(bloc_num,
+                                                           bloc_num, sub_bloc_num,
+                                                           bloc_num, sub_bloc_num)
+    num_word_dict_2 = pck.pickle_load(path_name, "")
+    path_name = "b_{}/b_{}_{}/index_dict_b{}_{}".format(bloc_num,
+                                                        bloc_num, sub_bloc_num,
+                                                        bloc_num, sub_bloc_num)
+    index_dict_2 = pck.pickle_load(path_name, "")
 
-    index_dict_2 = pck.pickle_load("index_dict_b" + str(bloc_num2), "")
-    num_word_dict_2 = pck.pickle_load("num_word_dict_b" + str(bloc_num2), "")
+    word_nb = len(word_num_dict)
+
     for wordnum_key_2, dict_value_2 in index_dict_2.items():
         norm_word = num_word_dict_2[wordnum_key_2]
         word_num = word_num_dict.get(norm_word, -1)
 
         # word NOT YET in the index
         if word_num < 0:
-            word_num_dict[norm_word] = i_newword
-            num_word_dict[i_newword] = norm_word
-            index_dict[i_newword] = {}
+            word_num_dict[norm_word] = word_nb
+            num_word_dict[word_nb] = norm_word
+            index_dict[word_nb] = {}
 
             for docnum_key_2, pos_count_value_2 in dict_value_2.items():
-                docnum = bloc_size + docnum_key_2
-                index_dict[i_newword] = {**index_dict[i_newword], **{docnum: pos_count_value_2}}
-            i_newword += 1
+                docnum = nb_docs_b0 + docnum_key_2 #DOCNUM MISTAKE PATCHED
+                index_dict[word_nb] = {**index_dict[word_nb], **{docnum: pos_count_value_2}}
+            word_nb += 1
 
         # word ALREADY in the index
         else:
             for docnum_key_2, pos_count_value_2 in dict_value_2.items():
-                docnum = bloc_size + docnum_key_2
+                docnum = nb_docs_b0 + docnum_key_2 #DOCNUM MISTAKE PATCHED
                 index_dict[word_num] = {**index_dict[word_num], **{docnum: pos_count_value_2}}
 
+    print("merge_index_wn_nw_dicts() : Memory usage", memory_usage(), "Mo")
     del index_dict_2
     del num_word_dict_2
 
-    remove("data/pickle_files/index_dict_b" + str(bloc_num1) + ".pickle")
-    remove("data/pickle_files/index_dict_b" + str(bloc_num2) + ".pickle")
-    pck.pickle_store("index_dict_b" + str(bloc_num1), index_dict, "")
+    # *------------------------------------------*
+    # index_dict
+    path_name = "b_{}/b_{}_{}/index_dict_b{}_{}".format(bloc_num,
+                                                        bloc_num, sub_bloc_num,
+                                                        bloc_num, sub_bloc_num)
+    remove("data/pickle_files/" + path_name + ".pickle")
+    path_name = "b_{}/b_{}_{}/index_dict_b{}_{}".format(0,
+                                                        0, sub_bloc_num,
+                                                        0, sub_bloc_num)
+    remove("data/pickle_files/" + path_name + ".pickle")
+    pck.pickle_store(path_name, index_dict, "")
     del index_dict
 
-    remove("data/pickle_files/word_num_dict_b" + str(bloc_num1) + ".pickle")
-    remove("data/pickle_files/word_num_dict_b" + str(bloc_num2) + ".pickle")
-    pck.pickle_store("word_num_dict_b" + str(bloc_num1), word_num_dict, "")
+    # *------------------------------------------*
+    # word_num_dict
+    path_name = "b_{}/b_{}_{}/word_num_dict_b{}_{}".format(bloc_num,
+                                                           bloc_num, sub_bloc_num,
+                                                           bloc_num, sub_bloc_num)
+    remove("data/pickle_files/" + path_name + ".pickle")
+    path_name = "b_{}/b_{}_{}/word_num_dict_b{}_{}".format(0,
+                                                           0, sub_bloc_num,
+                                                           0, sub_bloc_num)
+    remove("data/pickle_files/" + path_name + ".pickle")
+    pck.pickle_store(path_name, word_num_dict, "")
     del word_num_dict
 
-    remove("data/pickle_files/num_word_dict_b" + str(bloc_num1) + ".pickle")
-    remove("data/pickle_files/num_word_dict_b" + str(bloc_num2) + ".pickle")
-    pck.pickle_store("num_word_dict_b" + str(bloc_num1), num_word_dict, "")
+    # *------------------------------------------*
+    # num_word_dict
+    path_name = "b_{}/b_{}_{}/num_word_dict_b{}_{}".format(bloc_num,
+                                                           bloc_num, sub_bloc_num,
+                                                           bloc_num, sub_bloc_num)
+    remove("data/pickle_files/" + path_name + ".pickle")
+    path_name = "b_{}/b_{}_{}/num_word_dict_b{}_{}".format(0,
+                                                           0, sub_bloc_num,
+                                                           0, sub_bloc_num)
+    remove("data/pickle_files/" + path_name + ".pickle")
+    pck.pickle_store(path_name, num_word_dict, "")
     del num_word_dict
 
+    os.rmdir("data/pickle_files/b_{}/b_{}_{}".format(bloc_num, bloc_num, sub_bloc_num))
+
+
+def bloc_merging(bloc_num):
+    # """
+    # Merge 2 blocs which have been already created
+    # In order to make a clear distinction:
+    # -> each variable linked to bloc_num1 are suffixed by '_1'
+    # -> each variable linked to bloc_num2 are suffixed by '_2'
+    # -> each variable linked to the final bloc are NOT suffixed
+    # :param bloc_num1: number to identify first bloc to merge among others
+    # :param bloc_num2: number to identify second bloc to merge among others
+    # :return: nothing
+    # """
+
     # *------------------------------------------*
-    # -- infos_doc_dict --
-    infos_doc_dict = pck.pickle_load("infos_doc_dict_b" + str(bloc_num1), "")
-    infos_doc_dict_2 = pck.pickle_load("infos_doc_dict_b" + str(bloc_num2), "")
-    bloc_size = len(infos_doc_dict)
+    p = Process(target=merge_num_name_dict,
+                args=(bloc_num,))
+    p.start()
+    p.join()
 
-    for docnum_key_2, infos_value_2 in infos_doc_dict_2.items():
-        infos_doc_dict[bloc_size + docnum_key_2] = infos_value_2
+    # *------------------------------------------*
+    # here we need the number of docs for the next split
+    parent_conn, child_conn = Pipe()
+    p = Process(target=merge_infos_doc_dict,
+                args=(bloc_num, child_conn))
+    p.start()
+    nb_docs_b0 = parent_conn.recv()
+    p.join()
 
-    del infos_doc_dict_2
-
-    remove("data/pickle_files/infos_doc_dict_b" + str(bloc_num1) + ".pickle")
-    remove("data/pickle_files/infos_doc_dict_b" + str(bloc_num2) + ".pickle")
-    pck.pickle_store("infos_doc_dict_b" + str(bloc_num1), infos_doc_dict, "")
-    del infos_doc_dict
-
-    # num_name_dict     OK
-    # index_dict        OK
-    # num_word_dict     OK
-    # word_num_dict     OK
-    # infos_doc_dict    OK
+    # *------------------------------------------*
+    # -- index_dict, num_word_dict, word_num_dict --
+    sub_bloc_num = 0
+    while os.path.isdir("data/pickle_files/b_0/b_0_{}".format(sub_bloc_num)):
+        p = Process(target=merge_index_wn_nw_dicts,
+                    args=(bloc_num, sub_bloc_num, nb_docs_b0))
+        p.start()
+        p.join()
+        sub_bloc_num += 1
 
 
-def calculate_tf_idf(blocnum, total_nb_blocs_index):
+def calculate_tf_idf(blocnum, total_nb_blocs_index): #DEPRECATED
+    # TODO
     infos_doc_dict = pck.pickle_load("infos_doc_dict_b0", "")
 
     index_dict = pck.pickle_load("index_dict_b" + str(blocnum), "")
@@ -310,6 +394,7 @@ def calculate_tf_idf(blocnum, total_nb_blocs_index):
     del tf_idf_dict
 
 
+#DEPRECATED
 def bloc_merging2(bloc_num1, bloc_num2):
     # *------------------------------------------*
     # -- tf_idf_dict --

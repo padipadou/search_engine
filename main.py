@@ -18,23 +18,23 @@ from multiprocessing import Process, Pipe
 
 def main_bloc_creation(nb_total_docs):
     # *------------------------------------------*
-    # print("Creating indexes...")
-    # nb_docs_done = 0
-    # bloc_num = 0
-    # while nb_docs_done < nb_total_docs:
-    #     print("\n", nb_docs_done, "/", nb_total_docs, "done...")
-    #
-    #     parent_conn, child_conn = Pipe()
-    #     p = Process(target=bw.bloc_indexing,
-    #                 args=(nb_docs_done, bloc_num, nb_total_docs, child_conn))
-    #     p.start()
-    #     nb_docs_done = parent_conn.recv()
-    #     p.join()
-    #
-    #     bloc_num += 1
+    print("Creating indexes...", bw.memory_usage(), "Mo")
+    nb_docs_done = 0
+    bloc_num = 0
+    while nb_docs_done < nb_total_docs:
+        print("\n", nb_docs_done, "/", nb_total_docs, "done...", bw.memory_usage(), "Mo")
+
+        parent_conn, child_conn = Pipe()
+        p = Process(target=bw.bloc_indexing,
+                    args=(nb_docs_done, bloc_num, nb_total_docs, child_conn))
+        p.start()
+        nb_docs_done = parent_conn.recv()
+        p.join()
+
+        bloc_num += 1
 
     # *------------------------------------------*
-    print("Splitting indexes...")
+    print("Splitting indexes...", bw.memory_usage(), "Mo")
     total_bloc_nb = 2
     # total_bloc_nb = bloc_num + 1
 
@@ -47,18 +47,17 @@ def main_bloc_creation(nb_total_docs):
         p.join()
 
     # *------------------------------------------*
-    print("Merging indexes...")
-    gap = 1
-    while gap < total_nb_blocs:
-        gap *= 2
-        # NEED MULTIPROCESSING
-        for blocnum in range(0, total_nb_blocs, gap):
-            neighboor_blocnum = int(blocnum + gap / 2)
-            bw.bloc_merging(blocnum, neighboor_blocnum)
-    # # *------------------------------------------*
-    # # CAN BE IMPROVED if we need to reduce memory usage
+    print("Merging indexes...", bw.memory_usage(), "Mo")
+    bloc_num = 1
+    while os.path.isdir("data/pickle_files/b_{}".format(bloc_num)):
+        p = Process(target=bw.bloc_merging,
+                    args=(bloc_num,))
+        p.start()
+        p.join()
 
-    #
+        bloc_num += 1
+    # *------------------------------------------*
+    # TODO
     # print("Calculating tf * idf...")
     # for blocnum in range(0, total_nb_blocs_index, 1):
     #     bw.calculate_tf_idf(blocnum, total_nb_blocs_index)
@@ -93,9 +92,13 @@ def main_bloc_after_creation():
 
 
 def main():
-    main_bloc_creation(1200)
+    main_bloc_creation(3200)
     # main_bloc_after_creation()
-    # path_name = "b_0/b_0_2/word_num_dict_b0_2"
+    # bloc_num = 0
+    # sub_bloc_num = 2
+    # path_name = "b_{}/b_{}_{}/word_num_dict_b{}_{}".format(bloc_num,
+    #                                                        bloc_num, sub_bloc_num,
+    #                                                        bloc_num, sub_bloc_num)
     # word_num_dict = pck.pickle_load(path_name, "")
     # print(word_num_dict)
 if __name__ == '__main__':
