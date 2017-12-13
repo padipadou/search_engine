@@ -48,7 +48,7 @@ def bloc_indexing(i_start_doc, bloc_num, nb_total_docs, connection=None):
 
     i_doc = i_start_doc
     minibatch_size = 400
-    max_memory_usage = 50 #in Mo
+    max_memory_usage = 80 #in Mo
 
     num_name_dict = {}
     infos_doc_dict = {}
@@ -377,20 +377,41 @@ def bloc_merging(bloc_num):
         sub_bloc_num += 1
 
 
-def calculate_tf_idf(blocnum, total_nb_blocs_index): #DEPRECATED
-    # TODO
-    infos_doc_dict = pck.pickle_load("infos_doc_dict_b0", "")
+# def calculate_tf_idf(blocnum, total_nb_blocs_index): #DEPRECATED
+def calculate_tf_idf(sub_bloc_num):
+    # *------------------------------------------*
+    # Loading
+    path_name = "b_{}/infos_doc_dict_b{}".format(0, 0)
+    infos_doc_dict = pck.pickle_load(path_name, "")
 
-    index_dict = pck.pickle_load("index_dict_b" + str(blocnum), "")
+    path_name = "b_{}/b_{}_{}/index_dict_b{}_{}".format(0,
+                                                        0, sub_bloc_num,
+                                                        0, sub_bloc_num)
+    index_dict = pck.pickle_load(path_name, "")
+
+    # *------------------------------------------*
+    # Calculation
     tf_idf_dict, tf_dict = \
         ti.calculate_tf_idf_dict(index_dict, infos_doc_dict)
+    print("calculate_tf_idf() : Memory usage", memory_usage(), "Mo")
+
     del index_dict
     del infos_doc_dict
-    remove("data/pickle_files/index_dict_b" + str(blocnum) + ".pickle")
 
-    pck.pickle_store("tf_dict_b" + str(blocnum), tf_dict, "")
-    pck.pickle_store("tf_idf_dict_b" + str(blocnum), tf_idf_dict, "")
+    # *------------------------------------------*
+    # Storing values
+    remove("data/pickle_files/" + path_name + ".pickle")
+
+    path_name = "b_{}/b_{}_{}/tf_dict_b{}_{}".format(0,
+                                                     0, sub_bloc_num,
+                                                     0, sub_bloc_num)
+    pck.pickle_store(path_name, tf_dict, "")
     del tf_dict
+
+    path_name = "b_{}/b_{}_{}/tf_idf_dict_b{}_{}".format(0,
+                                                     0, sub_bloc_num,
+                                                     0, sub_bloc_num)
+    pck.pickle_store(path_name, tf_idf_dict, "")
     del tf_idf_dict
 
 

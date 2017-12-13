@@ -125,14 +125,14 @@ def get_total_word_nb(alpha_dict):
 
 
 if __name__ == '__main__':
-    # depth = 3
-    # alpha_dict = repartition_corpus(depth)
+    depth = 3
+    alpha_dict = repartition_corpus(depth)
     # pck.pickle_store("alpha_dict", alpha_dict, "../../")
 
-    alpha_dict = pck.pickle_load("alpha_dict", "../../")
+    # alpha_dict = pck.pickle_load("alpha_dict", "../../")
 
     # groups_nb = 27
-    groups_nb = 3
+    groups_nb = 4
     start_end_groups = repartition_groups_calc(alpha_dict, groups_nb)
     repartition_max_percent = 0
     for start_end_group in start_end_groups:

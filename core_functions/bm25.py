@@ -3,7 +3,7 @@ import Stemmer as pystemmer
 from core_functions import Const
 from core_functions import normalization as nrm
 
-
+def big_query_bm25()
 def bm25_function(query, stopwords,
                   word_num_dict=None,
                   tf_idf_dict=None,

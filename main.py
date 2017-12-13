@@ -35,16 +35,18 @@ def main_bloc_creation(nb_total_docs):
 
     # *------------------------------------------*
     print("Splitting indexes...", bw.memory_usage(), "Mo")
-    total_bloc_nb = 2
-    # total_bloc_nb = bloc_num + 1
-
     start_end_groups = pck.pickle_load("start_end_groups", "")
-
-    for bloc_num in range(total_bloc_nb):
+    # total_bloc_nb = 2
+    # # total_bloc_nb = bloc_num + 1
+    # # for bloc_num in range(total_bloc_nb):
+    bloc_num = 0
+    while os.path.isdir("data/pickle_files/b_{}".format(bloc_num)):
         p = Process(target=bw.split_indexes,
                     args=(bloc_num, start_end_groups))
         p.start()
         p.join()
+
+        bloc_num += 1
 
     # *------------------------------------------*
     print("Merging indexes...", bw.memory_usage(), "Mo")
@@ -56,18 +58,18 @@ def main_bloc_creation(nb_total_docs):
         p.join()
 
         bloc_num += 1
+
     # *------------------------------------------*
-    # TODO
-    # print("Calculating tf * idf...")
-    # for blocnum in range(0, total_nb_blocs_index, 1):
-    #     bw.calculate_tf_idf(blocnum, total_nb_blocs_index)
-    # # merging
-    # gap = 1
-    # while gap < total_nb_blocs_index:
-    #     gap *= 2
-    #     for blocnum in range(0, total_nb_blocs_index, gap):
-    #         neighboor_blocnum = int(blocnum + gap / 2)
-    #         bw.bloc_merging2(blocnum, neighboor_blocnum)
+    print("Calculating tf * idf...", bw.memory_usage(), "Mo")
+    sub_bloc_num = 0
+    while os.path.isdir("data/pickle_files/b_{}/b_{}_{}".format(0,
+                                                                0, sub_bloc_num)):
+        p = Process(target=bw.calculate_tf_idf,
+                    args=(sub_bloc_num,))
+        p.start()
+        p.join()
+
+        sub_bloc_num += 1
 
 
 def main_bloc_after_creation():
