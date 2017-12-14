@@ -47,8 +47,8 @@ def bloc_indexing(i_start_doc, bloc_num, nb_total_docs, connection=None):
     """
 
     i_doc = i_start_doc
-    minibatch_size = 400
-    max_memory_usage = 200 #in Mo
+    minibatch_size = 1000
+    max_memory_usage = 80 #in Mo
 
     num_name_dict = {}
     infos_doc_dict = {}
