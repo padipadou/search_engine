@@ -89,8 +89,8 @@ def main_bloc_after_creation():
 
 
 def main():
-    main_bloc_creation(3200)
-    # main_bloc_after_creation()
+    # main_bloc_creation(3200)
+    main_bloc_after_creation()
     # bloc_num = 0
     # sub_bloc_num = 2
     # path_name = "b_{}/b_{}_{}/word_num_dict_b{}_{}".format(bloc_num,

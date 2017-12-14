@@ -6,7 +6,6 @@ import core_functions.pickle_usage as pck
 import core_functions.handle_data as hd
 
 
-
 def get_sub_bloc_num_dict(words_query, start_end_groups):
     sub_bloc_num_dict = {}
     stopwords = hd.load_stopwords_set()
@@ -26,13 +25,8 @@ def get_sub_bloc_num_dict(words_query, start_end_groups):
                 if start_end_group[0] != "0others":
                     start_key = start_end_group[0]
                     end_key = start_end_group[1]
-                # other words
-                else:
-                    start_key = False
-                    end_key = False
-
-                if start_key and end_key:
                     first_letters = norm_word[:depth]
+
                     # word is here
                     if start_key <= first_letters <= end_key:
                         need_to_add = True
@@ -40,8 +34,10 @@ def get_sub_bloc_num_dict(words_query, start_end_groups):
                     else:
                         need_to_add = False
 
-                # last category (others), in default
+                # other words,  last category, in default
                 else:
+                    start_key = False
+                    end_key = False
                     need_to_add = True
 
                 if need_to_add:
@@ -52,6 +48,7 @@ def get_sub_bloc_num_dict(words_query, start_end_groups):
 
     return sub_bloc_num_dict
 
+
 def big_query_bm25(query, start_end_groups):
 
     docnum_score_sum_dict = {}
@@ -60,11 +57,10 @@ def big_query_bm25(query, start_end_groups):
     k1 = 1.5
     b = 0.75
 
-    #COULD BE PUT INTO A PROCESS /!\
+    #COULD BE PUT INTO A PROCESS /!\ (reducing memory, increasing time access ?)
     path_name = "b_{}/infos_doc_dict_b{}".format(0, 0)
     infos_doc_dict = pck.pickle_load(path_name, "")
     nb_words_avg = get_nb_words_avg(infos_doc_dict)
-    del infos_doc_dict
 
     # tokenizer, from Kea
     tokenizer = kea.tokenizer()
@@ -78,23 +74,44 @@ def big_query_bm25(query, start_end_groups):
         print("No results in the corpus")
         return docnum_score_sum_dict
 
-    # *------------------------------------------*
+    # CAN BE PUT INTO DIFFERENT PROCESSES /!\ (reducing memory, increasing time access ?)
+    for sub_bloc_num, words_list in sub_bloc_num_dict.items():
+        # loading dicts
+        path_name = "b_{}/b_{}_{}/word_num_dict_b{}_{}".format(0,
+                                                             0, sub_bloc_num,
+                                                             0, sub_bloc_num)
+        word_num_dict = pck.pickle_load(path_name, "")
+        path_name = "b_{}/b_{}_{}/tf_dict_b{}_{}".format(0,
+                                                         0, sub_bloc_num,
+                                                         0, sub_bloc_num)
+        tf_dict = pck.pickle_load(path_name, "")
+        path_name = "b_{}/b_{}_{}/tf_idf_dict_b{}_{}".format(0,
+                                                             0, sub_bloc_num,
+                                                             0, sub_bloc_num)
+        tf_idf_dict = pck.pickle_load(path_name, "")
 
-    for keyword_num in keyword_num_list:
-        keyword_docnums_tf_idf_dict = tf_idf_dict[keyword_num]
+        # traditional bm25
+        keyword_num_list = get_keyword_num_list(words_list, word_num_dict)
 
-        for docnum_key in keyword_docnums_tf_idf_dict.keys():
-            tf_idf = keyword_docnums_tf_idf_dict[docnum_key]
-            nb_words = infos_doc_dict[docnum_key][0]
-            docnum_score_sum = docnum_score_sum_dict.get(docnum_key, 0)
-            tf = tf_dict[keyword_num][docnum_key]
+        for keyword_num in keyword_num_list:
+            keyword_docnums_tf_idf_dict = tf_idf_dict[keyword_num]
 
-            # Bm25 score
-            score = tf_idf * (k1 + 1) \
-                    / (tf + k1 * (1 - b + b * (nb_words / nb_words_avg)))
+            for docnum_key in keyword_docnums_tf_idf_dict.keys():
+                tf_idf = keyword_docnums_tf_idf_dict[docnum_key]
+                nb_words = infos_doc_dict[docnum_key][0]
+                docnum_score_sum = docnum_score_sum_dict.get(docnum_key, 0)
+                tf = tf_dict[keyword_num][docnum_key]
 
-            # Sum
-            docnum_score_sum_dict[docnum_key] = docnum_score_sum + score
+                # Bm25 score
+                score = tf_idf * (k1 + 1) \
+                        / (tf + k1 * (1 - b + b * (nb_words / nb_words_avg)))
+
+                # Sum
+                docnum_score_sum_dict[docnum_key] = docnum_score_sum + score
+
+        del word_num_dict
+        del tf_dict
+        del tf_idf_dict
 
     return docnum_score_sum_dict
 
@@ -177,21 +194,13 @@ def get_nb_words_avg(infos_doc_dict):
     return nb_words_avg
 
 
-def get_keyword_num_list(words_query, word_num_dict, stopwords):
+def get_keyword_num_list(words_query, word_num_dict): # NEW VERSION
     keyword_num_list = []
 
-    # stemmer, from PyStemmer
-    if Const.STEMMER is True:
-        stemmer = pystemmer.Stemmer('french')
-    else:
-        stemmer = None
-
-    for word in words_query:
-        norm_word = nrm.normalization(word, stopwords, stemmer)
-        if norm_word is not None:
-            keyword_num = word_num_dict.get(norm_word, -1)
-            if keyword_num >= 0:
-                keyword_num_list.append(keyword_num)
+    for norm_word in words_query:
+        keyword_num = word_num_dict.get(norm_word, -1)
+        if keyword_num >= 0:
+            keyword_num_list.append(keyword_num)
 
     return keyword_num_list
 
