@@ -76,7 +76,7 @@ def main_bloc_after_creation():
     start_end_groups = pck.pickle_load("start_end_groups", "")
 
     query_test = "israël jérusalem"
-    # query_test = "président hollande"
+    query_test = "président hollande"
 
     docnum_score_sum_dict = \
         bm25.big_query_bm25(query_test, start_end_groups)
@@ -89,8 +89,8 @@ def main_bloc_after_creation():
 
 
 def main():
-    # main_bloc_creation(3200)
-    main_bloc_after_creation()
+    main_bloc_creation(20000)
+    # main_bloc_after_creation()
     # bloc_num = 0
     # sub_bloc_num = 2
     # path_name = "b_{}/b_{}_{}/word_num_dict_b{}_{}".format(bloc_num,

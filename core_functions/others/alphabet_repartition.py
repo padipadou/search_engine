@@ -131,12 +131,12 @@ if __name__ == '__main__':
 
     # alpha_dict = pck.pickle_load("alpha_dict", "../../")
 
-    # groups_nb = 27
-    groups_nb = 4
+    groups_nb = 27
+    # groups_nb = 4
     start_end_groups = repartition_groups_calc(alpha_dict, groups_nb)
     repartition_max_percent = 0
     for start_end_group in start_end_groups:
-        print(start_end_group)
+        # print(start_end_group)
         if start_end_group[-1] > repartition_max_percent:
             repartition_max_percent = start_end_group[-1]
 

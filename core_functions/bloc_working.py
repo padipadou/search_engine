@@ -48,7 +48,7 @@ def bloc_indexing(i_start_doc, bloc_num, nb_total_docs, connection=None):
 
     i_doc = i_start_doc
     minibatch_size = 400
-    max_memory_usage = 80 #in Mo
+    max_memory_usage = 200 #in Mo
 
     num_name_dict = {}
     infos_doc_dict = {}
@@ -194,6 +194,13 @@ def split_indexes(bloc_num, start_end_groups): #MAYBE NEED TO IMPROVED WITH PROC
                                                                 bloc_num, sub_bloc_num,
                                                                 bloc_num, sub_bloc_num)
         pck.pickle_store(path_name, sub_index_dict, "")
+
+    path_name = "b_{}/index_dict_b{}".format(bloc_num, bloc_num)
+    remove("data/pickle_files/" + path_name + ".pickle")
+    path_name = "b_{}/word_num_dict_b{}".format(bloc_num, bloc_num)
+    remove("data/pickle_files/" + path_name + ".pickle")
+    path_name = "b_{}/num_word_dict_b{}".format(bloc_num, bloc_num)
+    remove("data/pickle_files/" + path_name + ".pickle")
 
 
 def merge_num_name_dict(bloc_num):
