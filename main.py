@@ -89,7 +89,7 @@ def main_bloc_after_creation():
 
 
 def main():
-    main_bloc_creation(20000)
+    main_bloc_creation(100000)
     # main_bloc_after_creation()
     # bloc_num = 0
     # sub_bloc_num = 2

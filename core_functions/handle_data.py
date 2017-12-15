@@ -1,4 +1,5 @@
 import os
+import re
 
 
 def load_data_dict(directory, nb_files_needed=None, indice_start=0):
@@ -31,19 +32,19 @@ def load_data_dict(directory, nb_files_needed=None, indice_start=0):
         # dir_ = 'data/text_10000'
         current_path_0 = directory
         for year_dir in os.listdir(current_path_0):
-            if year_dir == ".DS_Store":
+            if re.search('DS_Store', year_dir):
                 pass
             current_path_1 = current_path_0 + '/' + year_dir
             for month_dir in os.listdir(current_path_1):
-                if month_dir == ".DS_Store":
+                if re.search('DS_Store', month_dir):
                     pass
                 current_path_2 = current_path_1 + '/' + month_dir
                 for day_dir in os.listdir(current_path_2):
-                    if day_dir == ".DS_Store":
+                    if re.search('DS_Store', day_dir):
                         pass
                     current_path_3 = current_path_2 + '/' + day_dir
                     for filename in os.listdir(current_path_3):
-                        if filename == ".DS_Store":
+                        if re.search('DS_Store', filename):
                             pass
                         file_count += 1
                         # No need to read this file
@@ -84,4 +85,9 @@ def load_stopwords_set(path='data/stopwords-fr.txt'):
 
 
 if __name__ == '__main__':
+    text_test = "._.DS_Store"
+    text_test = "S_Store"
+    if re.search('DS_Store', text_test):
+        print("coucou")
+
     pass
