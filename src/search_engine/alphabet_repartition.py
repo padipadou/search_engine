@@ -1,8 +1,9 @@
 import src.handle_data as hd
-import src.pickle_usage as pck
 import src.normalization as nrm
-import libs.kea as kea
 import tqdm as tq
+
+import libs.kea as kea
+import src.search_engine.pickle_usage as pck
 
 
 def creation_alpha_dict(depth):

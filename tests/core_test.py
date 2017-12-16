@@ -1,6 +1,9 @@
-import src.index_data as id
-import load_data_test as ld
 import time
+
+import load_data_test as ld
+
+import src.search_engine.index_data as id
+
 
 def main():
     print("Loading data...")

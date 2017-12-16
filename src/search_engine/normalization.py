@@ -1,5 +1,5 @@
+import src.search_engine.handle_data as hd
 from src import Const
-import src.handle_data as hd
 
 
 def accents_removal(word):

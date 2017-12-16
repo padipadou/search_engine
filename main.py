@@ -1,19 +1,11 @@
 import os
 import time
-from tqdm import tqdm
-import gc
-
-from memory_profiler import profile
-
-import src.bm25 as bm25
-import src.clustering.cluster_data as cl_cl
-import src.handle_data as hd
-import src.index_data as idxd
-import src.pickle_usage as pck
-import src.tf_idf as ti
-from src import Const
-import src.bloc_working as bw
 from multiprocessing import Process, Pipe
+
+import src.bloc_working as bw
+import src.bm25 as bm25
+
+import src.search_engine.pickle_usage as pck
 
 
 def main_bloc_creation(nb_total_docs):

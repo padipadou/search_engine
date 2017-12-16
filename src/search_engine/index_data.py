@@ -1,9 +1,13 @@
+import src.search_engine.normalization as nrm
+import src.search_engine.handle_data as hd
+import src.search_engine.pickle_usage as pck
+import src.other.memory_usage as mem
 import libs.kea as kea
-import Stemmer as pystemmer
-import tqdm as tq
 from src import Const
-import src.normalization as nrm
-import src.handle_data as hd
+
+import Stemmer as pystemmer
+import os
+from tqdm import tqdm
 
 
 def create_index_dict(datadict):
@@ -32,7 +36,7 @@ def create_index_dict(datadict):
     infos_doc_dict = {}
     word_count = 0
 
-    for page_number in tq.tqdm(datadict.keys()):
+    for page_number in tqdm(datadict.keys()):
         word_position = 0
         term_frequency_max = 0
         content_page = datadict[page_number].split('\n')
@@ -102,6 +106,109 @@ def create_index_dict(datadict):
     Const.NB_DOCS_FOR_A_WORD_MAX = nb_docs_for_a_word_max
 
     return index_dict, word_num_dict, num_word_dict, infos_doc_dict
+
+
+def bloc_indexing(i_start_doc, bloc_num, nb_total_docs, connection=None):
+    """
+    * Create a directory for each bloc with a precise memory size
+    * Create and store num_name_dict, index_dict, word_num_dict, num_word_dict, infos_doc_dict for one bloc
+    :param i_start_doc: first doc to look at in repertory
+    :param bloc_num: number to store each bloc amongst others
+    :param nb_total_docs: max number of wanted docs
+    :param connection: connection for the process (easiest way to handle memory)
+    :return: i_doc: number of docs which has been explorated in this part
+    """
+
+    i_doc = i_start_doc
+    minibatch_size = Const.MINIBATCH_SIZE
+    max_memory_usage = Const.MEMORY_SIZE #in Mo
+
+    num_name_dict = {}
+    infos_doc_dict = {}
+    index_dict = {}
+    word_num_dict = {}
+    num_word_dict = {}
+
+    while i_doc < nb_total_docs and mem.memory_usage() < max_memory_usage:
+        data_dict, num_name_dict_temp = \
+            hd.load_data_dict(Const.DIRECTORY_NAME, minibatch_size, i_doc)
+
+        print("Memory usage", mem.memory_usage(), "Mo")
+
+        i_doc += len(data_dict)
+
+        i_newdoc = len(num_name_dict)
+        i_newword = len(word_num_dict)
+
+        # -- num_name_dict --
+        for key, value in num_name_dict_temp.items():
+            num_name_dict[i_newdoc + key] = value
+        del num_name_dict_temp
+
+        # /!\ word_num_dict_temp useless
+        index_dict_temp, word_num_dict_temp, num_word_dict_temp, infos_doc_dict_temp = \
+            create_index_dict(data_dict)
+        del data_dict
+
+        # -- infos_doc_dict --
+        for key, value in infos_doc_dict_temp.items():
+            infos_doc_dict[i_newdoc + key] = value
+        del infos_doc_dict_temp
+
+        # -- index_dict, num_word_dict, word_num_dict --
+        for wordnum_key_temp, dict_value_temp in index_dict_temp.items():
+            norm_word = num_word_dict_temp[wordnum_key_temp]
+            word_num = word_num_dict.get(norm_word, -1)
+
+            # word NOT YET in the global index
+            if word_num < 0:
+                word_num_dict[norm_word] = i_newword
+                num_word_dict[i_newword] = norm_word
+                index_dict[i_newword] = {}
+
+                for docnum_key_temp, pos_count_value_temp in dict_value_temp.items():
+                    docnum = i_newdoc + docnum_key_temp
+                    index_dict[i_newword] = {**index_dict[i_newword], **{docnum: pos_count_value_temp}}
+                i_newword += 1
+
+            # word ALREADY in the global index
+            else:
+                for docnum_key_temp, pos_count_value_temp in dict_value_temp.items():
+                    docnum = i_newdoc + docnum_key_temp
+                    index_dict[word_num] = {**index_dict[word_num], **{docnum: pos_count_value_temp}}
+
+        del index_dict_temp
+        del num_word_dict_temp
+
+    # Storing dictionaries
+    os.mkdir("data/pickle_files/b_{}".format(bloc_num))
+    if num_name_dict and infos_doc_dict and index_dict and word_num_dict and num_word_dict:
+        path_name = "b_{}/num_name_dict_b{}".format(bloc_num, bloc_num)
+        pck.pickle_store(path_name, num_name_dict, "")
+        del num_name_dict
+
+        path_name = "b_{}/index_dict_b{}".format(bloc_num, bloc_num)
+        pck.pickle_store(path_name, index_dict, "")
+        del index_dict
+
+        path_name = "b_{}/word_num_dict_b{}".format(bloc_num, bloc_num)
+        pck.pickle_store(path_name, word_num_dict, "")
+        del word_num_dict
+
+        path_name = "b_{}/num_word_dict_b{}".format(bloc_num, bloc_num)
+        pck.pickle_store(path_name, num_word_dict, "")
+        del num_word_dict
+
+        path_name = "b_{}/infos_doc_dict_b{}".format(bloc_num, bloc_num)
+        pck.pickle_store(path_name, infos_doc_dict, "")
+        del infos_doc_dict
+
+    # Return nb_docs done
+    if connection:
+        connection.send(i_doc)
+        connection.close()
+    else:
+        return i_doc
 
 
 if __name__ == '__main__':

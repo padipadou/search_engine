@@ -1,18 +1,14 @@
 from gensim.models import Word2Vec
-import src.handle_data as ld
-import os
+from nltk.corpus.reader.plaintext import PlaintextCorpusReader
+
+import src.search_engine.handle_data as ld
 
 # from nltk.corpus import brown, movie_reviews, treebank
-
-
 # b = Word2Vec(brown.sents())
 # mr = Word2Vec(movie_reviews.sents())
 # t = Word2Vec(treebank.sents())
-
 # print(b.most_similar('money', topn=5))
 # print(brown.sents())
-
-from nltk.corpus.reader.plaintext import PlaintextCorpusReader
 
 corpusdir = 'data/lemonde_utf8/' # Directory of corpus.
 # corpusdir = '/home/david/PycharmProjects/search_engine/data/lemonde-utf8/' # Directory of corpus.

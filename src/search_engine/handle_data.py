@@ -96,12 +96,4 @@ if __name__ == '__main__':
     if os.path.isdir(text_test):
         print("coucou")
     # print(os.listdir(text_test))
-
-
-
-
-
-
-
-
     pass
