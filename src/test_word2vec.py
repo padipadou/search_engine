@@ -1,5 +1,5 @@
 from gensim.models import Word2Vec
-import core_functions.handle_data as ld
+import src.handle_data as ld
 import os
 
 # from nltk.corpus import brown, movie_reviews, treebank

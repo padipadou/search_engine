@@ -1,5 +1,5 @@
-from core_functions import Const
-import core_functions.handle_data as hd
+from src import Const
+import src.handle_data as hd
 
 
 def accents_removal(word):

@@ -1,9 +1,9 @@
 import libs.kea as kea
 import Stemmer as pystemmer
 import tqdm as tq
-from core_functions import Const
-import core_functions.normalization as nrm
-import core_functions.handle_data as hd
+from src import Const
+import src.normalization as nrm
+import src.handle_data as hd
 
 
 def create_index_dict(datadict):

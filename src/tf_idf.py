@@ -1,4 +1,4 @@
-from core_functions import Const
+from src import Const
 from math import log10
 
 

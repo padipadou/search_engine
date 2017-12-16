@@ -1,6 +1,6 @@
-import core_functions.handle_data as hd
-import core_functions.pickle_usage as pck
-import core_functions.normalization as nrm
+import src.handle_data as hd
+import src.pickle_usage as pck
+import src.normalization as nrm
 import libs.kea as kea
 import tqdm as tq
 

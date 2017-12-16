@@ -1,10 +1,10 @@
 from os import remove
 from math import ceil
-import core_functions.pickle_usage as pck
-import core_functions.handle_data as hd
-import core_functions.index_data as idxd
-import core_functions.tf_idf as ti
-from core_functions import Const
+import src.pickle_usage as pck
+import src.handle_data as hd
+import src.index_data as idxd
+import src.tf_idf as ti
+from src import Const
 import psutil
 import gc
 import os

@@ -1,5 +1,5 @@
 import unittest
-import core_functions.index_data as id
+import src.index_data as id
 import tests.load_data_test as ld
 
 class test_search_engine(unittest.TestCase):

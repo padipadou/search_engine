@@ -1,5 +1,5 @@
-import core_functions.clustering.similar_docs as sd
-from core_functions import Const
+import src.clustering.similar_docs as sd
+from src import Const
 
 
 def compute_Total_Inertia(centreOfGravityDict, all_vectors_dict):

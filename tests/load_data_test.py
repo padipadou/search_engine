@@ -60,7 +60,7 @@ def load_stopwords_set():
 
 
 if __name__ == '__main__':
-    import core_functions.index_data as id
+    import src.index_data as id
     import tests.load_data_test as ldtest
 
     data_dict, name_num_dict, num_name_dict = ldtest.load_hiboudata_dict()
