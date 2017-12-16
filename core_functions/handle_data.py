@@ -33,40 +33,41 @@ def load_data_dict(directory, nb_files_needed=None, indice_start=0):
         current_path_0 = directory
         for year_dir in os.listdir(current_path_0):
             if re.search('DS_Store', year_dir):
-                pass
+                break
             current_path_1 = current_path_0 + '/' + year_dir
             for month_dir in os.listdir(current_path_1):
                 if re.search('DS_Store', month_dir):
-                    pass
+                    break
                 current_path_2 = current_path_1 + '/' + month_dir
                 for day_dir in os.listdir(current_path_2):
                     if re.search('DS_Store', day_dir):
-                        pass
+                        break
                     current_path_3 = current_path_2 + '/' + day_dir
                     for filename in os.listdir(current_path_3):
                         if re.search('DS_Store', filename):
                             pass
-                        file_count += 1
-                        # No need to read this file
-                        if file_count < indice_start:
-                            pass
+                        else:
+                            file_count += 1
+                            # No need to read this file
+                            if file_count < indice_start:
+                                pass
 
-                        # This file is necessary for this batch (if it exists)
-                        elif file_count >= indice_start and i_global < nb_files_needed:
-                            current_path_4 = current_path_3 + '/' + filename
-                            num_name_dict[i_global] = filename
+                            # This file is necessary for this batch (if it exists)
+                            elif file_count >= indice_start and i_global < nb_files_needed:
+                                current_path_4 = current_path_3 + '/' + filename
+                                num_name_dict[i_global] = filename
 
-                            try:
-                                with open(current_path_4, 'r', encoding="utf-8") as infile:
-                                    data_dict[i_global] = infile.read()
-                                i_global += 1
-                            except:
-                                print("Not enough files ! Only {} here.".format(i_global))
+                                try:
+                                    with open(current_path_4, 'r', encoding="utf-8") as infile:
+                                        data_dict[i_global] = infile.read()
+                                    i_global += 1
+                                except:
+                                    print("Not enough files ! Only {} here.".format(i_global))
+                                    return data_dict, num_name_dict
+
+                            # We have enough files for this batch
+                            elif i_global >= nb_files_needed:
                                 return data_dict, num_name_dict
-
-                        # We have enough files for this batch
-                        elif i_global >= nb_files_needed:
-                            return data_dict, num_name_dict
 
     return data_dict, num_name_dict
 
@@ -87,7 +88,20 @@ def load_stopwords_set(path='data/stopwords-fr.txt'):
 if __name__ == '__main__':
     text_test = "._.DS_Store"
     text_test = "S_Store"
-    if re.search('DS_Store', text_test):
+    text_test = "data/text_10000/2013/07/._.DS_Store"
+    text_test = "data"
+    # if re.search('DS_Store', text_test):
+    #     print("coucou")
+
+    if os.path.isdir(text_test):
         print("coucou")
+    # print(os.listdir(text_test))
+
+
+
+
+
+
+
 
     pass
