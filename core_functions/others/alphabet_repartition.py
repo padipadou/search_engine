@@ -14,22 +14,32 @@ def creation_alpha_dict(depth):
     alphabet_list = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t",
                      "u", "v", "w", "x", "y", "z"]
     alpha_dict = {}
-    for first_letter in alphabet_list:
-        if depth == 1:
+
+    if depth == 1:
+        for first_letter in alphabet_list:
             key_ = first_letter
             alpha_dict[key_] = 0
-        elif depth == 2:
+    elif depth == 2:
+        for first_letter in alphabet_list:
             for second_letter in alphabet_list:
                 key_ = first_letter + second_letter
                 alpha_dict[key_] = 0
-        elif depth == 3:
+    elif depth == 3:
+        for first_letter in alphabet_list:
             for second_letter in alphabet_list:
                 for third_letter in alphabet_list:
                     key_ = first_letter + second_letter + third_letter
                     alpha_dict[key_] = 0
-        else:
-            print("Too deep for now.")
-            return alpha_dict
+    elif depth == 4:
+        for first_letter in alphabet_list:
+            for second_letter in alphabet_list:
+                for third_letter in alphabet_list:
+                    for fourth_letter in alphabet_list:
+                        key_ = first_letter + second_letter + third_letter + fourth_letter
+                        alpha_dict[key_] = 0
+    else:
+        print("Too deep for now.")
+        return alpha_dict
 
     alpha_dict["0others"] = 0
 

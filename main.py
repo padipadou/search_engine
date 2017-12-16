@@ -79,7 +79,7 @@ def main_bloc_after_creation():
     query_test = "président hollande"
 
     docnum_score_sum_dict = \
-        bm25.big_query_bm25(query_test, start_end_groups)
+        bm25.bm25(query_test, start_end_groups)
 
     path_name = "b_{}/num_name_dict_b{}".format(0, 0)
     num_name_dict = pck.pickle_load(path_name, "")

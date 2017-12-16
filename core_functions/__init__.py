@@ -31,3 +31,9 @@ class Const:
     # true or false -> false allows less memory usage (instead of a position list, only one int)
     POSITIONS_LIST = False
 
+    # size max in Mo for datablocs at the beginning
+    MEMORY_SIZE = 200
+
+    # size for one data batch (number of docs)
+    MINIBATCH_SIZE = 1000
+
