@@ -9,13 +9,13 @@ import time
 # TODO: args for exec / Makefile
 
 def main():
-    depth = 3
-    groups_nb = 27
-    nb_docs_to_look_at = 3000
-
-    alp.alphabet_repartition(nb_docs_to_look_at, depth, groups_nb)
+    # depth = 3
+    # groups_nb = 27
+    # nb_docs_to_look_at = 3000
+    #
+    # alp.alphabet_repartition(nb_docs_to_look_at, depth, groups_nb)
     # bw.indexes_creation(3000)
-    # bw.query()
+    bw.query()
 
     # bloc_num = 0
     # sub_bloc_num = 2
