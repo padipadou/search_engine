@@ -28,10 +28,10 @@ def split_indexes(bloc_num, start_end_groups):  # MAYBE NEED TO IMPROVED WITH PR
             start_key = False
             end_key = False
 
-        # useless to sort...
-        # sorted_items = sorted(word_num_dict.items(), key=lambda x: x[0], reverse=False)
-        items_ = word_num_dict.items()
-        for key, value in items_:
+        # useless to sort... but mandatory
+        sorted_items = sorted(word_num_dict.items(), key=lambda x: x[0], reverse=False)
+        # items_ = word_num_dict.items() # ISSUE HERE: RuntimeError: dictionary changed size during iteration
+        for key, value in sorted_items:
             if start_key and end_key:
                 first_letters = key[:depth]
                 if start_key <= first_letters <= end_key:

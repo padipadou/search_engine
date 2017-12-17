@@ -7,6 +7,7 @@ import libs.kea as kea
 
 import Stemmer as pystemmer
 import os
+from os import remove
 from tqdm import tqdm
 
 
@@ -184,7 +185,12 @@ def bloc_indexing(i_start_doc, bloc_num, nb_total_docs, connection=None):
         del num_word_dict_temp
 
     # Storing dictionaries
-    os.mkdir("data/pickle_files/b_{}".format(bloc_num))
+    try:
+        os.mkdir("data/pickle_files/b_{}".format(bloc_num))
+    except:
+        remove("data/pickle_files/b_{}".format(bloc_num))
+        os.mkdir("data/pickle_files/b_{}".format(bloc_num))
+
     if num_name_dict and infos_doc_dict and index_dict and word_num_dict and num_word_dict:
         path_name = "b_{}/num_name_dict_b{}".format(bloc_num, bloc_num)
         pck.pickle_store(path_name, num_name_dict, "")
