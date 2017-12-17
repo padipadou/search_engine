@@ -1,11 +1,10 @@
-import Stemmer as pystemmer
-
-import src.search_engine.normalization  as nrm
-
-import libs.kea as kea
 import src.other.pickle_usage as pck
 import src.search_engine.sub_steps.handle_data as hd
+import src.search_engine.sub_steps.normalization  as nrm
 from src import Const
+import libs.kea as kea
+
+import Stemmer as pystemmer
 
 
 def get_sub_bloc_num_dict(words_query, start_end_groups):
@@ -95,7 +94,7 @@ def bm25(query, start_end_groups):
     k1 = 1.5
     b = 0.75
 
-    #COULD BE PUT INTO A PROCESS /!\ (reducing memory, increasing time access ?)
+    # COULD BE PUT INTO A PROCESS /!\ (reducing memory, increasing time access ?)
     path_name = "b_{}/infos_doc_dict_b{}".format(0, 0)
     infos_doc_dict = pck.pickle_load(path_name, "")
     nb_words_avg = get_nb_words_avg(infos_doc_dict)
@@ -116,8 +115,8 @@ def bm25(query, start_end_groups):
     for sub_bloc_num, words_list in sub_bloc_num_dict.items():
         # loading dicts
         path_name = "b_{}/b_{}_{}/word_num_dict_b{}_{}".format(0,
-                                                             0, sub_bloc_num,
-                                                             0, sub_bloc_num)
+                                                               0, sub_bloc_num,
+                                                               0, sub_bloc_num)
         word_num_dict = pck.pickle_load(path_name, "")
         path_name = "b_{}/b_{}_{}/tf_dict_b{}_{}".format(0,
                                                          0, sub_bloc_num,

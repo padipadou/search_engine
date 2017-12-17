@@ -1,9 +1,9 @@
-from math import log10
-from os import remove
-
 import src.other.memory_usage as mem
 import src.other.pickle_usage as pck
 from src import Const
+
+from math import log10
+from os import remove
 
 
 def tf_function(positions_or_count, infos_doc):

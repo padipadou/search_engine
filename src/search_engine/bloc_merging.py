@@ -1,9 +1,9 @@
+import src.other.memory_usage as mem
+import src.other.pickle_usage as pck
+
 import os
 from multiprocessing import Process, Pipe
 from os import remove
-
-import src.other.memory_usage as mem
-import src.other.pickle_usage as pck
 
 
 def merge_num_name_dict(bloc_num):

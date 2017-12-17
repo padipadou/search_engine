@@ -3,6 +3,7 @@ import src.other.pickle_usage as pck
 import os
 from os import remove
 
+
 def split_indexes(bloc_num, start_end_groups):  # MAYBE NEED TO IMPROVED WITH PROCESSES
 
     depth = len(start_end_groups[0][0])

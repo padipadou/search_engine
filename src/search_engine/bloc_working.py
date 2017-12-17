@@ -10,6 +10,7 @@ import src.other.pickle_usage as pck
 import os
 from multiprocessing import Process, Pipe
 
+
 # Before the query, requires some time
 def indexes_creation(nb_total_docs):
     # *------------------------------------------*
