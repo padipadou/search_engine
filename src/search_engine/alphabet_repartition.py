@@ -151,7 +151,8 @@ def alphabet_repartition(nb_docs_to_look_at, depth, groups_nb):
         if start_end_group[-1] > repartition_max_percent:
             repartition_max_percent = start_end_group[-1]
 
-    pck.pickle_store("start_end_groups", start_end_groups, "../../")
+    # pck.pickle_store("start_end_groups", start_end_groups, "../../")
+    pck.pickle_store("start_end_groups", start_end_groups, "")
 
     print(repartition_max_percent, len(start_end_groups))
 
