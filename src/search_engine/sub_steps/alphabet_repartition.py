@@ -1,9 +1,9 @@
-import src.search_engine.normalization as nrm
-from tqdm import tqdm
-
-import libs.kea as kea
-import src.other.pickle_usage as pck
+import src.search_engine.sub_steps.normalization as nrm
 import src.search_engine.sub_steps.handle_data as hd
+import src.other.pickle_usage as pck
+import libs.kea as kea
+
+from tqdm import tqdm
 
 
 def get_total_word_nb(alpha_dict):

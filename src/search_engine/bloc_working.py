@@ -1,15 +1,14 @@
-import os
-from multiprocessing import Process, Pipe
-
-import src.search_engine.bloc_working.bloc_merging as bm
-import src.search_engine.bloc_working.bloc_splitting as bs
-import src.search_engine.bm25 as bm25
-import src.search_engine.tf_idf as ti
+import src.search_engine.bloc_merging as bm
+import src.search_engine.bloc_splitting as bs
+import src.search_engine.sub_steps.bm25 as bm25
+import src.search_engine.sub_steps.tf_idf as ti
+import src.search_engine.sub_steps.index_data as id
 
 import src.other.memory_usage as mem
 import src.other.pickle_usage as pck
-import src.search_engine.sub_steps.index_data as id
 
+import os
+from multiprocessing import Process, Pipe
 
 # Before the query, requires some time
 def indexes_creation(nb_total_docs):
