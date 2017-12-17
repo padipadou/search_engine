@@ -1,10 +1,10 @@
-import src.search_engine.bloc_working as bw
+import src.search_engine.bloc_working.bloc_working as bw
 import time
 
 
 def main():
-    bw.indexes_creation(1000)
-    bw.query()
+    bw.indexes_creation(3000)
+    # bw.query()
 
     # bloc_num = 0
     # sub_bloc_num = 2

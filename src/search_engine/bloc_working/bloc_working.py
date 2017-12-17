@@ -10,20 +10,6 @@ import os
 from multiprocessing import Process, Pipe
 
 
-# from os import remove
-#
-# import src.tf_idf as ti
-#
-# import src.search_engine.pickle_usage as pck
-#
-# from multiprocessing import Process, Pipe
-#
-# import src.bloc_working as bw
-# import src.bm25 as bm25
-#
-# import src.search_engine.pickle_usage as pck
-
-
 def indexes_creation(nb_total_docs):
     # *------------------------------------------*
     print("Creating indexes...", mem.memory_usage(), "Mo")
