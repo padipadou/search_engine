@@ -1,14 +1,20 @@
 import src.search_engine.bloc_working.bloc_working as bw
+import src.search_engine.alphabet_repartition as alp
 import time
 
 
 # TODO: comment / docstring all functions
 # TODO: bigrams
 # TODO: mini summary for each text
-
+# TODO: args for exec / Makefile
 
 def main():
-    bw.indexes_creation(3000)
+    depth = 3
+    groups_nb = 27
+    nb_docs_to_look_at = 3000
+
+    alp.alphabet_repartition(nb_docs_to_look_at, depth, groups_nb)
+    # bw.indexes_creation(3000)
     # bw.query()
 
     # bloc_num = 0

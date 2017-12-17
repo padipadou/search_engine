@@ -69,7 +69,8 @@ def repartition_corpus(nb_docs_to_look_at=100, depth=2):
         return {}
 
     data_dict, num_name_dict = \
-        hd.load_data_dict("../../data/text_10000", nb_docs_to_look_at)
+        hd.load_data_dict("data/text_10000", nb_docs_to_look_at)
+        # hd.load_data_dict("../../data/text_10000", nb_docs_to_look_at)
 
     # useless data
     del num_name_dict
@@ -77,7 +78,8 @@ def repartition_corpus(nb_docs_to_look_at=100, depth=2):
     # tokenizer, from Kea
     tokenizer = kea.tokenizer()
 
-    stopwords = hd.load_stopwords_set('../../data/stopwords-fr.txt')
+    # stopwords = hd.load_stopwords_set('../../data/stopwords-fr.txt')
+    stopwords = hd.load_stopwords_set('data/stopwords-fr.txt')
 
     for page_number in tqdm(data_dict.keys()):
         content_page = data_dict[page_number].split('\n')

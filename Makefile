@@ -7,5 +7,5 @@ exec:
 	python3 main.py
 
 clean:
-	rm data/pickle_files/*.pickle
-	rm b_*
+	rm -rf data/pickle_files/*.pickle
+	rm -rf data/pickle_files/b_*
