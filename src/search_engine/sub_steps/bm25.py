@@ -1,10 +1,11 @@
-import src.search_engine.handle_data as hd
-import src.search_engine.normalization  as nrm
-import src.search_engine.pickle_usage as pck
-from src import Const
-import libs.kea as kea
-
 import Stemmer as pystemmer
+
+import src.search_engine.normalization  as nrm
+
+import libs.kea as kea
+import src.other.pickle_usage as pck
+import src.search_engine.sub_steps.handle_data as hd
+from src import Const
 
 
 def get_sub_bloc_num_dict(words_query, start_end_groups):

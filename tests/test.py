@@ -1,6 +1,6 @@
 import unittest
 
-import src.search_engine.index_data as id
+import src.search_engine.sub_steps.index_data as id
 import tests.load_data_test as ld
 
 

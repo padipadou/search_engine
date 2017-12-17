@@ -1,4 +1,4 @@
-import src.search_engine.handle_data as hd
+import src.search_engine.sub_steps.handle_data as hd
 from src import Const
 
 

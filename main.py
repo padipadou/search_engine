@@ -1,12 +1,16 @@
-import src.search_engine.bloc_working.bloc_working as bw
-import src.search_engine.alphabet_repartition as alp
 import time
+
+import src.search_engine.bloc_working as bw
 
 
 # TODO: comment / docstring all functions
 # TODO: bigrams
-# TODO: mini summary for each text
+# TODO: (mini summary for each text) (NOT MANDATORY)
 # TODO: args for exec / Makefile
+# TODO: process to look at memory usage on all processes
+# TODO: doc how-to-use-?
+# TODO: relevant ? try proposed queries
+
 
 def main():
     # depth = 3

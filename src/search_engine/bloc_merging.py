@@ -1,9 +1,9 @@
-import src.search_engine.pickle_usage as pck
-import src.other.memory_usage as mem
-
 import os
-from os import remove
 from multiprocessing import Process, Pipe
+from os import remove
+
+import src.other.memory_usage as mem
+import src.other.pickle_usage as pck
 
 
 def merge_num_name_dict(bloc_num):

@@ -1,7 +1,7 @@
 from gensim.models import Word2Vec
 from nltk.corpus.reader.plaintext import PlaintextCorpusReader
 
-import src.search_engine.handle_data as ld
+import src.search_engine.sub_steps.handle_data as ld
 
 # from nltk.corpus import brown, movie_reviews, treebank
 # b = Word2Vec(brown.sents())

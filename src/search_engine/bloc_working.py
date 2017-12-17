@@ -1,15 +1,17 @@
-import src.search_engine.bm25 as bm25
-import src.search_engine.pickle_usage as pck
-import src.search_engine.index_data as id
-import src.search_engine.bloc_working.bloc_splitting as bs
-import src.search_engine.bloc_working.bloc_merging as bm
-import src.search_engine.tf_idf as ti
-import src.other.memory_usage as mem
-
 import os
 from multiprocessing import Process, Pipe
 
+import src.search_engine.bloc_working.bloc_merging as bm
+import src.search_engine.bloc_working.bloc_splitting as bs
+import src.search_engine.bm25 as bm25
+import src.search_engine.tf_idf as ti
 
+import src.other.memory_usage as mem
+import src.other.pickle_usage as pck
+import src.search_engine.sub_steps.index_data as id
+
+
+# Before the query, requires some time
 def indexes_creation(nb_total_docs):
     # *------------------------------------------*
     print("Creating indexes...", mem.memory_usage(), "Mo")
@@ -66,6 +68,7 @@ def indexes_creation(nb_total_docs):
         sub_bloc_num += 1
 
 
+# Only the query, requires first step already completed
 def query(query=None):
     start_end_groups = pck.pickle_load("start_end_groups", "")
     if query is None:

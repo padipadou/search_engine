@@ -1,14 +1,15 @@
-import src.search_engine.normalization as nrm
-import src.search_engine.handle_data as hd
-import src.search_engine.pickle_usage as pck
-import src.other.memory_usage as mem
-from src import Const
-import libs.kea as kea
-
 import Stemmer as pystemmer
 import os
 from os import remove
+
+import src.search_engine.normalization as nrm
 from tqdm import tqdm
+
+import libs.kea as kea
+import src.other.memory_usage as mem
+import src.other.pickle_usage as pck
+import src.search_engine.sub_steps.handle_data as hd
+from src import Const
 
 
 def create_index_dict(datadict):
