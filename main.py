@@ -2,6 +2,11 @@ import src.search_engine.bloc_working.bloc_working as bw
 import time
 
 
+# TODO: comment / docstring all functions
+# TODO: bigrams
+# TODO: mini summary for each text
+
+
 def main():
     bw.indexes_creation(3000)
     # bw.query()
