@@ -20,8 +20,8 @@ def creation_alpha_dict(depth):
     :param depth: numbers of first letters to look at
     :return: alpha_dict
     """
-    alphabet_list = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t",
-                     "u", "v", "w", "x", "y", "z"]
+    alphabet_list = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j",
+                     "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"]
     alpha_dict = {}
 
     if depth == 1:
@@ -104,7 +104,7 @@ def repartition_groups_calc(alpha_dict, groups_nb):
     :return: list with each beginning/end of group and size in percentage
     """
     total_word_nb = get_total_word_nb(alpha_dict)
-    val_nb_group = int(total_word_nb/(groups_nb-1))
+    val_nb_group = int(total_word_nb / (groups_nb - 1))
 
     # last group for other words
     other_words_value = alpha_dict["0others"]
@@ -125,10 +125,10 @@ def repartition_groups_calc(alpha_dict, groups_nb):
 
     # last normal group
     if val_nb > 0:
-        start_end_groups.append([start_key, prev_key, val_nb, val_nb/total_word_nb])
+        start_end_groups.append([start_key, prev_key, val_nb, val_nb / total_word_nb])
 
     # last group for other words
-    start_end_groups.append(["0others", other_words_value, other_words_value/total_word_nb])
+    start_end_groups.append(["0others", other_words_value, other_words_value / total_word_nb])
 
     return start_end_groups
 

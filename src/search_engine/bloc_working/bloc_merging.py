@@ -1,75 +1,9 @@
-import os
-from multiprocessing import Process, Pipe
-from os import remove
-
-import src.tf_idf as ti
-
 import src.search_engine.pickle_usage as pck
+import src.other.memory_usage as mem
 
-
-def split_indexes(bloc_num, start_end_groups): #MAYBE NEED TO IMPROVED WITH PROCESSES
-
-    depth = len(start_end_groups[0][0])
-
-    path_name = "b_{}/index_dict_b{}".format(bloc_num, bloc_num)
-    index_dict = pck.pickle_load(path_name, "")
-    path_name = "b_{}/word_num_dict_b{}".format(bloc_num, bloc_num)
-    word_num_dict = pck.pickle_load(path_name, "")
-
-    for sub_bloc_num, start_end_group in enumerate(start_end_groups):
-        os.mkdir("data/pickle_files/b_{}/b_{}_{}".format(bloc_num, bloc_num, sub_bloc_num))
-        sub_index_dict = {}
-        sub_word_num_dict = {}
-        sub_num_word_dict = {}
-
-        # we have some letters
-        if start_end_group[0] != "0others":
-            start_key = start_end_group[0]
-            end_key = start_end_group[1]
-        # other words
-        else:
-            start_key = False
-            end_key = False
-
-        #useless to sort...
-        # sorted_items = sorted(word_num_dict.items(), key=lambda x: x[0], reverse=False)
-        for key, value in word_num_dict.items():
-            if start_key and end_key:
-                first_letters = key[:depth]
-                if start_key <= first_letters <= end_key:
-                    need_to_add = True
-                else:
-                    need_to_add = False
-            else:
-                need_to_add = True
-
-            if need_to_add:
-                sub_word_num_dict[key] = value
-                sub_num_word_dict[value] = key
-                sub_index_dict[value] = index_dict[value]
-                del word_num_dict[key]
-
-        # print("Memory usage", memory_usage(), "Mo", start_key)
-
-        path_name = "b_{}/b_{}_{}/word_num_dict_b{}_{}".format(bloc_num,
-                                                                bloc_num, sub_bloc_num,
-                                                                bloc_num, sub_bloc_num)
-        pck.pickle_store(path_name, sub_word_num_dict, "")
-        path_name = "b_{}/b_{}_{}/num_word_dict_b{}_{}".format(bloc_num,
-                                                                bloc_num, sub_bloc_num,
-                                                                bloc_num, sub_bloc_num)
-        pck.pickle_store(path_name, sub_num_word_dict, "")
-        path_name = "b_{}/b_{}_{}/index_dict_b{}_{}".format(bloc_num,
-                                                                bloc_num, sub_bloc_num,
-                                                                bloc_num, sub_bloc_num)
-        pck.pickle_store(path_name, sub_index_dict, "")
-
-    path_name = "b_{}/index_dict_b{}".format(bloc_num, bloc_num)
-    remove("data/pickle_files/" + path_name + ".pickle")
-    path_name = "b_{}/word_num_dict_b{}".format(bloc_num, bloc_num)
-    remove("data/pickle_files/" + path_name + ".pickle")
-    path_name = "b_{}/num_word_dict_b{}".format(bloc_num, bloc_num)
-    remove("data/pickle_files/" + path_name + ".pickle")
+import os
+from os import remove
+from multiprocessing import Process, Pipe
 
 
 def merge_num_name_dict(bloc_num):
@@ -83,7 +17,7 @@ def merge_num_name_dict(bloc_num):
     for docnum_key_2, name_value_2 in num_name_dict_2.items():
         num_name_dict[bloc_size + docnum_key_2] = name_value_2
 
-    print("merge_num_name_dict() : Memory usage", memory_usage(), "Mo")
+    print("merge_num_name_dict() : Memory usage", mem.memory_usage(), "Mo")
     del num_name_dict_2
 
     remove("data/pickle_files/" + path_name + ".pickle")
@@ -103,7 +37,7 @@ def merge_infos_doc_dict(bloc_num, connection):
     for docnum_key_2, infos_value_2 in infos_doc_dict_2.items():
         infos_doc_dict[bloc_size + docnum_key_2] = infos_value_2
 
-    print("merge_infos_doc_dict() : Memory usage", memory_usage(), "Mo")
+    print("merge_infos_doc_dict() : Memory usage", mem.memory_usage(), "Mo")
     del infos_doc_dict_2
 
     remove("data/pickle_files/" + path_name + ".pickle")
@@ -159,17 +93,17 @@ def merge_index_wn_nw_dicts(bloc_num, sub_bloc_num, nb_docs_b0):
             index_dict[word_nb] = {}
 
             for docnum_key_2, pos_count_value_2 in dict_value_2.items():
-                docnum = nb_docs_b0 + docnum_key_2 #DOCNUM MISTAKE PATCHED
+                docnum = nb_docs_b0 + docnum_key_2  # DOCNUM MISTAKE PATCHED
                 index_dict[word_nb] = {**index_dict[word_nb], **{docnum: pos_count_value_2}}
             word_nb += 1
 
         # word ALREADY in the index
         else:
             for docnum_key_2, pos_count_value_2 in dict_value_2.items():
-                docnum = nb_docs_b0 + docnum_key_2 #DOCNUM MISTAKE PATCHED
+                docnum = nb_docs_b0 + docnum_key_2  # DOCNUM MISTAKE PATCHED
                 index_dict[word_num] = {**index_dict[word_num], **{docnum: pos_count_value_2}}
 
-    print("merge_index_wn_nw_dicts() : Memory usage", memory_usage(), "Mo")
+    print("merge_index_wn_nw_dicts() : Memory usage", mem.memory_usage(), "Mo")
     del index_dict_2
     del num_word_dict_2
 
@@ -226,6 +160,11 @@ def bloc_merging(bloc_num):
     # :param bloc_num2: number to identify second bloc to merge among others
     # :return: nothing
     # """
+    """
+
+    :param bloc_num:
+    :return:
+    """
 
     # *------------------------------------------*
     p = Process(target=merge_num_name_dict,

@@ -31,7 +31,7 @@ def tf_function(positions_or_count, infos_doc):
     elif Const.TF_WEIGHT == 'log_frequency':
         return 1 + log10(count)
     elif Const.TF_WEIGHT == 'double_normal_05':
-        return 0.5 + 0.5 * (count/term_freq_max)
+        return 0.5 + 0.5 * (count / term_freq_max)
     else:
         raise Exception('Issue with TF calculation: {}'.format(Const.TF_WEIGHT))
 
@@ -50,15 +50,15 @@ def idf_function(word_dict):
     if Const.IDF_WEIGHT == 'unary':
         return 1
     elif Const.IDF_WEIGHT == 'idf':
-        return log10(N_total_docs/n_docs_term)
+        return log10(N_total_docs / n_docs_term)
     elif Const.IDF_WEIGHT == 'idf_smooth':
-        return log10(1 + N_total_docs/n_docs_term)
+        return log10(1 + N_total_docs / n_docs_term)
     elif Const.IDF_WEIGHT == 'idf_max':
-        return log10(Ndocs_for_a_word_max/(1 + n_docs_term))
+        return log10(Ndocs_for_a_word_max / (1 + n_docs_term))
     elif Const.IDF_WEIGHT == 'idf_probalistic':
-        return log10((N_total_docs - n_docs_term)/n_docs_term)
+        return log10((N_total_docs - n_docs_term) / n_docs_term)
     elif Const.IDF_WEIGHT == 'idf_probalistic_05':
-        return log10((N_total_docs - n_docs_term + 0.5)/(n_docs_term + 0.5))
+        return log10((N_total_docs - n_docs_term + 0.5) / (n_docs_term + 0.5))
     else:
         raise Exception('Issue with IDF calculation: {}'.format(Const.IDF_WEIGHT))
 
@@ -126,8 +126,8 @@ def calculate_tf_idf(sub_bloc_num):
     del tf_dict
 
     path_name = "b_{}/b_{}_{}/tf_idf_dict_b{}_{}".format(0,
-                                                     0, sub_bloc_num,
-                                                     0, sub_bloc_num)
+                                                         0, sub_bloc_num,
+                                                         0, sub_bloc_num)
     pck.pickle_store(path_name, tf_idf_dict, "")
     del tf_idf_dict
 

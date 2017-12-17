@@ -86,7 +86,10 @@ def create_index_dict(datadict):
 
                     # ERROR
                     else:
-                        raise Exception('Issue with word: "{}" \n\tin the page {} \n\tat the position {}'.format(norm_word, page_number, word_position))
+                        raise Exception(
+                            'Issue with word: "{}" \n\tin the page {} \n\tat the position {}'.format(norm_word,
+                                                                                                     page_number,
+                                                                                                     word_position))
 
         # to get some infos about corpus
         infos_doc_dict[page_number] = []
@@ -121,7 +124,7 @@ def bloc_indexing(i_start_doc, bloc_num, nb_total_docs, connection=None):
 
     i_doc = i_start_doc
     minibatch_size = Const.MINIBATCH_SIZE
-    max_memory_usage = Const.MEMORY_SIZE #in Mo
+    max_memory_usage = Const.MEMORY_SIZE  # in Mo
 
     num_name_dict = {}
     infos_doc_dict = {}
