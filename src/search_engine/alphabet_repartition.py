@@ -1,9 +1,17 @@
-import src.handle_data as hd
-import src.normalization as nrm
-import tqdm as tq
+import src.search_engine.handle_data as hd
+import src.search_engine.normalization as nrm
+import src.search_engine.pickle_usage as pck
 
 import libs.kea as kea
-import src.search_engine.pickle_usage as pck
+from tqdm import tqdm
+
+
+def get_total_word_nb(alpha_dict):
+    total_word_nb = 0
+    for val_ in alpha_dict.values():
+        total_word_nb += val_
+
+    return total_word_nb
 
 
 def creation_alpha_dict(depth):
@@ -64,7 +72,6 @@ def repartition_corpus(nb_docs_to_look_at=100, depth=2):
         hd.load_data_dict("../../data/text_10000", nb_docs_to_look_at)
 
     # useless data
-    # del name_num_dict
     del num_name_dict
 
     # tokenizer, from Kea
@@ -72,7 +79,7 @@ def repartition_corpus(nb_docs_to_look_at=100, depth=2):
 
     stopwords = hd.load_stopwords_set('../../data/stopwords-fr.txt')
 
-    for page_number in tq.tqdm(data_dict.keys()):
+    for page_number in tqdm(data_dict.keys()):
         content_page = data_dict[page_number].split('\n')
         for line in content_page:
             words_line = tokenizer.tokenize(line)
@@ -107,7 +114,6 @@ def repartition_groups_calc(alpha_dict, groups_nb):
     start_end_groups = []
     start_key = "000"
 
-#    for key, value in sorted(alpha_dict.items(), key=lambda x: x[0], reverse=False)[1:]:
     for key, value in sorted(alpha_dict.items(), key=lambda x: x[0], reverse=False):
         val_nb += value
         if val_nb > val_nb_group:
@@ -127,30 +133,30 @@ def repartition_groups_calc(alpha_dict, groups_nb):
     return start_end_groups
 
 
-def get_total_word_nb(alpha_dict):
-    total_word_nb = 0
-    for val_ in alpha_dict.values():
-        total_word_nb += val_
-
-    return total_word_nb
-
-
-if __name__ == '__main__':
-    depth = 3
-    alpha_dict = repartition_corpus(depth)
-    # pck.pickle_store("alpha_dict", alpha_dict, "../../")
-
-    # alpha_dict = pck.pickle_load("alpha_dict", "../../")
-
-    groups_nb = 27
-    # groups_nb = 4
+def alphabet_repartition(nb_docs_to_look_at, depth, groups_nb):
+    """
+    create start_end_groups and store it
+    :param nb_docs_to_look_at: the more we put in it, the precise it will be
+    :param depth: the more we put in it, the precise it will be (number of first letters to check)
+    :param groups_nb: desired number of groups
+    :return: start_end_groups: list of list with start_key, prev_key, number of words, percentage
+    """
+    alpha_dict = repartition_corpus(nb_docs_to_look_at, depth)
     start_end_groups = repartition_groups_calc(alpha_dict, groups_nb)
+
     repartition_max_percent = 0
     for start_end_group in start_end_groups:
-        # print(start_end_group)
         if start_end_group[-1] > repartition_max_percent:
             repartition_max_percent = start_end_group[-1]
 
     pck.pickle_store("start_end_groups", start_end_groups, "../../")
 
     print(repartition_max_percent, len(start_end_groups))
+
+
+if __name__ == '__main__':
+    depth = 3
+    groups_nb = 27
+    nb_docs_to_look_at = 1000
+
+    alphabet_repartition(nb_docs_to_look_at, depth, groups_nb)

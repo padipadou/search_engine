@@ -1,11 +1,10 @@
-import Stemmer as pystemmer
-
-import src.handle_data as hd
-
-import libs.kea as kea
+import src.search_engine.handle_data as hd
+import src.search_engine.normalization  as nrm
 import src.search_engine.pickle_usage as pck
 from src import Const
-from src import normalization as nrm
+import libs.kea as kea
+
+import Stemmer as pystemmer
 
 
 def get_sub_bloc_num_dict(words_query, start_end_groups):
@@ -46,7 +45,7 @@ def get_sub_bloc_num_dict(words_query, start_end_groups):
                     if sub_bloc_num_dict.get(sub_bloc_num) is None:
                         sub_bloc_num_dict[sub_bloc_num] = []
                     sub_bloc_num_dict[sub_bloc_num].append(norm_word)
-                    break
+                    continue
 
     return sub_bloc_num_dict
 

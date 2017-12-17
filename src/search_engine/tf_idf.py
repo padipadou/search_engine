@@ -1,5 +1,9 @@
+import src.search_engine.pickle_usage as pck
+import src.other.memory_usage as mem
 from src import Const
+
 from math import log10
+from os import remove
 
 
 def tf_function(positions_or_count, infos_doc):
@@ -81,14 +85,51 @@ def calculate_tf_idf_dict(index_dict, infos_doc_dict):
 
             tf_idf_word_dict[document] = tf * idf
 
-            if Const.BM_25 == True:
+            if Const.BM_25 is True:
                 tf_word_dict[document] = tf
 
         tf_idf_dict[wordnum] = tf_idf_word_dict
-        if Const.BM_25 == True:
+        if Const.BM_25 is True:
             tf_dict[wordnum] = tf_word_dict
 
     return tf_idf_dict, tf_dict
+
+
+def calculate_tf_idf(sub_bloc_num):
+    # *------------------------------------------*
+    # Loading
+    path_name = "b_{}/infos_doc_dict_b{}".format(0, 0)
+    infos_doc_dict = pck.pickle_load(path_name, "")
+
+    path_name = "b_{}/b_{}_{}/index_dict_b{}_{}".format(0,
+                                                        0, sub_bloc_num,
+                                                        0, sub_bloc_num)
+    index_dict = pck.pickle_load(path_name, "")
+
+    # *------------------------------------------*
+    # Calculation
+    tf_idf_dict, tf_dict = \
+        calculate_tf_idf_dict(index_dict, infos_doc_dict)
+    print("calculate_tf_idf() : Memory usage", mem.memory_usage(), "Mo")
+
+    del index_dict
+    del infos_doc_dict
+
+    # *------------------------------------------*
+    # Storing values
+    remove("data/pickle_files/" + path_name + ".pickle")
+
+    path_name = "b_{}/b_{}_{}/tf_dict_b{}_{}".format(0,
+                                                     0, sub_bloc_num,
+                                                     0, sub_bloc_num)
+    pck.pickle_store(path_name, tf_dict, "")
+    del tf_dict
+
+    path_name = "b_{}/b_{}_{}/tf_idf_dict_b{}_{}".format(0,
+                                                     0, sub_bloc_num,
+                                                     0, sub_bloc_num)
+    pck.pickle_store(path_name, tf_idf_dict, "")
+    del tf_idf_dict
 
 
 if __name__ == '__main__':

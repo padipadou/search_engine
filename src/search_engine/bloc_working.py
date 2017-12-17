@@ -32,8 +32,8 @@ def split_indexes(bloc_num, start_end_groups): #MAYBE NEED TO IMPROVED WITH PROC
             end_key = False
 
         #useless to sort...
-        sorted_items = sorted(word_num_dict.items(), key=lambda x: x[0], reverse=False)
-        for key, value in sorted_items:
+        # sorted_items = sorted(word_num_dict.items(), key=lambda x: x[0], reverse=False)
+        for key, value in word_num_dict.items():
             if start_key and end_key:
                 first_letters = key[:depth]
                 if start_key <= first_letters <= end_key:
@@ -251,43 +251,6 @@ def bloc_merging(bloc_num):
         p.start()
         p.join()
         sub_bloc_num += 1
-
-
-def calculate_tf_idf(sub_bloc_num):
-    # *------------------------------------------*
-    # Loading
-    path_name = "b_{}/infos_doc_dict_b{}".format(0, 0)
-    infos_doc_dict = pck.pickle_load(path_name, "")
-
-    path_name = "b_{}/b_{}_{}/index_dict_b{}_{}".format(0,
-                                                        0, sub_bloc_num,
-                                                        0, sub_bloc_num)
-    index_dict = pck.pickle_load(path_name, "")
-
-    # *------------------------------------------*
-    # Calculation
-    tf_idf_dict, tf_dict = \
-        ti.calculate_tf_idf_dict(index_dict, infos_doc_dict)
-    print("calculate_tf_idf() : Memory usage", memory_usage(), "Mo")
-
-    del index_dict
-    del infos_doc_dict
-
-    # *------------------------------------------*
-    # Storing values
-    remove("data/pickle_files/" + path_name + ".pickle")
-
-    path_name = "b_{}/b_{}_{}/tf_dict_b{}_{}".format(0,
-                                                     0, sub_bloc_num,
-                                                     0, sub_bloc_num)
-    pck.pickle_store(path_name, tf_dict, "")
-    del tf_dict
-
-    path_name = "b_{}/b_{}_{}/tf_idf_dict_b{}_{}".format(0,
-                                                     0, sub_bloc_num,
-                                                     0, sub_bloc_num)
-    pck.pickle_store(path_name, tf_idf_dict, "")
-    del tf_idf_dict
 
 
 if __name__ == '__main__':

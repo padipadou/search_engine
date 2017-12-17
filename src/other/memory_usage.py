@@ -24,5 +24,8 @@ def memory_usage():
         return memory_usage
 
 
+# TODO: process to look at memory usage on all processes
+
+
 if __name__ == '__main__':
     pass

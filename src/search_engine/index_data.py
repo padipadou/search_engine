@@ -2,8 +2,8 @@ import src.search_engine.normalization as nrm
 import src.search_engine.handle_data as hd
 import src.search_engine.pickle_usage as pck
 import src.other.memory_usage as mem
-import libs.kea as kea
 from src import Const
+import libs.kea as kea
 
 import Stemmer as pystemmer
 import os
