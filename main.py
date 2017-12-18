@@ -1,12 +1,14 @@
 import time
 
 import src.search_engine.bloc_working as bw
+import src.search_engine.sub_steps.alphabet_repartition as alp
 
 
 # TODO: comment / docstring all functions
 # TODO: bigrams
 # TODO: (mini summary for each text) (NOT MANDATORY)
 # TODO: args for exec / Makefile
+# https://openclassrooms.com/courses/apprenez-a-programmer-en-python/un-peu-de-programmation-systeme#/id/r-2555629
 # TODO: process to look at memory usage on all processes
 # TODO: doc how-to-use-?
 # TODO: relevant ? try proposed queries
