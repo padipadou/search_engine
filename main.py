@@ -20,16 +20,16 @@ def test_queries():
     text = ""
     text += bw.query("Charlie Hebdo")
     text += bw.query("volcan")
-    # text += bw.query("playoffs NBA")
-    # text += bw.query("accidents d'avion")
-    # text += bw.query("laïcité")
-    # text += bw.query("élections législatives")
-    # text += bw.query("Sepp Blatter")
-    # text += bw.query("budget de la défense")
-    # text += bw.query("Galaxy S6")
-    # text += bw.query("Kurdes")
+    text += bw.query("playoffs NBA")
+    text += bw.query("accidents d'avion")
+    text += bw.query("laïcité")
+    text += bw.query("élections législatives")
+    text += bw.query("Sepp Blatter")
+    text += bw.query("budget de la défense")
+    text += bw.query("Galaxy S6")
+    text += bw.query("Kurdes")
 
-    with open("data/results.txt", "w") as file:
+    with open("data/results.txt", "w", encoding='utf8') as file:
         file.write(text)
 
 
