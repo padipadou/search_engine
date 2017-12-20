@@ -16,6 +16,18 @@ import src.other.memory_usage as mem
 # TODO: relevant ? try proposed queries
 
 
+def test_queries():
+    bw.query("Charlie Hebdo")
+    bw.query("volcan")
+    bw.query("playoffs NBA")
+    bw.query("accidents d'avion")
+    bw.query("laïcité")
+    bw.query("élections législatives")
+    bw.query("Sepp Blatter")
+    bw.query("budget de la défense")
+    bw.query("Galaxy S6")
+    bw.query("Kurdes")
+
 def main():
     # depth = 3
     # groups_nb = 27
@@ -23,7 +35,9 @@ def main():
     #
     # alp.alphabet_repartition(nb_docs_to_look_at, depth, groups_nb)
     # bw.indexes_creation(2000)
-    bw.query("Ben laden")
+    # bw.query()
+
+    test_queries()
 
     # bloc_num = 0e
     # sub_bloc_num = 2
