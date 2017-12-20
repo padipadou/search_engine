@@ -79,8 +79,31 @@ def plot_memory_usage():
 
         memory_usage_plotlist.append(sum_)
 
-    plt.plot(memory_usage_plotlist)
+    smooth_list = smoothing(memory_usage_plotlist, 30, min_=True)
+    smooth_list = smoothing(smooth_list, 10, min_=False)
+
+    plt.plot(smooth_list)
     plt.show()
+
+
+def smoothing(Ly, p, min_=False):
+    '''Fonction qui débruite une courbe par une moyenne glissante
+    sur 2P+1 points'''
+    Lyout = []
+    for index in range(p, len(Ly) - p):
+        average = sum(Ly[index - p: index + p + 1]) / (2 * p + 1)
+        if min_:
+            Lyout.append(minimum(average,Ly[index]))
+        else:
+            Lyout.append(average)
+
+    return Lyout
+
+def minimum(a,b):
+    if b <= a and b != 0:
+        return b
+    else:
+        return a
 
 if __name__ == '__main__':
     pass
