@@ -22,8 +22,8 @@ def main():
     # nb_docs_to_look_at = 100
     #
     # alp.alphabet_repartition(nb_docs_to_look_at, depth, groups_nb)
-    bw.indexes_creation(2000)
-    # bw.query("Ben laden")
+    # bw.indexes_creation(2000)
+    bw.query("Ben laden")
 
     # bloc_num = 0e
     # sub_bloc_num = 2
@@ -35,18 +35,18 @@ def main():
 
 
 if __name__ == '__main__':
-    # time_gap = 0.01
-    # q = Queue()
-    # p = Process(target=mem.track_memory_usage, args=(time_gap, q))
-    # p.start()
-    #
-    # t_start = time.time()
-    # main()
-    # t_end = time.time()
-    #
-    # q.put("STOP_SIGNAL!")
-    # p.join()
-    #
-    # print("Running time = {} second(s)\n".format(t_end - t_start))
+    time_gap = 0.01
+    q = Queue()
+    p = Process(target=mem.track_memory_usage, args=(time_gap, q))
+    p.start()
 
-    mem.plot_memory_usage()
+    t_start = time.time()
+    main()
+    t_end = time.time()
+
+    q.put("STOP_SIGNAL!")
+    p.join()
+
+    print("Running time = {} second(s)\n".format(t_end - t_start))
+
+    # mem.plot_memory_usage()
