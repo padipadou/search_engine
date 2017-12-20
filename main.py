@@ -17,16 +17,21 @@ import src.other.memory_usage as mem
 
 
 def test_queries():
-    bw.query("Charlie Hebdo")
-    bw.query("volcan")
-    bw.query("playoffs NBA")
-    bw.query("accidents d'avion")
-    bw.query("laïcité")
-    bw.query("élections législatives")
-    bw.query("Sepp Blatter")
-    bw.query("budget de la défense")
-    bw.query("Galaxy S6")
-    bw.query("Kurdes")
+    text = ""
+    text += bw.query("Charlie Hebdo")
+    text += bw.query("volcan")
+    # text += bw.query("playoffs NBA")
+    # text += bw.query("accidents d'avion")
+    # text += bw.query("laïcité")
+    # text += bw.query("élections législatives")
+    # text += bw.query("Sepp Blatter")
+    # text += bw.query("budget de la défense")
+    # text += bw.query("Galaxy S6")
+    # text += bw.query("Kurdes")
+
+    with open("data/results.txt", "w") as file:
+        file.write(text)
+
 
 def main():
     # depth = 3

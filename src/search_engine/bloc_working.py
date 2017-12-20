@@ -81,10 +81,16 @@ def query(query=None):
     path_name = "b_{}/num_name_dict_b{}".format(0, 0)
     num_name_dict = pck.pickle_load(path_name, "")
 
-    print("\nResults for the query:",query)
+    text = ""
+    text += "\tResults for the query: {}".format(query)
+    print(text)
     for key, value in sorted(docnum_score_sum_dict.items(), key=lambda x: x[1], reverse=True)[:10]:
         print("{}: \t{}".format(num_name_dict[key], value))
+        text += "\n{}: \t{}".format(num_name_dict[key], value)
 
+    text += "\n\n"
+
+    return text
 
 if __name__ == '__main__':
     pass
