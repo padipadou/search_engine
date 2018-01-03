@@ -1,5 +1,6 @@
 import time
 import argparse
+import os
 from multiprocessing import Process, Pipe, Queue
 
 import src.search_engine.bloc_working as bw
@@ -24,12 +25,12 @@ def main():
     groups_nb = 27
     index_nb_docs = 2000
     query = None
-    memory_tracker = False
+    memory_tracker = "False"
 
     parser = argparse.ArgumentParser()
     parser.add_argument("--work_to_do",
                         help="alphabet repartition ('alpha') or index creation ('index') or search engine usage ('query')")
-    parser.add_argument("--memory_tracker", type=bool, help="memory tracker presence (True) or absence (False)")
+    parser.add_argument("--memory_tracker", help="memory tracker presence (True) or absence (False)")
     # *------------------------------------------*
     parser.add_argument("--alpha_nb_docs", type=int,
                         help="number of documents to look at to estimate alphabet repartition")
@@ -43,26 +44,39 @@ def main():
 
     if args.work_to_do:
         work_to_do = args.work_to_do
-        if args.alpha_nb_docs:
-            nb_docs_to_look_at = args.alpha_nb_docs
-        if args.alpha_depth:
-            depth = args.alpha_depth
-        if args.alpha_groups_nb:
-            groups_nb = args.alpha_groups_nb
-        if args.index_nb_docs:
-            index_nb_docs = args.index_nb_docs
-        if args.query_query:
-            query = args.query_query
-        # *------------------------------------------*
+        memory_tracker = args.memory_tracker
+
         if work_to_do == "alpha":
+            if args.alpha_nb_docs:
+                nb_docs_to_look_at = args.alpha_nb_docs
+            if args.alpha_depth:
+                depth = args.alpha_depth
+            if args.alpha_groups_nb:
+                groups_nb = args.alpha_groups_nb
             alp.alphabet_repartition(nb_docs_to_look_at, depth, groups_nb, memory_tracker)
+
         elif work_to_do == "index":
+            if args.index_nb_docs:
+                index_nb_docs = args.index_nb_docs
+            if not os.path.isfile('data/pickle_files/start_end_groups.pickle'):
+                print("Error: need a repartition file first, please run the first step.")
+                return -1
             bw.indexes_creation(index_nb_docs)
+
         elif work_to_do == "query":
+            if args.query_query:
+                query = args.query_query
             if query == "BENCHMARK":
                 bw.test_queries()
             else:
                 bw.query(query)
+
+        elif work_to_do == "mem_plot":
+            if not os.path.isfile('data/pickle_files/memory_usage.pickle'):
+                print("Error: need a memory file to plot, please run a code with memory tracker activated first.")
+                return -1
+            mem.plot_memory_usage()
+
         else:
             print("Error:", work_to_do, "is not a correct name for a job.")
             return -1
@@ -70,28 +84,18 @@ def main():
         print("Error: no work to do!")
         return -1
 
-    # bloc_num = 0e
-    # sub_bloc_num = 2
-    # path_name = "b_{}/b_{}_{}/word_num_dict_b{}_{}".format(bloc_num,
-    #                                                        bloc_num, sub_bloc_num,
-    #                                                        bloc_num, sub_bloc_num)
-    # word_num_dict = pck.pickle_load(path_name, "")
-    # print(word_num_dict)
-
 
 if __name__ == '__main__':
-    time_gap = 0.01
-    q = Queue()
-    p = Process(target=mem.track_memory_usage, args=(time_gap, q))
-    p.start()
+    # time_gap = 0.01
+    # q = Queue()
+    # p = Process(target=mem.track_memory_usage, args=(time_gap, q))
+    # p.start()
 
     t_start = time.time()
     main()
     t_end = time.time()
 
-    q.put("STOP_SIGNAL!")
-    p.join()
+    # q.put("STOP_SIGNAL!")
+    # p.join()
 
     print("Running time = {} second(s)\n".format(t_end - t_start))
-
-    # mem.plot_memory_usage()

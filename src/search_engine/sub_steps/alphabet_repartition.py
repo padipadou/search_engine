@@ -147,7 +147,8 @@ def alphabet_repartition(nb_docs_to_look_at, depth, groups_nb, memory_tracker):
     :param groups_nb: desired number of groups
     :return: start_end_groups: list of list with start_key, prev_key, number of words, percentage
     """
-    if memory_tracker:
+    if memory_tracker == "True":
+        print("Memory tracker activated.")
         time_gap = 0.01
         q = Queue()
         p = Process(target=mem.track_memory_usage, args=(time_gap, q))
@@ -164,11 +165,11 @@ def alphabet_repartition(nb_docs_to_look_at, depth, groups_nb, memory_tracker):
     # pck.pickle_store("start_end_groups", start_end_groups, "../../")
     pck.pickle_store("start_end_groups", start_end_groups, "")
 
-    if memory_tracker:
+    if memory_tracker == "True":
         q.put("STOP_SIGNAL!")
         p.join()
 
-    print("Repartition for first", nb_docs_to_look_at, "documents with", depth,
+    print("Repartition in", groups_nb, "groups for first", nb_docs_to_look_at, "documents with", depth,
           "letter(s) have been done correctly.")
     print("Ready for next step.")
 
