@@ -1,9 +1,12 @@
+from multiprocessing import Process, Pipe, Queue
+from tqdm import tqdm
+
 import src.search_engine.sub_steps.normalization as nrm
 import src.search_engine.sub_steps.handle_data as hd
 import src.other.pickle_usage as pck
+import src.other.memory_usage as mem
+from src import Const
 import libs.kea as kea
-
-from tqdm import tqdm
 
 
 def get_total_word_nb(alpha_dict):
@@ -62,14 +65,15 @@ def repartition_corpus(nb_docs_to_look_at=100, depth=2):
     :param depth: the more we put in it, the precise it will be (number of first letters to check)
     :return: alpha_dict with number of words for each beginning of word (key)
     """
-    if 0 < depth < 4:
+    if 0 < depth < 5:
         alpha_dict = creation_alpha_dict(depth)
     else:
         print("Error with depth.")
         return {}
 
     data_dict, num_name_dict = \
-        hd.load_data_dict("data/text_10000", nb_docs_to_look_at)
+        hd.load_data_dict(Const.DIRECTORY_NAME, nb_docs_to_look_at)
+    # hd.load_data_dict("data/text_10000", nb_docs_to_look_at)
     # hd.load_data_dict("../../data/text_10000", nb_docs_to_look_at)
 
     # useless data
@@ -114,7 +118,7 @@ def repartition_groups_calc(alpha_dict, groups_nb):
 
     val_nb = 0
     start_end_groups = []
-    start_key = "000"
+    start_key = "0000000000"
 
     for key, value in sorted(alpha_dict.items(), key=lambda x: x[0], reverse=False):
         val_nb += value
@@ -135,7 +139,7 @@ def repartition_groups_calc(alpha_dict, groups_nb):
     return start_end_groups
 
 
-def alphabet_repartition(nb_docs_to_look_at, depth, groups_nb):
+def alphabet_repartition(nb_docs_to_look_at, depth, groups_nb, memory_tracker):
     """
     create start_end_groups and store it
     :param nb_docs_to_look_at: the more we put in it, the precise it will be
@@ -143,6 +147,12 @@ def alphabet_repartition(nb_docs_to_look_at, depth, groups_nb):
     :param groups_nb: desired number of groups
     :return: start_end_groups: list of list with start_key, prev_key, number of words, percentage
     """
+    if memory_tracker:
+        time_gap = 0.01
+        q = Queue()
+        p = Process(target=mem.track_memory_usage, args=(time_gap, q))
+        p.start()
+
     alpha_dict = repartition_corpus(nb_docs_to_look_at, depth)
     start_end_groups = repartition_groups_calc(alpha_dict, groups_nb)
 
@@ -154,7 +164,13 @@ def alphabet_repartition(nb_docs_to_look_at, depth, groups_nb):
     # pck.pickle_store("start_end_groups", start_end_groups, "../../")
     pck.pickle_store("start_end_groups", start_end_groups, "")
 
-    print(repartition_max_percent, len(start_end_groups))
+    if memory_tracker:
+        q.put("STOP_SIGNAL!")
+        p.join()
+
+    print("Repartition for first", nb_docs_to_look_at, "documents with", depth,
+          "letter(s) have been done correctly.")
+    print("Ready for next step.")
 
 
 if __name__ == '__main__':
@@ -162,4 +178,4 @@ if __name__ == '__main__':
     groups_nb = 27
     nb_docs_to_look_at = 1000
 
-    alphabet_repartition(nb_docs_to_look_at, depth, groups_nb)
+    alphabet_repartition(nb_docs_to_look_at, depth, groups_nb, False)

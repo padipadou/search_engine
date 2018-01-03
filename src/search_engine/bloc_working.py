@@ -29,7 +29,6 @@ def indexes_creation(nb_total_docs):
 
         bloc_num += 1
 
-    # *------------------------------------------*
     print("Splitting indexes...", mem.memory_usage(), "Mo")
     start_end_groups = pck.pickle_load("start_end_groups", "")
     # total_bloc_nb = 2
@@ -91,6 +90,24 @@ def query(query=None):
     text += "\n\n"
 
     return text
+
+
+def test_queries():
+    text = ""
+    text += query("Charlie Hebdo")
+    text += query("volcan")
+    text += query("playoffs NBA")
+    text += query("accidents d'avion")
+    text += query("laïcité")
+    text += query("élections législatives")
+    text += query("Sepp Blatter")
+    text += query("budget de la défense")
+    text += query("Galaxy S6")
+    text += query("Kurdes")
+
+    with open("data/results.txt", "w", encoding='utf8') as file:
+        file.write(text)
+
 
 if __name__ == '__main__':
     pass

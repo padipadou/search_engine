@@ -19,8 +19,12 @@ class Const:
     # corpus size is unknown at the beginning
     CORPUS_SIZE = None
 
-    # other possibility : 'tests/text_to_test/cluster_test', 'data/lemonde_utf8', 'data/text_10000'
-    DIRECTORY_NAME = 'data/text_10000'
+    # other possibilities :
+    # - 'tests/text_to_test/cluster_test',
+    # - 'data/lemonde_utf8',
+    # - 'data/text_10000',
+    # - 'data/text',
+    DIRECTORY_NAME = 'data/text'
 
     # true or false
     BM_25 = True

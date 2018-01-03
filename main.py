@@ -1,4 +1,5 @@
 import time
+import argparse
 from multiprocessing import Process, Pipe, Queue
 
 import src.search_engine.bloc_working as bw
@@ -14,35 +15,60 @@ import src.other.memory_usage as mem
 # TODO: process to look at memory usage on all processes
 # TODO: doc how-to-use-?
 # TODO: relevant ? try proposed queries
-
-
-def test_queries():
-    text = ""
-    text += bw.query("Charlie Hebdo")
-    text += bw.query("volcan")
-    text += bw.query("playoffs NBA")
-    text += bw.query("accidents d'avion")
-    text += bw.query("laïcité")
-    text += bw.query("élections législatives")
-    text += bw.query("Sepp Blatter")
-    text += bw.query("budget de la défense")
-    text += bw.query("Galaxy S6")
-    text += bw.query("Kurdes")
-
-    with open("data/results.txt", "w", encoding='utf8') as file:
-        file.write(text)
+# TODO: erase doc with terms after "-"
 
 
 def main():
-    # depth = 3
-    # groups_nb = 27
-    # nb_docs_to_look_at = 100
-    #
-    # alp.alphabet_repartition(nb_docs_to_look_at, depth, groups_nb)
-    # bw.indexes_creation(2000)
-    # bw.query()
+    nb_docs_to_look_at = 100
+    depth = 3
+    groups_nb = 27
+    index_nb_docs = 2000
+    query = None
+    memory_tracker = False
 
-    test_queries()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--work_to_do",
+                        help="alphabet repartition ('alpha') or index creation ('index') or search engine usage ('query')")
+    parser.add_argument("--memory_tracker", type=bool, help="memory tracker presence (True) or absence (False)")
+    # *------------------------------------------*
+    parser.add_argument("--alpha_nb_docs", type=int,
+                        help="number of documents to look at to estimate alphabet repartition")
+    parser.add_argument("--alpha_depth", type=int, help="number of first letters to look at for alphabet repartition")
+    parser.add_argument("--alpha_groups_nb", type=int, help="number of groups for alphabet repartition")
+    # *------------------------------------------*
+    parser.add_argument("--index_nb_docs", type=int, help="number of docs to index")
+    # *------------------------------------------*
+    parser.add_argument("--query_query", help="query in natural language")
+    args = parser.parse_args()
+
+    if args.work_to_do:
+        work_to_do = args.work_to_do
+        if args.alpha_nb_docs:
+            nb_docs_to_look_at = args.alpha_nb_docs
+        if args.alpha_depth:
+            depth = args.alpha_depth
+        if args.alpha_groups_nb:
+            groups_nb = args.alpha_groups_nb
+        if args.index_nb_docs:
+            index_nb_docs = args.index_nb_docs
+        if args.query_query:
+            query = args.query_query
+        # *------------------------------------------*
+        if work_to_do == "alpha":
+            alp.alphabet_repartition(nb_docs_to_look_at, depth, groups_nb, memory_tracker)
+        elif work_to_do == "index":
+            bw.indexes_creation(index_nb_docs)
+        elif work_to_do == "query":
+            if query == "BENCHMARK":
+                bw.test_queries()
+            else:
+                bw.query(query)
+        else:
+            print("Error:", work_to_do, "is not a correct name for a job.")
+            return -1
+    else:
+        print("Error: no work to do!")
+        return -1
 
     # bloc_num = 0e
     # sub_bloc_num = 2
