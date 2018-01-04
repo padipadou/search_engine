@@ -76,3 +76,4 @@ libs/__pycache__/
 /data/text_10000/
 /data/text/
 /data/pickle_files/*
+/data/results.txt

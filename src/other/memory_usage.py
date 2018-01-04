@@ -6,6 +6,26 @@ import matplotlib.pyplot as plt
 import src.other.pickle_usage as pck
 
 
+def smoothing(Ly, p, min_=False):
+    '''Fonction qui débruite une courbe par une moyenne glissante
+    sur 2P+1 points'''
+    Lyout = []
+    for index in range(p, len(Ly) - p):
+        average = sum(Ly[index - p: index + p + 1]) / (2 * p + 1)
+        if min_:
+            Lyout.append(minimum(average,Ly[index]))
+        else:
+            Lyout.append(average)
+
+    return Lyout
+
+def minimum(a,b):
+    if b <= a and b != 0:
+        return b
+    else:
+        return a
+
+
 def memory_usage():
     """
     Return memory usage for the current process in Mo
@@ -28,7 +48,7 @@ def memory_usage():
         return memory_usage
 
 
-def track_memory_usage(time_gap, queue):
+def track_memory_usage(phase_name, time_gap, queue):
     own_pid = os.getpid()
     master_pid = os.getppid()
 
@@ -43,7 +63,7 @@ def track_memory_usage(time_gap, queue):
                 name_ = p.info['name']
             except:
                 continue
-            # if name_ == "python3" and pid_ != own_pid and pid_ != master_pid :
+            # if name_ == "Python" and pid_ != own_pid and pid_ != master_pid :
             if name_ == "Python":
                 try:
                     infos = p.memory_info()
@@ -59,17 +79,22 @@ def track_memory_usage(time_gap, queue):
 
         time.sleep(time_gap)
 
-    pck.pickle_store("memory_usage", memory_usage_list, "")
+    filename = "memory_usage"
+    if not phase_name == "":
+        filename += "_{}".format(phase_name)
+    pck.pickle_store(filename, memory_usage_list, "")
 
 
-def plot_memory_usage():
+def plot_memory_usage(title=""):
+    filename = "memory_usage"
+    if not title == "":
+        filename += "_{}".format(title)
+
     try:
-        memory_usage_list = pck.pickle_load("memory_usage", "")
+        memory_usage_list = pck.pickle_load(filename, "")
     except:
-        print("ERROR, no file for memory usage")
+        print("ERROR, no file found for memory usage", filename)
         return ""
-
-    print(memory_usage_list)
 
     memory_usage_plotlist = []
     for mem_dict in memory_usage_list:
@@ -82,28 +107,21 @@ def plot_memory_usage():
     smooth_list = smoothing(memory_usage_plotlist, 30, min_=True)
     smooth_list = smoothing(smooth_list, 10, min_=False)
 
-    plt.plot(smooth_list)
-    plt.show()
+    X, Y = [], []
+    for i, y in enumerate(smooth_list):
+        X.append(i/100) # h=0.01sec
+        Y.append(y)
 
+    if not title == "":
+        title = "memory usage for " + title
 
-def smoothing(Ly, p, min_=False):
-    '''Fonction qui débruite une courbe par une moyenne glissante
-    sur 2P+1 points'''
-    Lyout = []
-    for index in range(p, len(Ly) - p):
-        average = sum(Ly[index - p: index + p + 1]) / (2 * p + 1)
-        if min_:
-            Lyout.append(minimum(average,Ly[index]))
-        else:
-            Lyout.append(average)
+    plt.plot(X, Y)
+    plt.xlabel('time (in sec)')
+    plt.ylabel('memory usage (in Mo)')
+    plt.title('memory usage')
+    plt.savefig('data/{}.png'.format(filename))
 
-    return Lyout
-
-def minimum(a,b):
-    if b <= a and b != 0:
-        return b
-    else:
-        return a
+    print("data/{}.png saved !".format(filename))
 
 if __name__ == '__main__':
     pass

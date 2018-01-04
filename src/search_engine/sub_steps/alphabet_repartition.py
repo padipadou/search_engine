@@ -150,8 +150,9 @@ def alphabet_repartition(nb_docs_to_look_at, depth, groups_nb, memory_tracker):
     if memory_tracker == "True":
         print("Memory tracker activated.")
         time_gap = 0.01
+        phase_name = "alphabet_repartition"
         q = Queue()
-        p = Process(target=mem.track_memory_usage, args=(time_gap, q))
+        p = Process(target=mem.track_memory_usage, args=(phase_name, time_gap, q))
         p.start()
 
     alpha_dict = repartition_corpus(nb_docs_to_look_at, depth)
