@@ -147,7 +147,7 @@ def alphabet_repartition(nb_docs_to_look_at, depth, groups_nb, memory_tracker):
     :param groups_nb: desired number of groups
     :return: start_end_groups: list of list with start_key, prev_key, number of words, percentage
     """
-    if memory_tracker == "True":
+    if memory_tracker:
         print("Memory tracker activated.")
         time_gap = 0.01
         phase_name = "alphabet_repartition"
@@ -166,7 +166,7 @@ def alphabet_repartition(nb_docs_to_look_at, depth, groups_nb, memory_tracker):
     # pck.pickle_store("start_end_groups", start_end_groups, "../../")
     pck.pickle_store("start_end_groups", start_end_groups, "")
 
-    if memory_tracker == "True":
+    if memory_tracker:
         q.put("STOP_SIGNAL!")
         p.join()
 

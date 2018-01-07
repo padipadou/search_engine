@@ -8,12 +8,19 @@ import src.other.memory_usage as mem
 import src.other.pickle_usage as pck
 
 import os
-from multiprocessing import Process, Pipe
+from multiprocessing import Process, Pipe, Queue
 
 
 # Before the query, requires some time
-def indexes_creation(nb_total_docs):
-    # *------------------------------------------*
+def indexes_creation(nb_total_docs, memory_tracker):
+    if memory_tracker:
+        print("Memory tracker activated.")
+        time_gap = 0.01
+        phase_name = "index_creation"
+        q = Queue()
+        p = Process(target=mem.track_memory_usage, args=(phase_name, time_gap, q))
+        p.start()
+
     print("Creating indexes...", mem.memory_usage(), "Mo")
     nb_docs_done = 0
     bloc_num = 0
@@ -29,11 +36,19 @@ def indexes_creation(nb_total_docs):
 
         bloc_num += 1
 
+    if memory_tracker:
+        q.put("STOP_SIGNAL!")
+        p.join()
+
+    # *------------------------------------------*
+    if memory_tracker:
+        phase_name = "index_splitting"
+        q = Queue()
+        p = Process(target=mem.track_memory_usage, args=(phase_name, time_gap, q))
+        p.start()
+
     print("Splitting indexes...", mem.memory_usage(), "Mo")
-    start_end_groups = pck.pickle_load("start_end_groups", "")
-    # total_bloc_nb = 2
-    # # total_bloc_nb = bloc_num + 1
-    # # for bloc_num in range(total_bloc_nb):
+    start_end_groups = pck.pickle_load("start_end_groups", "") #NEED A TEST AT BEGINNING
     bloc_num = 0
     while os.path.isdir("data/pickle_files/b_{}".format(bloc_num)):
         p = Process(target=bs.split_indexes,
@@ -43,7 +58,17 @@ def indexes_creation(nb_total_docs):
 
         bloc_num += 1
 
+    if memory_tracker:
+        q.put("STOP_SIGNAL!")
+        p.join()
+
     # *------------------------------------------*
+    if memory_tracker:
+        phase_name = "index_merging"
+        q = Queue()
+        p = Process(target=mem.track_memory_usage, args=(phase_name, time_gap, q))
+        p.start()
+
     print("Merging indexes...", mem.memory_usage(), "Mo")
     bloc_num = 1
     while os.path.isdir("data/pickle_files/b_{}".format(bloc_num)):
@@ -54,7 +79,17 @@ def indexes_creation(nb_total_docs):
 
         bloc_num += 1
 
+    if memory_tracker:
+        q.put("STOP_SIGNAL!")
+        p.join()
+
     # *------------------------------------------*
+    if memory_tracker:
+        phase_name = "tf_idf_calculus"
+        q = Queue()
+        p = Process(target=mem.track_memory_usage, args=(phase_name, time_gap, q))
+        p.start()
+
     print("Calculating tf * idf...", mem.memory_usage(), "Mo")
     sub_bloc_num = 0
     while os.path.isdir("data/pickle_files/b_{}/b_{}_{}".format(0,
@@ -66,10 +101,22 @@ def indexes_creation(nb_total_docs):
 
         sub_bloc_num += 1
 
+    if memory_tracker:
+        q.put("STOP_SIGNAL!")
+        p.join()
+
 
 # Only the query, requires first step already completed
-def query(query=None):
-    start_end_groups = pck.pickle_load("start_end_groups", "")
+def query(query=None, memory_tracker=False):
+    if memory_tracker:
+        print("Memory tracker activated.")
+        time_gap = 0.01
+        phase_name = "query"
+        q = Queue()
+        p = Process(target=mem.track_memory_usage, args=(phase_name, time_gap, q))
+        p.start()
+
+    start_end_groups = pck.pickle_load("start_end_groups", "") #NEED A TEST
     if query is None:
         query = "israël jérusalem"
         query = "président hollande"
@@ -89,10 +136,22 @@ def query(query=None):
 
     text += "\n\n"
 
+    if memory_tracker:
+        q.put("STOP_SIGNAL!")
+        p.join()
+
     return text
 
 
-def test_queries():
+def test_queries(memory_tracker):
+    if memory_tracker:
+        print("Memory tracker activated.")
+        time_gap = 0.01
+        phase_name = "test_query"
+        q = Queue()
+        p = Process(target=mem.track_memory_usage, args=(phase_name, time_gap, q))
+        p.start()
+
     text = ""
     text += query("Charlie Hebdo")
     text += query("volcan")
@@ -107,6 +166,10 @@ def test_queries():
 
     with open("data/results.txt", "w", encoding='utf8') as file:
         file.write(text)
+
+    if memory_tracker:
+        q.put("STOP_SIGNAL!")
+        p.join()
 
 
 if __name__ == '__main__':

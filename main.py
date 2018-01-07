@@ -16,8 +16,14 @@ import src.other.memory_usage as mem
 # TODO: process to look at memory usage on all processes
 # TODO: doc how-to-use-?
 # TODO: relevant ? try proposed queries
-# TODO: erase doc with terms after "-"
+# TODO: erase doc with terms after "-" (NOT MANDATORY)
+# TODO: test start end groups in bloc working
 
+def str_to_bool(value):
+    if value == "True" or value == "true":
+        return True
+    else:
+        return False
 
 def main():
     nb_docs_to_look_at = 100
@@ -25,7 +31,7 @@ def main():
     groups_nb = 27
     index_nb_docs = 2000
     query = None
-    memory_tracker = "False"
+    memory_tracker = False
 
     parser = argparse.ArgumentParser()
     parser.add_argument("--work_to_do",
@@ -40,11 +46,13 @@ def main():
     parser.add_argument("--index_nb_docs", type=int, help="number of docs to index")
     # *------------------------------------------*
     parser.add_argument("--query_query", help="query in natural language")
+    # *------------------------------------------*
+    parser.add_argument("--mem_plot_phase", help="phase to plot to see memory usage")
     args = parser.parse_args()
 
     if args.work_to_do:
         work_to_do = args.work_to_do
-        memory_tracker = args.memory_tracker
+        memory_tracker = str_to_bool(args.memory_tracker)
 
         if work_to_do == "alpha":
             if args.alpha_nb_docs:
@@ -61,21 +69,23 @@ def main():
             if not os.path.isfile('data/pickle_files/start_end_groups.pickle'):
                 print("Error: need a repartition file first, please run the first step.")
                 return -1
-            bw.indexes_creation(index_nb_docs)
+            bw.indexes_creation(index_nb_docs, memory_tracker)
 
         elif work_to_do == "query":
             if args.query_query:
                 query = args.query_query
             if query == "BENCHMARK":
-                bw.test_queries()
+                bw.test_queries(memory_tracker)
             else:
-                bw.query(query)
+                bw.query(query, memory_tracker)
 
         elif work_to_do == "mem_plot":
-            if not os.path.isfile('data/pickle_files/memory_usage.pickle'):
-                print("Error: need a memory file to plot, please run a code with memory tracker activated first.")
+            if args.mem_plot_phase:
+                phase_name = args.mem_plot_phase
+            if not os.path.isfile('data/pickle_files/memory_usage_{}.pickle'.format(phase_name)):
+                print("Error: need a memory file to plot, please run a code with memory tracker activated first or with a correct filename.")
                 return -1
-            mem.plot_memory_usage()
+            mem.plot_memory_usage(phase_name)
 
         else:
             print("Error:", work_to_do, "is not a correct name for a job.")
@@ -86,16 +96,8 @@ def main():
 
 
 if __name__ == '__main__':
-    # time_gap = 0.01
-    # q = Queue()
-    # p = Process(target=mem.track_memory_usage, args=(time_gap, q))
-    # p.start()
-
     t_start = time.time()
     main()
     t_end = time.time()
 
-    # q.put("STOP_SIGNAL!")
-    # p.join()
-
-    print("Running time = {} second(s)\n".format(t_end - t_start))
+    print("\nRunning time = {} second(s)\n".format(t_end - t_start))
