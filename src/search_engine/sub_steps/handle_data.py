@@ -86,14 +86,5 @@ def load_stopwords_set(path='data/stopwords-fr.txt'):
 
 
 if __name__ == '__main__':
-    text_test = "._.DS_Store"
-    text_test = "S_Store"
-    text_test = "data/text_10000/2013/07/._.DS_Store"
-    text_test = "data"
-    # if re.search('DS_Store', text_test):
-    #     print("coucou")
-
-    if os.path.isdir(text_test):
-        print("coucou")
-    # print(os.listdir(text_test))
-    pass
+    directory = "../../../data/text"
+    load_data_dict(directory, nb_files_needed=20, indice_start=7020)
