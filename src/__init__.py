@@ -24,7 +24,8 @@ class Const:
     # - 'data/lemonde_utf8',
     # - 'data/text_10000',
     # - 'data/text',
-    DIRECTORY_NAME = 'data/text'
+    # - 'data/text_original',
+    DIRECTORY_NAME = 'data/text_original'
 
     # true or false
     BM_25 = True
