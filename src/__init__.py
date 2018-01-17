@@ -22,10 +22,10 @@ class Const:
     # other possibilities :
     # - 'tests/text_to_test/cluster_test',
     # - 'data/lemonde_utf8',
-    # - 'data/text_10000',
+    # - 'data/text_100000',
     # - 'data/text',
     # - 'data/text_original',
-    DIRECTORY_NAME = 'data/text_original'
+    DIRECTORY_NAME = 'data/text_100000'
 
     # true or false
     BM_25 = True
