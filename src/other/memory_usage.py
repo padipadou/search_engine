@@ -64,7 +64,7 @@ def track_memory_usage(phase_name, time_gap, queue):
             except:
                 continue
             # if name_ == "Python" and pid_ != own_pid and pid_ != master_pid :
-            if name_ == "Python":
+            if name_ == "Python" or name_ == "python3":
                 try:
                     infos = p.memory_info()
                 except:
