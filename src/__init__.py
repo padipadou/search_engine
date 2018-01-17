@@ -37,7 +37,7 @@ class Const:
     POSITIONS_LIST = False
 
     # size max in Mo for datablocs at the beginning
-    MEMORY_SIZE = 100
+    MEMORY_SIZE = 500
 
     # size for one data batch (number of docs)
     MINIBATCH_SIZE = 1000
