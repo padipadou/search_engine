@@ -55,9 +55,9 @@ def track_memory_usage(phase_name, time_gap, queue):
     memory_usage_list = []
 
     while(True):
+        mem_dict = {}
         process_to_check = psutil.process_iter(attrs=['pid', 'name'])
         for p in process_to_check:
-            mem_dict = {}
             try:
                 pid_ = p.info['pid']
                 name_ = p.info['name']
