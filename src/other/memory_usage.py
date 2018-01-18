@@ -82,6 +82,7 @@ def track_memory_usage(phase_name, time_gap, queue):
     filename = "memory_usage"
     if not phase_name == "":
         filename += "_{}".format(phase_name)
+    #print(memory_usage_list)
     pck.pickle_store(filename, memory_usage_list, "")
 
 
@@ -124,4 +125,17 @@ def plot_memory_usage(title=""):
     print("data/{}.png saved !".format(filename))
 
 if __name__ == '__main__':
+    from multiprocessing import Process, Queue
+    
+    time_gap = 0.1
+    phase_name = ""
+    q = Queue()
+    p = Process(target=track_memory_usage, args=(phase_name, time_gap, q))
+    p.start()
+    
+    time.sleep(1)
+    
+    q.put("STOP_SIGNAL!")
+    p.join()
+
     pass
