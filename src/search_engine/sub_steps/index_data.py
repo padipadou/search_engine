@@ -124,6 +124,7 @@ def bloc_indexing(i_start_doc, bloc_num, nb_total_docs, connection=None):
     """
 
     i_doc = i_start_doc
+    prev_i_doc = -1
     minibatch_size = Const.MINIBATCH_SIZE
     max_memory_usage = Const.MEMORY_SIZE  # in Mo
 
@@ -134,11 +135,20 @@ def bloc_indexing(i_start_doc, bloc_num, nb_total_docs, connection=None):
     num_word_dict = {}
 
     while i_doc < nb_total_docs and mem.memory_usage() < max_memory_usage:
+        if prev_i_doc == i_doc:
+            # Return nb_docs done
+            if connection:
+                connection.send(i_doc)
+                connection.close()
+            else:
+                return i_doc
+        
         data_dict, num_name_dict_temp = \
             hd.load_data_dict(Const.DIRECTORY_NAME, minibatch_size, i_doc)
 
         print("Memory usage", mem.memory_usage(), "Mo")
-
+        
+        prev_i_doc = i_doc
         i_doc += len(data_dict)
 
         i_newdoc = len(num_name_dict)

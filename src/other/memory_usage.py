@@ -102,11 +102,11 @@ def plot_memory_usage(title=""):
         sum_ = 0
         for val in mem_dict.values():
             sum_ += val
-
         memory_usage_plotlist.append(sum_)
-
-    smooth_list = smoothing(memory_usage_plotlist, 30, min_=True)
-    smooth_list = smoothing(smooth_list, 10, min_=False)
+    
+    smooth_list = memory_usage_plotlist
+    #smooth_list = smoothing(smooth_list, 30, min_=True)
+    #smooth_list = smoothing(smooth_list, 10, min_=False)
 
     X, Y = [], []
     for i, y in enumerate(smooth_list):
@@ -127,15 +127,17 @@ def plot_memory_usage(title=""):
 if __name__ == '__main__':
     from multiprocessing import Process, Queue
     
-    time_gap = 0.1
-    phase_name = ""
+    time_gap = 0.01
+    phase_name = "test"
     q = Queue()
     p = Process(target=track_memory_usage, args=(phase_name, time_gap, q))
     p.start()
     
-    time.sleep(1)
+    time.sleep(3)
     
     q.put("STOP_SIGNAL!")
     p.join()
+
+    plot_memory_usage(phase_name)
 
     pass

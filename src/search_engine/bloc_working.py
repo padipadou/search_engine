@@ -23,8 +23,10 @@ def indexes_creation(nb_total_docs, memory_tracker):
 
     print("Creating indexes...", mem.memory_usage(), "Mo")
     nb_docs_done = 0
+    prev_nb_docs_done = -1
     bloc_num = 0
-    while nb_docs_done < nb_total_docs:
+    while nb_docs_done < nb_total_docs and prev_nb_docs_done != nb_docs_done:
+        prev_nb_docs_done = nb_docs_done
         print("\n", nb_docs_done, "/", nb_total_docs, "done...", mem.memory_usage(), "Mo")
 
         parent_conn, child_conn = Pipe()
