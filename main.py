@@ -9,15 +9,15 @@ import src.other.memory_usage as mem
 
 
 # TODO: comment / docstring all functions
-# TODO: bigrams
-# TODO: (mini summary for each text) (NOT MANDATORY)
-# TODO: args for exec / Makefile
-# https://openclassrooms.com/courses/apprenez-a-programmer-en-python/un-peu-de-programmation-systeme#/id/r-2555629
 # TODO: process to look at memory usage on all processes
 # TODO: doc how-to-use-?
-# TODO: relevant ? try proposed queries
+# TODO: working on 1M5 docs
+
+# TODO: bigrams
+# TODO: (mini summary for each text) (NOT MANDATORY)
 # TODO: erase doc with terms after "-" (NOT MANDATORY)
-# TODO: test start end groups in bloc working
+# TODO: relevant ? try proposed queries (NOT MANDATORY)
+
 
 def str_to_bool(value):
     if value == "True" or value == "true":
