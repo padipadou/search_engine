@@ -144,7 +144,7 @@ def bloc_indexing(i_start_doc, bloc_num, nb_total_docs, connection=None):
                 return i_doc
         
         data_dict, num_name_dict_temp = \
-            hd.load_data_dict(Const.DIRECTORY_NAME, minibatch_size, 0)
+            hd.load_data_dict(Const.DIRECTORY_NAME, minibatch_size, 7000)
 
         print("Memory usage", mem.memory_usage(), "Mo")
         
