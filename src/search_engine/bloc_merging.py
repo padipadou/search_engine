@@ -7,6 +7,11 @@ from os import remove
 
 
 def merge_num_name_dict(bloc_num):
+    """
+    explicit, merge num_name_dict from bloc_num with num_name_dict for master bloc 0
+    :param bloc_num:
+    :return: nothing all results are stored
+    """
     # -- num_name_dict --
     path_name = "b_{}/num_name_dict_b{}".format(0, 0)
     num_name_dict = pck.pickle_load(path_name, "")
@@ -27,6 +32,12 @@ def merge_num_name_dict(bloc_num):
 
 
 def merge_infos_doc_dict(bloc_num, connection):
+    """
+    explicit, merge infos_doc_dict from bloc_num with infos_doc_dict for master bloc 0
+    :param bloc_num: index of the bloc needed to be merged with the master bloc 0
+    :param connection: connection to return the total number of docs in the master bloc 0
+    :return: nothing all results are stored
+    """
     # -- infos_doc_dict --
     path_name = "b_{}/infos_doc_dict_b{}".format(0, 0)
     infos_doc_dict = pck.pickle_load(path_name, "")
@@ -54,8 +65,15 @@ def merge_infos_doc_dict(bloc_num, connection):
 
 
 def merge_index_wn_nw_dicts(bloc_num, sub_bloc_num, nb_docs_b0):
+    """
+    Because the merging of index_dict, num_word_dict, word_num_dict is linked, we need to merge them in one time
+    :param bloc_num: index of the bloc needed to be merged with the master bloc 0
+    :param sub_bloc_num: index of the sub_bloc needed to be merged with the master sub_bloc 0
+    :param nb_docs_b0: we need the total number of docs in the master bloc 0
+    :return: nothing all results are stored
+    """
     # *------------------------------------------*
-    # 0
+    # loading 0
     path_name = "b_{}/b_{}_{}/word_num_dict_b{}_{}".format(0,
                                                            0, sub_bloc_num,
                                                            0, sub_bloc_num)
@@ -70,7 +88,7 @@ def merge_index_wn_nw_dicts(bloc_num, sub_bloc_num, nb_docs_b0):
     index_dict = pck.pickle_load(path_name, "")
 
     # *------------------------------------------*
-    # bloc_num
+    # loading bloc_num
     path_name = "b_{}/b_{}_{}/num_word_dict_b{}_{}".format(bloc_num,
                                                            bloc_num, sub_bloc_num,
                                                            bloc_num, sub_bloc_num)
@@ -108,7 +126,7 @@ def merge_index_wn_nw_dicts(bloc_num, sub_bloc_num, nb_docs_b0):
     del num_word_dict_2
 
     # *------------------------------------------*
-    # index_dict
+    # storing index_dict
     path_name = "b_{}/b_{}_{}/index_dict_b{}_{}".format(bloc_num,
                                                         bloc_num, sub_bloc_num,
                                                         bloc_num, sub_bloc_num)
@@ -121,7 +139,7 @@ def merge_index_wn_nw_dicts(bloc_num, sub_bloc_num, nb_docs_b0):
     del index_dict
 
     # *------------------------------------------*
-    # word_num_dict
+    # storing word_num_dict
     path_name = "b_{}/b_{}_{}/word_num_dict_b{}_{}".format(bloc_num,
                                                            bloc_num, sub_bloc_num,
                                                            bloc_num, sub_bloc_num)
@@ -134,7 +152,7 @@ def merge_index_wn_nw_dicts(bloc_num, sub_bloc_num, nb_docs_b0):
     del word_num_dict
 
     # *------------------------------------------*
-    # num_word_dict
+    # storing num_word_dict
     path_name = "b_{}/b_{}_{}/num_word_dict_b{}_{}".format(bloc_num,
                                                            bloc_num, sub_bloc_num,
                                                            bloc_num, sub_bloc_num)
@@ -150,29 +168,26 @@ def merge_index_wn_nw_dicts(bloc_num, sub_bloc_num, nb_docs_b0):
 
 
 def bloc_merging(bloc_num):
-    # """
-    # Merge 2 blocs which have been already created
-    # In order to make a clear distinction:
-    # -> each variable linked to bloc_num1 are suffixed by '_1'
-    # -> each variable linked to bloc_num2 are suffixed by '_2'
-    # -> each variable linked to the final bloc are NOT suffixed
-    # :param bloc_num1: number to identify first bloc to merge among others
-    # :param bloc_num2: number to identify second bloc to merge among others
-    # :return: nothing
-    # """
     """
-
-    :param bloc_num:
-    :return:
+    Merge one bloc of dicts which have been calculated previously for only one databloc.
+    after the bloc zero will be calculated for previous bloc zero AND this last databloc.
+    in the bloc different things need to be merged :
+    -> num_name_dict
+    -> infos_doc_dict
+    -> index_dict, num_word_dict, word_num_dict
+    :param bloc_num: index of the bloc needed to be merged with the master bloc 0
+    :return: nothing, results are stored
     """
 
     # *------------------------------------------*
+    # -- num_name_dict --
     p = Process(target=merge_num_name_dict,
                 args=(bloc_num,))
     p.start()
     p.join()
 
     # *------------------------------------------*
+    # -- infos_doc_dict --
     # here we need the number of docs for the next split
     parent_conn, child_conn = Pipe()
     p = Process(target=merge_infos_doc_dict,

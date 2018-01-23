@@ -11,7 +11,7 @@ def tf_function(positions_or_count, infos_doc):
     More infos https://en.wikipedia.org/wiki/Tf%E2%80%93idf#Term_frequency_2
     :param positions_or_count: list of positions one word in the doc or directly the count of words for this word
     :param infos_doc: list[0]: total nb of words, list[1]: term frequency max
-    :return: tf_value for this word regarding to differents way of calculation
+    :return: tf_value for this word regarding to different ways of calculation
     """
 
     nb_total_words = infos_doc[0]
@@ -67,6 +67,9 @@ def calculate_tf_idf_dict(index_dict, infos_doc_dict):
     """
     Calculates a dict of words as keys and dicts as values.
     For each dict, you have docnums as keys and tf*idf as values.
+    :param index_dict:
+    :param infos_doc_dict:
+    :return:
     """
     tf_idf_dict = {}
     tf_dict = {}
@@ -96,6 +99,11 @@ def calculate_tf_idf_dict(index_dict, infos_doc_dict):
 
 
 def calculate_tf_idf(sub_bloc_num):
+    """
+    Calculate tf_idf score for each words which are present in the sub_bloc
+    :param sub_bloc_num: number of the sub_bloc to proceed
+    :return: nothing, results of the calculations are stored
+    """
     # *------------------------------------------*
     # Loading
     path_name = "b_{}/infos_doc_dict_b{}".format(0, 0)

@@ -13,6 +13,12 @@ from multiprocessing import Process, Pipe, Queue
 
 # Before the query, requires some time
 def indexes_creation(nb_total_docs, memory_tracker):
+    """
+
+    :param nb_total_docs:
+    :param memory_tracker:
+    :return:
+    """
     if memory_tracker:
         print("Memory tracker activated.")
         time_gap = 0.01
@@ -110,6 +116,12 @@ def indexes_creation(nb_total_docs, memory_tracker):
 
 # Only the query, requires first step already completed
 def query(query=None, memory_tracker=False):
+    """
+
+    :param query:
+    :param memory_tracker:
+    :return:
+    """
     if memory_tracker:
         print("Memory tracker activated.")
         time_gap = 0.01
@@ -146,6 +158,11 @@ def query(query=None, memory_tracker=False):
 
 
 def test_queries(memory_tracker):
+    """
+    Function to run 10 queries proposed in the documentation.
+    :param memory_tracker: explicit
+    :return: nothing, results are stored in a file
+    """
     if memory_tracker:
         print("Memory tracker activated.")
         time_gap = 0.01

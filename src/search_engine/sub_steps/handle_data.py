@@ -6,7 +6,7 @@ def load_data_dict(directory, nb_files_needed=None, indice_start=0):
     """
     :param directory: root to read files
     :param nb_files_needed: number of files that you need
-    :param indice_start: number of the first file that you need
+    :param indice_start: indice of the first file that you need
     :return:
     data_dict: dict with docnum as key, content of doc as value
     num_name_dict: dict with docnum as key, doc name  as value
@@ -75,6 +75,8 @@ def load_data_dict(directory, nb_files_needed=None, indice_start=0):
 def load_stopwords_set(path='data/stopwords-fr.txt'):
     """
     Creates and returns a set containing stopwords which are in the file.
+    :param path:
+    :return: set containing stopwords
     """
     stopwords = []
 

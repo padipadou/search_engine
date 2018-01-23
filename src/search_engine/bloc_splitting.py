@@ -5,7 +5,13 @@ from os import remove
 
 
 def split_indexes(bloc_num, start_end_groups):  # MAYBE NEED TO IMPROVED WITH PROCESSES
-
+    """
+    For each data_bloc, we need to split it into different blocs.
+    These blocs will be split following alphabet repartition.
+    :param bloc_num: index of the bloc needed to be split
+    :param start_end_groups: list of list with start_key, prev_key, number of words, percentage
+    :return: nothing, results are stored
+    """
     depth = len(start_end_groups[0][0])
 
     path_name = "b_{}/index_dict_b{}".format(bloc_num, bloc_num)

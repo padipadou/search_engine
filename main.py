@@ -9,7 +9,6 @@ import src.other.memory_usage as mem
 
 
 # TODO: comment / docstring all functions
-# TODO: process to look at memory usage on all processes
 # TODO: doc how-to-use-?
 # TODO: working on 1M5 docs
 
@@ -20,12 +19,21 @@ import src.other.memory_usage as mem
 
 
 def str_to_bool(value):
+    """
+    explicit
+    :param value:
+    :return:
+    """
     if value == "True" or value == "true":
         return True
     else:
         return False
 
 def main():
+    """
+    complete function understanding parameters
+    :return:
+    """
     nb_docs_to_look_at = 100
     depth = 3
     groups_nb = 27

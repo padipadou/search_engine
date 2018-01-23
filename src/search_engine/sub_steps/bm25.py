@@ -60,6 +60,12 @@ def get_nb_words_avg(infos_doc_dict):
 
 
 def get_keyword_num_list(words_query, word_num_dict):
+    """
+
+    :param words_query:
+    :param word_num_dict:
+    :return:
+    """
     keyword_num_list = []
 
     for norm_word in words_query:
@@ -71,21 +77,12 @@ def get_keyword_num_list(words_query, word_num_dict):
 
 
 def bm25(query, start_end_groups):
-    # """
-    # More info https://en.wikipedia.org/wiki/Okapi_BM25
-    # :param query: normal sentence in natural language
-    # :param stopwords: set of stopwords
-    # :param word_num_dict: dict with normalized word as key, wordnum as value
-    # :param tf_idf_dict: dict with wordnum as key, dict as value (dict with docnum as key, tf*idf as value per doc)
-    # :param tf_dict: dict with wordnum as key, tf as value
-    # :param infos_doc_dict: dict with docnum  as key, list as value (per doc; list[0]: total nb of words, list[1]: term frequency max)
-    # :return: dict with docnum as key, score of bm25 as value
-    # """
     """
-
-    :param query:
-    :param start_end_groups:
-    :return:
+    BM25 done into ONE process reaching index splitted by blocs
+    More info https://en.wikipedia.org/wiki/Okapi_BM25
+    :param query: normal sentence in natural language
+    :param start_end_groups: list of list with start_key, prev_key, number of words, percentage
+    :return: dict with docnum as key, score of bm25 as value
     """
 
     docnum_score_sum_dict = {}

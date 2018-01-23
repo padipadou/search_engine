@@ -10,6 +10,10 @@ import libs.kea as kea
 
 
 def get_total_word_nb(alpha_dict):
+    """
+    :param alpha_dict: alpha_dict with letters as key, number of words with this these first letters
+    :return: sum of all values from alpha_dict
+    """
     total_word_nb = 0
     for val_ in alpha_dict.values():
         total_word_nb += val_
@@ -53,6 +57,7 @@ def creation_alpha_dict(depth):
         print("Too deep for now.")
         return alpha_dict
 
+    # for words with accents
     alpha_dict["0others"] = 0
 
     return alpha_dict
@@ -73,8 +78,6 @@ def repartition_corpus(nb_docs_to_look_at=100, depth=2):
 
     data_dict, num_name_dict = \
         hd.load_data_dict(Const.DIRECTORY_NAME, nb_docs_to_look_at)
-    # hd.load_data_dict("data/text_10000", nb_docs_to_look_at)
-    # hd.load_data_dict("../../data/text_10000", nb_docs_to_look_at)
 
     # useless data
     del num_name_dict
@@ -82,7 +85,6 @@ def repartition_corpus(nb_docs_to_look_at=100, depth=2):
     # tokenizer, from Kea
     tokenizer = kea.tokenizer()
 
-    # stopwords = hd.load_stopwords_set('../../data/stopwords-fr.txt')
     stopwords = hd.load_stopwords_set('data/stopwords-fr.txt')
 
     for page_number in tqdm(data_dict.keys()):
@@ -108,6 +110,10 @@ def repartition_groups_calc(alpha_dict, groups_nb):
     :param alpha_dict: number of words for each beginning of word (key)
     :param groups_nb: desired number of groups
     :return: list with each beginning/end of group and size in percentage
+    - start_key
+    - prev_key
+    - val_nb: number of words in this category
+    - val_nb / total_word_nb: percentage of words in this category
     """
     total_word_nb = get_total_word_nb(alpha_dict)
     val_nb_group = int(total_word_nb / (groups_nb - 1))
@@ -163,7 +169,6 @@ def alphabet_repartition(nb_docs_to_look_at, depth, groups_nb, memory_tracker):
         if start_end_group[-1] > repartition_max_percent:
             repartition_max_percent = start_end_group[-1]
 
-    # pck.pickle_store("start_end_groups", start_end_groups, "../../")
     pck.pickle_store("start_end_groups", start_end_groups, "")
 
     if memory_tracker:
@@ -172,7 +177,6 @@ def alphabet_repartition(nb_docs_to_look_at, depth, groups_nb, memory_tracker):
 
     print("Repartition in", groups_nb, "groups for first", nb_docs_to_look_at, "documents with", depth,
           "letter(s) have been done correctly.")
-    print("Ready for next step.")
 
 
 if __name__ == '__main__':
