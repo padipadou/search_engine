@@ -14,7 +14,13 @@ from multiprocessing import Process, Pipe, Queue
 # Before the query, requires some time
 def indexes_creation(nb_total_docs, memory_tracker):
     """
-
+    work to do  before the query, creation of all files required for the query
+    WARNING need alphabet repartition file created before
+    -> creation of primary blocs
+    -> splitting these blocs into secundary blocs
+    -> merging secundary blocs from each primary bloc together
+    -> calculating tf idf for each secundary bloc merged
+    -> READY FOR QUERY
     :param nb_total_docs:
     :param memory_tracker:
     :return:
@@ -117,7 +123,7 @@ def indexes_creation(nb_total_docs, memory_tracker):
 # Only the query, requires first step already completed
 def query(query=None, memory_tracker=False):
     """
-
+    global bm25 query with print, and memory track
     :param query:
     :param memory_tracker:
     :return:
@@ -130,7 +136,7 @@ def query(query=None, memory_tracker=False):
         p = Process(target=mem.track_memory_usage, args=(phase_name, time_gap, q))
         p.start()
 
-    start_end_groups = pck.pickle_load("start_end_groups", "") #NEED A TEST
+    start_end_groups = pck.pickle_load("start_end_groups", "")
     if query is None:
         query = "israël jérusalem"
         query = "président hollande"

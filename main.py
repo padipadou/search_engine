@@ -8,11 +8,10 @@ import src.search_engine.sub_steps.alphabet_repartition as alp
 import src.other.memory_usage as mem
 
 
-# TODO: comment / docstring all functions
 # TODO: doc how-to-use-?
 # TODO: working on 1M5 docs
 
-# TODO: bigrams
+# TODO: n_grams with position
 # TODO: (mini summary for each text) (NOT MANDATORY)
 # TODO: erase doc with terms after "-" (NOT MANDATORY)
 # TODO: relevant ? try proposed queries (NOT MANDATORY)

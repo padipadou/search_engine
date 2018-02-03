@@ -8,6 +8,12 @@ import Stemmer as pystemmer
 
 
 def get_sub_bloc_num_dict(words_query, start_end_groups):
+    """
+    return a dict with the index of blocs which are required to gets tf idf scores for each word
+    :param words_query:
+    :param start_end_groups:
+    :return:
+    """
     sub_bloc_num_dict = {}
     stopwords = hd.load_stopwords_set()
     depth = 3
@@ -51,6 +57,11 @@ def get_sub_bloc_num_dict(words_query, start_end_groups):
 
 
 def get_nb_words_avg(infos_doc_dict):
+    """
+    explicit
+    :param infos_doc_dict:
+    :return:
+    """
     nb_words_avg = 0
     for value in infos_doc_dict.values():
         nb_words_avg += value[0]
@@ -61,7 +72,8 @@ def get_nb_words_avg(infos_doc_dict):
 
 def get_keyword_num_list(words_query, word_num_dict):
     """
-
+    function to get index of each word in on one dict,
+    NOT USED with blocs
     :param words_query:
     :param word_num_dict:
     :return:
