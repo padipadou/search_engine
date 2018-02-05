@@ -9,6 +9,7 @@ import src.other.memory_usage as mem
 import src.word2vec.test_word2vec as w2v_t
 
 # TODO: working on 1M5 docs
+# TODO: argparser for crawler
 
 # TODO: n_grams with position (NOT MANDATORY)
 # TODO: (mini summary for each text) (NOT MANDATORY)
