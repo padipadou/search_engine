@@ -43,7 +43,7 @@ def word2vec_test(positive_word, negative_word=None):
 
 
 def word2vec_main(positive_word, negative_word=None):
-    results = word2vec_test(word)
+    results = word2vec_test(positive_word)
 
     for result in results:
         print(result)
