@@ -6,7 +6,7 @@ from multiprocessing import Process, Pipe, Queue
 import src.search_engine.bloc_working as bw
 import src.search_engine.sub_steps.alphabet_repartition as alp
 import src.other.memory_usage as mem
-
+import src.word2vec.test_word2vec as w2v_t
 
 # TODO: working on 1M5 docs
 
@@ -41,7 +41,7 @@ def main():
 
     parser = argparse.ArgumentParser()
     parser.add_argument("--work_to_do",
-                        help="alphabet repartition ('alpha') or index creation ('index') or search engine usage ('query')")
+                        help="alphabet repartition ('alpha') or index creation ('index') or search engine usage ('query') or word2vec test ('w2vtest')")
     parser.add_argument("--memory_tracker", help="memory tracker presence (True) or absence (False)")
     # *------------------------------------------*
     parser.add_argument("--alpha_nb_docs", type=int,
@@ -54,6 +54,8 @@ def main():
     parser.add_argument("--query_query", help="query in natural language")
     # *------------------------------------------*
     parser.add_argument("--mem_plot_phase", help="phase to plot to see memory usage")
+    # *------------------------------------------*
+    parser.add_argument("--word_to_test", help="word which we need synonyms")
     args = parser.parse_args()
 
     if args.work_to_do:
@@ -92,6 +94,11 @@ def main():
                 print("Error: need a memory file to plot, please run a code with memory tracker activated first or with a correct filename.")
                 return -1
             mem.plot_memory_usage(phase_name)
+
+        elif work_to_do == "w2vtest":
+            if args.word_to_test:
+                positive_word = args.word_to_test
+            w2v_t.word2vec_main(positive_word)
 
         else:
             print("Error:", work_to_do, "is not a correct name for a job.")

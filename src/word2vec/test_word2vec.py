@@ -24,9 +24,11 @@ def word2vec_test(positive_word, negative_word=None):
         extra = "_remove_accents"
 
     # Chargement du modèle
+    # root_path = ""
+    root_path = "src/word2vec/"
     if ngram_level > 0:
-        phraser_file = 'phraser/phraser_web{}_mincount{}_t{}_level{{}}.bin'.format(lang, mincount, threshold)
-    word2vec_model_file = 'word2vec/word2vec_web{}_mincount{}_size{}{}_phrases.bin'.format(lang, mincount, size, extra)
+        phraser_file = root_path + 'phraser/phraser_web{}_mincount{}_t{}_level{{}}.bin'.format(lang, mincount, threshold)
+    word2vec_model_file = root_path + 'word2vec/word2vec_web{}_mincount{}_size{}{}_phrases.bin'.format(lang, mincount, size, extra)
 
     model = Word2Vec.load(word2vec_model_file)
 
